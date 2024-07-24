@@ -1,7 +1,7 @@
 package kuraeyong.backend.dto.line;
 
 import kuraeyong.backend.object.Position;
-import kuraeyong.backend.object.UpDownLineListElement;
+import kuraeyong.backend.object.StationInfoLineListElement;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -15,8 +15,8 @@ public class GetStationInfoResponse {
     private String prev;
     private String curr;
     private String next;
-    private List<UpDownLineListElement> upLineList;
-    private List<UpDownLineListElement> downLineList;
+    private List<StationInfoLineListElement> upLineList;
+    private List<StationInfoLineListElement> downLineList;
     private Position pos;
     private List<String> facilityList;
 }

@@ -5,7 +5,8 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class UpDownLineListElement {
+public class StationTimeTableLineListElement {
+    private String depart;
     private String dest;
-    private String arrival_time;
+    private String departure_time;
 }

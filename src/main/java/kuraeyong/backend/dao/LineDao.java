@@ -2,8 +2,10 @@ package kuraeyong.backend.dao;
 
 import kuraeyong.backend.dto.line.GetLineListResponse;
 import kuraeyong.backend.dto.line.GetStationInfoResponse;
+import kuraeyong.backend.dto.line.GetStationTimeTableResponse;
 import kuraeyong.backend.object.Position;
-import kuraeyong.backend.object.UpDownLineListElement;
+import kuraeyong.backend.object.StationInfoLineListElement;
+import kuraeyong.backend.object.StationTimeTableLineListElement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -37,18 +39,38 @@ public class LineDao {
         String prev = "성수";
         String curr = "건대입구";
         String next = "뚝섬";
-        List<UpDownLineListElement> upLineList = new ArrayList<>(Arrays.asList(
-                new UpDownLineListElement("성수(외선행)", "곧 도착"),
-                new UpDownLineListElement("성수(외선행)", "4분 44초")
+        List<StationInfoLineListElement> upLineList = new ArrayList<>(Arrays.asList(
+                new StationInfoLineListElement("성수(외선행)", "곧 도착"),
+                new StationInfoLineListElement("성수(외선행)", "4분 44초")
         ));
-        List<UpDownLineListElement> downLineList = new ArrayList<>(Arrays.asList(
-                new UpDownLineListElement("성수(내선행)", "1분 42초"),
-                new UpDownLineListElement("성수(내선행)", "7분 34초")
+        List<StationInfoLineListElement> downLineList = new ArrayList<>(Arrays.asList(
+                new StationInfoLineListElement("성수(내선행)", "1분 42초"),
+                new StationInfoLineListElement("성수(내선행)", "7분 34초")
         ));
         Position pos = new Position("37.540408", "127.069231");
         List<String> facilityList = new ArrayList<>(Arrays.asList("엘리베이터", "자전거보관소", "무인민원발급기", "고객안내센터",
                 "휠체어", "관광안내소", "만남의장소"));
 
         return new GetStationInfoResponse(stationId, line, prev, curr, next, upLineList, downLineList, pos, facilityList);
+    }
+
+    public GetStationTimeTableResponse getStationTimeTable(String lineName, String stationName, String dayType) {
+        log.info("[LineDao.getStationTimeTable]");
+
+        // 임시 코드
+        List<StationTimeTableLineListElement> upLineList = new ArrayList<>(Arrays.asList(
+                new StationTimeTableLineListElement("삼성", "성수", "05:45"),
+                new StationTimeTableLineListElement("서울대입구", "성수", "06:05"),
+                new StationTimeTableLineListElement("...", "...", "..."),
+                new StationTimeTableLineListElement("성수", "성수", "24:58")
+        ));
+        List<StationTimeTableLineListElement> downLineList = new ArrayList<>(Arrays.asList(
+                new StationTimeTableLineListElement("성수", "성수", "05:32"),
+                new StationTimeTableLineListElement("성수", "성수", "05:42"),
+                new StationTimeTableLineListElement("...", "...", "..."),
+                new StationTimeTableLineListElement("성수", "삼성", "24:46")
+        ));
+
+        return new GetStationTimeTableResponse(upLineList, downLineList);
     }
 }

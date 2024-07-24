@@ -3,6 +3,7 @@ package kuraeyong.backend.service;
 import kuraeyong.backend.dao.LineDao;
 import kuraeyong.backend.dto.line.GetLineListResponse;
 import kuraeyong.backend.dto.line.GetStationInfoResponse;
+import kuraeyong.backend.dto.line.GetStationTimeTableResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -26,5 +27,12 @@ public class LineService {
 
         // TODO: 해당 역 정보 조회
         return lineDao.getStationInfo(lineName, stationName);
+    }
+
+    public GetStationTimeTableResponse getStationTimeTable(String lineName, String stationName, String dayType) {
+        log.info("[LineService.getStationTimeTable]");
+
+        // TODO: 해당 역사 시간표 조회
+        return lineDao.getStationTimeTable(lineName, stationName, dayType);
     }
 }
