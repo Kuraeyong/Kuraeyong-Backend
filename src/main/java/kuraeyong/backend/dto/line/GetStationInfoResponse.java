@@ -18,5 +18,6 @@ public class GetStationInfoResponse {
     private List<StationInfoLineListElement> upLineList;
     private List<StationInfoLineListElement> downLineList;
     private Position pos;
+    private int exitCount;
     private List<String> facilityList;
 }

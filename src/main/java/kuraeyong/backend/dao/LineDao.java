@@ -49,10 +49,11 @@ public class LineDao {
                 new StationInfoLineListElement("성수(내선행)", "7분 34초")
         ));
         Position pos = new Position("37.540408", "127.069231");
+        int exitCount = 4;
         List<String> facilityList = new ArrayList<>(Arrays.asList("엘리베이터", "자전거보관소", "무인민원발급기", "고객안내센터",
                 "휠체어", "관광안내소", "만남의장소"));
 
-        return new GetStationInfoResponse(stationId, line, prev, curr, next, upLineList, downLineList, pos, facilityList);
+        return new GetStationInfoResponse(stationId, line, prev, curr, next, upLineList, downLineList, pos, exitCount, facilityList);
     }
 
     public GetStationTimeTableResponse getStationTimeTable(String lineName, String stationName, String dayType) {
