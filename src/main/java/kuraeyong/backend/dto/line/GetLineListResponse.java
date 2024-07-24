@@ -1,4 +1,4 @@
-package kuraeyong.backend.dto.station;
+package kuraeyong.backend.dto.line;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
