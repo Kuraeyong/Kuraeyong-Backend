@@ -1,13 +1,11 @@
 package kuraeyong.backend.controller;
 
 import kuraeyong.backend.common.response.BaseResponse;
-import kuraeyong.backend.dto.station.GetLineListResponse;
+import kuraeyong.backend.dto.station.GetListResponse;
 import kuraeyong.backend.service.StationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -17,9 +15,9 @@ public class StationController {
 
     private final StationService stationService;
     @GetMapping("/{stationName}")
-    public BaseResponse<GetLineListResponse> getLineListByStationName(@PathVariable String stationName) {
-        log.info("[StationController.getLineListByStationName]");
+    public BaseResponse<GetListResponse> getLineNameListByStationName(@PathVariable String stationName) {
+        log.info("[StationController.getLineNameListByStationName]");
 
-        return new BaseResponse<>(stationService.getLineListByStationName(stationName));
+        return new BaseResponse<>(stationService.getLineNameListByStationName(stationName));
     }
 }

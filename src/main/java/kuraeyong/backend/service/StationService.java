@@ -1,12 +1,10 @@
 package kuraeyong.backend.service;
 
 import kuraeyong.backend.dao.StationDao;
-import kuraeyong.backend.dto.station.GetLineListResponse;
+import kuraeyong.backend.dto.station.GetListResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -15,10 +13,10 @@ public class StationService {
 
     private final StationDao stationDao;
 
-    public GetLineListResponse getLineListByStationName(String stationName) {
-        log.info("[UserService.getAllUsers]");
+    public GetListResponse getLineNameListByStationName(String stationName) {
+        log.info("[StationService.getLineNameListByStationName]");
 
-        // TODO: 전체 회원 조회
-        return stationDao.getLineListByStationName(stationName);
+        // TODO: 해당 역이 속한 노선명 리스트 조회
+        return stationDao.getLineNameListByStationName(stationName);
     }
 }

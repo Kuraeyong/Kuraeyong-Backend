@@ -7,6 +7,6 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class GetLineListResponse {
-    private List<List<String>> list;
+public class GetListResponse {
+    private List<String> list;
 }
