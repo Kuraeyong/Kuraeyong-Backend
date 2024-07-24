@@ -1,4 +1,4 @@
-package kuraeyong.backend.dto.station;
+package kuraeyong.backend.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,6 +7,6 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class GetLineNameListResponse {
+public class GetListResponse {
     private List<String> list;
 }

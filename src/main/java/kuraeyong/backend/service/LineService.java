@@ -1,6 +1,7 @@
 package kuraeyong.backend.service;
 
 import kuraeyong.backend.dao.LineDao;
+import kuraeyong.backend.dto.GetListResponse;
 import kuraeyong.backend.dto.line.GetLineListResponse;
 import kuraeyong.backend.dto.line.GetStationInfoResponse;
 import kuraeyong.backend.dto.line.GetStationTimeTableResponse;
@@ -34,5 +35,12 @@ public class LineService {
 
         // TODO: 해당 역사 시간표 조회
         return lineDao.getStationTimeTable(lineName, stationName, dayType);
+    }
+
+    public GetListResponse getPlaceAroundExitList(String lineName, String stationName, String exitNumber) {
+        log.info("[LineService.getPlaceAroundExitList]");
+
+        // TODO: 해당 역 출구 주요장소 조회
+        return lineDao.getPlaceAroundExitList(lineName, stationName, exitNumber);
     }
 }

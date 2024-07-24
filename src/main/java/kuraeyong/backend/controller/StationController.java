@@ -1,7 +1,7 @@
 package kuraeyong.backend.controller;
 
 import kuraeyong.backend.common.response.BaseResponse;
-import kuraeyong.backend.dto.station.GetLineNameListResponse;
+import kuraeyong.backend.dto.GetListResponse;
 import kuraeyong.backend.service.StationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,7 +15,7 @@ public class StationController {
 
     private final StationService stationService;
     @GetMapping("/{stationName}")
-    public BaseResponse<GetLineNameListResponse> getLineNameListByStationName(@PathVariable String stationName) {
+    public BaseResponse<GetListResponse> getLineNameListByStationName(@PathVariable String stationName) {
         log.info("[StationController.getLineNameListByStationName]");
 
         return new BaseResponse<>(stationService.getLineNameListByStationName(stationName));

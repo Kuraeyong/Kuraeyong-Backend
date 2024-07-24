@@ -37,5 +37,3 @@ out/
 .vscode/
 
 # user-defined
-/src/main/java/kuraeyong/backend/controller/APITestController.java
-/src/main/java/kuraeyong/backend/dto/APITestResponse.java

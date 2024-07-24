@@ -1,6 +1,7 @@
 package kuraeyong.backend.controller;
 
 import kuraeyong.backend.common.response.BaseResponse;
+import kuraeyong.backend.dto.GetListResponse;
 import kuraeyong.backend.dto.line.GetLineListResponse;
 import kuraeyong.backend.dto.line.GetStationInfoResponse;
 import kuraeyong.backend.dto.line.GetStationTimeTableResponse;
@@ -39,5 +40,12 @@ public class LineController {
         log.info("[LineController.getStationTimeTable]");
 
         return new BaseResponse<>(lineService.getStationTimeTable(lineName, stationName, dayType));
+    }
+
+    @GetMapping("/{lineName}/stations/{stationName}/exits/{exitNumber}")
+    public BaseResponse<GetListResponse> getPlaceAroundExitList(@PathVariable String lineName, @PathVariable String stationName, @PathVariable String exitNumber) {
+        log.info("[LineController.getPlaceAroundExitList]");
+
+        return new BaseResponse<>(lineService.getPlaceAroundExitList(lineName, stationName, exitNumber));
     }
 }

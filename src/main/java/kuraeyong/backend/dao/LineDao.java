@@ -1,5 +1,6 @@
 package kuraeyong.backend.dao;
 
+import kuraeyong.backend.dto.GetListResponse;
 import kuraeyong.backend.dto.line.GetLineListResponse;
 import kuraeyong.backend.dto.line.GetStationInfoResponse;
 import kuraeyong.backend.dto.line.GetStationTimeTableResponse;
@@ -72,5 +73,18 @@ public class LineDao {
         ));
 
         return new GetStationTimeTableResponse(upLineList, downLineList);
+    }
+
+    public GetListResponse getPlaceAroundExitList(String lineName, String stationName, String exitNumber) {
+        log.info("[LineDao.getPlaceAroundExitList]");
+
+        // 임시 코드
+        List<String> list = new ArrayList<>(Arrays.asList(
+                "롯데캐슬", "아이파크", "성락성결교회", "성수2,3동주민센터",
+                "성수2가3파출소", "성수쇼핑센터", "성수지구대", "우방아파트",
+                "향림공원", "성수수제화타운"
+        ));
+
+        return new GetListResponse(list);
     }
 }
