@@ -1,0 +1,23 @@
+spring:
+  profiles:
+    group:
+      "local": "localDB"
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: "localDB"
+
+  datasource:
+    url: ${DATASOURCE_URL_LOCAL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    dbcp2:
+      validation-query: select 1
+
+
+
+
