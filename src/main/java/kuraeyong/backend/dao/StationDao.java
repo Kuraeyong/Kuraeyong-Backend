@@ -1,8 +1,8 @@
 package kuraeyong.backend.dao;
 
-import kuraeyong.backend.dto.GetListResponse;
-import kuraeyong.backend.entity.Station;
-import kuraeyong.backend.repository.StationRepository;
+import kuraeyong.backend.dao.repository.StationRepository;
+import kuraeyong.backend.dto.response.GetListResponse;
+import kuraeyong.backend.domain.Station;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;

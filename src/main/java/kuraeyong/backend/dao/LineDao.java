@@ -1,12 +1,12 @@
 package kuraeyong.backend.dao;
 
-import kuraeyong.backend.dto.GetListResponse;
-import kuraeyong.backend.dto.line.GetLineListResponse;
-import kuraeyong.backend.dto.line.GetStationInfoResponse;
-import kuraeyong.backend.dto.line.GetStationTimeTableResponse;
-import kuraeyong.backend.object.Position;
-import kuraeyong.backend.object.StationInfoLineListElement;
-import kuraeyong.backend.object.StationTimeTableLineListElement;
+import kuraeyong.backend.dto.response.GetListResponse;
+import kuraeyong.backend.dto.response.line.GetLineListResponse;
+import kuraeyong.backend.dto.response.line.GetStationInfoResponse;
+import kuraeyong.backend.dto.response.line.GetStationTimeTableResponse;
+import kuraeyong.backend.dto.element.Position;
+import kuraeyong.backend.dto.element.StationInfoLineListElement;
+import kuraeyong.backend.dto.element.StationTimeTableLineListElement;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;

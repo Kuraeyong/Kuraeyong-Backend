@@ -1,8 +1,6 @@
-package kuraeyong.backend.dto.train;
+package kuraeyong.backend.dto.response.train;
 
-import kuraeyong.backend.object.Position;
-import kuraeyong.backend.object.StationInfoLineListElement;
-import kuraeyong.backend.object.TrainInfoListElement;
+import kuraeyong.backend.dto.element.TrainInfoListElement;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

@@ -1,12 +1,7 @@
 package kuraeyong.backend.controller;
 
 import kuraeyong.backend.common.response.BaseResponse;
-import kuraeyong.backend.dto.GetListResponse;
-import kuraeyong.backend.dto.line.GetLineListResponse;
-import kuraeyong.backend.dto.line.GetStationInfoResponse;
-import kuraeyong.backend.dto.line.GetStationTimeTableResponse;
-import kuraeyong.backend.dto.train.GetTrainInfoResponse;
-import kuraeyong.backend.service.LineService;
+import kuraeyong.backend.dto.response.train.GetTrainInfoResponse;
 import kuraeyong.backend.service.TrainService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

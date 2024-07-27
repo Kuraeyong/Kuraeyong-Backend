@@ -1,7 +1,7 @@
 package kuraeyong.backend.service;
 
 import kuraeyong.backend.dao.StationDao;
-import kuraeyong.backend.dto.GetListResponse;
+import kuraeyong.backend.dto.response.GetListResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

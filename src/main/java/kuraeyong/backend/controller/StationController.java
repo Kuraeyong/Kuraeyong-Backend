@@ -1,7 +1,7 @@
 package kuraeyong.backend.controller;
 
 import kuraeyong.backend.common.response.BaseResponse;
-import kuraeyong.backend.dto.GetListResponse;
+import kuraeyong.backend.dto.response.GetListResponse;
 import kuraeyong.backend.service.StationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package kuraeyong.backend.dto;
+package kuraeyong.backend.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

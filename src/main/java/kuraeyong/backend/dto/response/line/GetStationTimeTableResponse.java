@@ -1,8 +1,6 @@
-package kuraeyong.backend.dto.line;
+package kuraeyong.backend.dto.response.line;
 
-import kuraeyong.backend.object.Position;
-import kuraeyong.backend.object.StationInfoLineListElement;
-import kuraeyong.backend.object.StationTimeTableLineListElement;
+import kuraeyong.backend.dto.element.StationTimeTableLineListElement;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

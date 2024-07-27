@@ -1,10 +1,8 @@
-package kuraeyong.backend.entity;
+package kuraeyong.backend.domain;
 
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import javax.annotation.processing.Generated;
 
 @Entity
 @Getter
