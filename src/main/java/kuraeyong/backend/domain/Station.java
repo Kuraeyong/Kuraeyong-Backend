@@ -1,12 +1,13 @@
 package kuraeyong.backend.domain;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
+import lombok.*;
 
 @Entity
+@Builder
 @Getter
-@RequiredArgsConstructor
+@NoArgsConstructor
+@AllArgsConstructor
 public class Station {
 
     @Id
@@ -14,8 +15,23 @@ public class Station {
     private Long id;
 
     @Column
-    private String name;
+    private String railOprIsttCd;
 
     @Column
-    private String line;
+    private String railOprIsttNm;
+
+    @Column
+    private String lnCd;
+
+    @Column
+    private String lnNm;
+
+    @Column
+    private String stinNo;
+
+    @Column
+    private String stinCd;
+
+    @Column
+    private String stinNm;
 }

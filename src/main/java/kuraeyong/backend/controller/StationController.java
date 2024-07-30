@@ -15,16 +15,15 @@ import org.springframework.web.bind.annotation.*;
 public class StationController {
 
     private final StationService stationService;
-    @GetMapping("/{stationName}")
-    public BaseResponse<GetListResponse> getLineNameListByStationName(@PathVariable String stationName) {
-        log.info("[StationController.getLineNameListByStationName]");
+//    @GetMapping("/{stationName}")
+//    public BaseResponse<GetListResponse> getLineNameListByStationName(@PathVariable String stationName) {
+//        log.info("[StationController.getLineNameListByStationName]");
+//
+//        return new BaseResponse<>(stationService.getLineNameListByStationName(stationName));
+//    }
 
-        return new BaseResponse<>(stationService.getLineNameListByStationName(stationName));
-    }
-
-    @GetMapping("/test")
-    public String test() {
-        ExcelUtil.printExcel();
-        return "hi";
+    @GetMapping("/init-db")
+    public String initStationDB() {
+        return stationService.createStationDB();
     }
 }
