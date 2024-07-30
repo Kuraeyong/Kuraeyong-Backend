@@ -29,7 +29,9 @@ spring:
       hibernate:
         format_sql: true
 
+---
 
+service-key: ${SERVICE_KEY}
 
 
 

@@ -37,4 +37,5 @@ out/
 .vscode/
 
 # user-defined
+/src/main/resources/*.csv
 /src/main/resources/xlsx/station_code_info.xlsx
