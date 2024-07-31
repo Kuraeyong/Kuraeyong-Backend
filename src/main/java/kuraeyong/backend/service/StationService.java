@@ -2,7 +2,6 @@ package kuraeyong.backend.service;
 
 import kuraeyong.backend.dao.StationDao;
 import kuraeyong.backend.domain.Station;
-import kuraeyong.backend.dto.response.GetListResponse;
 import kuraeyong.backend.util.OpenApiUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,9 +12,7 @@ import org.json.simple.parser.ParseException;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.Buffer;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
@@ -36,12 +33,12 @@ public class StationService {
         // TODO: API 결과 CSV 파일에 저장
         List<Station> stationList = stationDao.getStationList();
         String format = "json";
-        String dayCd = "9";
+        String dayCd = "7";
         int stationCount = 0, lineCount = 0, logCount = 0;
 
-        // 파일명 및 로그파일명 지정
-        String filePath = "src/main/resources/station_time_table_holiday.csv";
-        String logFilePath = "src/main/resources/station_time_table_holiday_log.csv";
+        // 파일명 및 로그파일명 지정 (덮어쓰기로 진행)
+        String filePath = "src/main/resources/station_time_table_saturday.csv";
+        String logFilePath = "src/main/resources/station_time_table_saturday_log.csv";
         File file, logFile;
         BufferedWriter bw, logBw;
         String NEWLINE = System.lineSeparator();    // 개행
@@ -73,7 +70,7 @@ public class StationService {
             logBw.write(NEWLINE);
 
             for (Station station : stationList) {
-                stationCount++;
+                System.out.println("CurrentStationCount: " + ++stationCount);
                 String railOprIsttCd = station.getRailOprIsttCd();
                 String lnCd = station.getLnCd();
                 String stinCd = station.getStinCd();
@@ -114,10 +111,28 @@ public class StationService {
             bw.close();
             logBw.flush();
             logBw.close();
-            System.out.println("StationCount:" + stationCount);
+            System.out.println("StationCount: " + stationCount);
             System.out.println("lineCount: " + lineCount);
             System.out.println("logCount: " + logCount);
         } catch (IOException | ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public void loadCsv() {
+        String filePath = "src/main/resources/station_time_table_holiday.csv";
+        File file;
+        BufferedReader br;
+
+        file = new File(filePath);
+        try {
+            br = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
+            String line;
+            while ((line = br.readLine()) != null) {
+                System.out.println(line);
+            }
+            br.close();
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

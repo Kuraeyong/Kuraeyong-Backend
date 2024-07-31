@@ -62,6 +62,7 @@ public class ExcelUtil {
                         XSSFCell cell = row.getCell(columnIndex);
                         String value = switch (cell.getCellType()) { // 각 셀에 담겨있는 데이터의 타입을 체크하고 해당 타입에 맞게 가져온다.
                             case NUMERIC -> cell.getNumericCellValue() + "";
+//                            case NUMERIC -> cell.getStringCellValue();
                             case STRING -> cell.getStringCellValue();
                             case BLANK -> cell.getBooleanCellValue() + "";
                             case ERROR -> cell.getErrorCellValue() + "";

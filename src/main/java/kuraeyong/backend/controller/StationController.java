@@ -1,22 +1,11 @@
 package kuraeyong.backend.controller;
 
-import kuraeyong.backend.common.response.BaseResponse;
-import kuraeyong.backend.dto.response.GetListResponse;
 import kuraeyong.backend.service.StationService;
-import kuraeyong.backend.util.ExcelUtil;
-import kuraeyong.backend.util.OpenApiUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.springframework.web.bind.annotation.*;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
 @RestController
@@ -40,6 +29,12 @@ public class StationController {
     @GetMapping("/save-to-csv")
     public String saveApiResultToCsv() {
         stationService.saveApiResultToCsv();
+        return "hi";
+    }
+
+    @GetMapping("/load-csv")
+    public String loadCsv() {
+        stationService.loadCsv();
         return "hi";
     }
 }

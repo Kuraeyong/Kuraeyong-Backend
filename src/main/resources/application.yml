@@ -33,5 +33,11 @@ spring:
 
 service-key: ${SERVICE_KEY}
 
+---
+
+spring:
+  batch:
+    jdbc:
+      initialize-schema: always
 
 
