@@ -1,11 +1,9 @@
 package kuraeyong.backend.dao.repository;
 
-import kuraeyong.backend.domain.Station;
+import kuraeyong.backend.domain.StationInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
-public interface StationRepository extends JpaRepository<Station, Long> {
+public interface StationRepository extends JpaRepository<StationInfo, Long> {
 //    List<Station> findAllByName(String name);
 
 }

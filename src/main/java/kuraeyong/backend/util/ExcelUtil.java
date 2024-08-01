@@ -1,14 +1,12 @@
 package kuraeyong.backend.util;
 
-import kuraeyong.backend.domain.Station;
-import org.apache.poi.ss.formula.functions.T;
+import kuraeyong.backend.domain.StationInfo;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -45,8 +43,8 @@ public class ExcelUtil {
 //        }
 //    }
 
-    public static List<Station> getStationListFromExcel(String filePath) {
-        List<Station> stationList = new ArrayList<>();
+    public static List<StationInfo> getStationListFromExcel(String filePath) {
+        List<StationInfo> stationInfoList = new ArrayList<>();
         List<String> stationElementList = new ArrayList<>();
         try {
             FileInputStream fis = new FileInputStream(filePath);
@@ -72,7 +70,7 @@ public class ExcelUtil {
                     }
                 }
 
-                Station station = Station.builder()
+                StationInfo stationInfo = StationInfo.builder()
                         .railOprIsttCd(stationElementList.get(0))
                         .railOprIsttNm(stationElementList.get(1))
                         .lnCd(stationElementList.get(2))
@@ -81,12 +79,12 @@ public class ExcelUtil {
                         .stinCd(stationElementList.get(5))
                         .stinNm(stationElementList.get(6))
                         .build();
-                stationList.add(station);
+                stationInfoList.add(stationInfo);
                 stationElementList.clear();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        return stationList;
+        return stationInfoList;
     }
 }

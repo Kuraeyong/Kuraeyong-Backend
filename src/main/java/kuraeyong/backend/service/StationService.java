@@ -1,7 +1,7 @@
 package kuraeyong.backend.service;
 
 import kuraeyong.backend.dao.StationDao;
-import kuraeyong.backend.domain.Station;
+import kuraeyong.backend.domain.StationInfo;
 import kuraeyong.backend.util.OpenApiUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class StationService {
     // 반환값 수정 필요
     public void saveApiResultToCsv() {
         // TODO: API 결과 CSV 파일에 저장
-        List<Station> stationList = stationDao.getStationList();
+        List<StationInfo> stationInfoList = stationDao.getStationList();
         String format = "json";
         String dayCd = "7";
         int stationCount = 0, lineCount = 0, logCount = 0;
@@ -69,11 +69,11 @@ public class StationService {
                     "DAY_CD");
             logBw.write(NEWLINE);
 
-            for (Station station : stationList) {
+            for (StationInfo stationInfo : stationInfoList) {
                 System.out.println("CurrentStationCount: " + ++stationCount);
-                String railOprIsttCd = station.getRailOprIsttCd();
-                String lnCd = station.getLnCd();
-                String stinCd = station.getStinCd();
+                String railOprIsttCd = stationInfo.getRailOprIsttCd();
+                String lnCd = stationInfo.getLnCd();
+                String stinCd = stationInfo.getStinCd();
                 String queryString = "&format=" + format +
                         "&railOprIsttCd=" + railOprIsttCd +
                         "&lnCd=" + lnCd +

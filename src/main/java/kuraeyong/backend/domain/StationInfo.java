@@ -8,7 +8,7 @@ import lombok.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Station {
+public class StationInfo {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
