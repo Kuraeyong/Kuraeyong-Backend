@@ -1,18 +1,21 @@
 package kuraeyong.backend.config;
 
+import kuraeyong.backend.dao.repository.StationTimeTableRepository;
+import kuraeyong.backend.domain.StationTimeTable;
 import kuraeyong.backend.dto.StationTimeTableDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
-import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.job.builder.JobBuilder;
-import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
+import org.springframework.batch.item.Chunk;
+import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
@@ -22,6 +25,9 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Configuration
 public class SimpleChunkJobConfig {
     private final int chunkSize = 1000;
+
+    @Autowired
+    private StationTimeTableRepository stationTimeTableRepository;
 
     @Bean
     public Job simpleChunkJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) throws Exception {
@@ -36,8 +42,9 @@ public class SimpleChunkJobConfig {
     public Step simpleChunkStep1(JobRepository jobRepository, PlatformTransactionManager platformTransactionManager) throws Exception {
         log.info("ACCESS simpleChunkStep1");
         return new StepBuilder("simpleChunkStep1", jobRepository)
-                .<StationTimeTableDto, StationTimeTableDto>chunk(chunkSize, platformTransactionManager)
+                .<StationTimeTableDto, StationTimeTable>chunk(chunkSize, platformTransactionManager)
                 .reader(flatFileReader())
+                .processor(simpleProcessor())
                 .writer(simpleChunkWriter())
                 .build();
     }
@@ -53,13 +60,25 @@ public class SimpleChunkJobConfig {
                 .fieldSetMapper(new BeanWrapperFieldSetMapper<>() {{
                     setTargetType(StationTimeTableDto.class);
                 }})
+                .linesToSkip(1)
                 .build();
     }
 
     @Bean
-    public ItemWriter<StationTimeTableDto> simpleChunkWriter() {
+    public ItemProcessor<StationTimeTableDto, StationTimeTable> simpleProcessor() {
+        return StationTimeTableDto::toEntity;
+    }
+
+    @Bean
+    public ItemWriter<StationTimeTable> simpleChunkWriter() {
         log.info("ACCESS itemWriter");
-        return items -> items.forEach(System.out::println);
+        return new ItemWriter<StationTimeTable>() {
+            @Override
+            public void write(Chunk<? extends StationTimeTable> items) throws Exception {
+                stationTimeTableRepository.saveAll(items);
+            }
+        };
+//        return items -> items.forEach(System.out::println);
 //        return items -> System.out.println(items.size());
     }
 }

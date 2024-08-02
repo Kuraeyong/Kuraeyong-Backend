@@ -1,5 +1,6 @@
 package kuraeyong.backend.dto;
 
+import kuraeyong.backend.domain.StationTimeTable;
 import lombok.*;
 
 @Getter
@@ -33,5 +34,20 @@ public class StationTimeTableDto {
                 ", tmnStinCd='" + tmnStinCd + '\'' +
                 ", railOprIsttCd='" + railOprIsttCd + '\'' +
                 '}';
+    }
+
+    public StationTimeTable toEntity() {
+        return StationTimeTable.builder()
+                .lnCd(lnCd)
+                .orgStinCd(orgStinCd)
+                .dayCd(dayCd)
+                .arvTm(arvTm)
+                .dayNm(dayNm)
+                .dptTm(dptTm)
+                .stinCd(stinCd)
+                .trnNo(trnNo)
+                .tmnStinCd(tmnStinCd)
+                .railOprIsttCd(railOprIsttCd)
+                .build();
     }
 }

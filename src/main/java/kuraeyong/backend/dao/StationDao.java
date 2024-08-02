@@ -1,6 +1,6 @@
 package kuraeyong.backend.dao;
 
-import kuraeyong.backend.dao.repository.StationRepository;
+import kuraeyong.backend.dao.repository.StationInfoRepository;
 import kuraeyong.backend.domain.StationInfo;
 import kuraeyong.backend.util.ExcelUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -14,12 +14,12 @@ import java.util.*;
 public class StationDao {
 
     @Autowired
-    private StationRepository stationRepository;
+    private StationInfoRepository stationInfoRepository;
 
     public String initStationDB() {
         List<StationInfo> stationInfoList = ExcelUtil.getStationListFromExcel("src/main/resources/xlsx/station_code_info.xlsx");
-        stationRepository.deleteAll();
-        List<StationInfo> saveResult = stationRepository.saveAll(stationInfoList);
+        stationInfoRepository.deleteAll();
+        List<StationInfo> saveResult = stationInfoRepository.saveAll(stationInfoList);
         if (saveResult.size() == stationInfoList.size()) {
             return "SUCCESS";
         }
@@ -27,7 +27,7 @@ public class StationDao {
     }
 
     public List<StationInfo> getStationList() {
-        return stationRepository.findAll();
+        return stationInfoRepository.findAll();
     }
 
 //    public GetListResponse getLineNameListByStationName(String stationName) {

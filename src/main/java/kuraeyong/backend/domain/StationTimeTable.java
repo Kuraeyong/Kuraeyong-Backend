@@ -46,4 +46,21 @@ public class StationTimeTable {
 
     @Column
     private String railOprIsttCd;
+
+    @Override
+    public String toString() {
+        return "StationTimeTable{" +
+                "id=" + id +
+                ", lnCd='" + lnCd + '\'' +
+                ", orgStinCd='" + orgStinCd + '\'' +
+                ", dayCd='" + dayCd + '\'' +
+                ", arvTm='" + arvTm + '\'' +
+                ", dayNm='" + dayNm + '\'' +
+                ", dptTm='" + dptTm + '\'' +
+                ", stinCd='" + stinCd + '\'' +
+                ", trnNo='" + trnNo + '\'' +
+                ", tmnStinCd='" + tmnStinCd + '\'' +
+                ", railOprIsttCd='" + railOprIsttCd + '\'' +
+                '}';
+    }
 }
