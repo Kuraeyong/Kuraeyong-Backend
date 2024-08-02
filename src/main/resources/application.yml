@@ -1,7 +1,9 @@
 spring:
   profiles:
     group:
-      "local": "localDB"
+      "saturday": "localDB, saturday"
+      "holiday": "localDB, holiday"
+      "weekday": "localDB, weekday"
 
 ---
 
@@ -47,3 +49,32 @@ spring:
     job:
       name: csvToDbJob
 
+---
+
+spring:
+  config:
+    activate:
+      on-profile: "saturday"
+
+csv-file-path: "src/main/resources/station_time_table_saturday.csv"
+log-file-path: "src/main/resources/station_time_table_saturday_log.csv"
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: "holiday"
+
+csv-file-path: "src/main/resources/station_time_table_holiday.csv"
+log-file-path: "src/main/resources/station_time_table_holiday_log.csv"
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: "weekday"
+
+csv-file-path: "src/main/resources/station_time_table_weekday.csv"
+log-file-path: "src/main/resources/station_time_table_weekday_log.csv"

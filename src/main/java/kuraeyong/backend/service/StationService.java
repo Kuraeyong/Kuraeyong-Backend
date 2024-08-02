@@ -9,6 +9,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -22,6 +23,17 @@ import java.util.List;
 public class StationService {
 
     private final StationDao stationDao;
+    private static String csvFilePath, logFilePath;
+
+    @Value("${csv-file-path}")
+    public void setCsvFilePath(String path) {
+        csvFilePath = path;
+    }
+
+    @Value("${log-file-path}")
+    public void setLogFilePath(String path) {
+        logFilePath = path;
+    }
 
     public String createStationDB() {
         // TODO: Station DB 생성 및 초기화
@@ -36,15 +48,12 @@ public class StationService {
         String dayCd = "7";
         int stationCount = 0, lineCount = 0, logCount = 0;
 
-        // 파일명 및 로그파일명 지정 (덮어쓰기로 진행)
-        String filePath = "src/main/resources/station_time_table_saturday.csv";
-        String logFilePath = "src/main/resources/station_time_table_saturday_log.csv";
         File file, logFile;
         BufferedWriter bw, logBw;
         String NEWLINE = System.lineSeparator();    // 개행
 
         try {
-            file = new File(filePath);
+            file = new File(csvFilePath);
             bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
             bw.write("\uFEFF");
             bw.write("LN_CD," +

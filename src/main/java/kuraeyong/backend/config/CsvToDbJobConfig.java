@@ -9,13 +9,12 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
-import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.FileSystemResource;
@@ -28,6 +27,13 @@ public class CsvToDbJobConfig {
 
     @Autowired
     private StationTimeTableRepository stationTimeTableRepository;
+
+    private static String csvFilePath;
+
+    @Value("${csv-file-path}")
+    public void setCsvFilePath(String path) {
+        csvFilePath = path;
+    }
 
     @Bean
     public Job csvToDbJob(JobRepository jobRepository, PlatformTransactionManager transactionManager) throws Exception {
@@ -54,7 +60,7 @@ public class CsvToDbJobConfig {
         log.info("ACCESS csvReader");
         return new FlatFileItemReaderBuilder<StationTimeTableDto>()
                 .name("csvReader")
-                .resource(new FileSystemResource("src/main/resources/station_time_table_saturday.csv"))
+                .resource(new FileSystemResource(csvFilePath))
                 .delimited().delimiter(",") // 기본 구분자는 ,
                 .names(new String[]{"LN_CD", "ORG_STIN_CD", "DAY_CD", "ARV_TM", "DAY_NM", "DPT_TM", "STIN_CD", "TRN_NO", "TMN_STIN_CD", "RAIL_OPR_ISTT_CD"})
 //                .fieldSetMapper(new BeanWrapperFieldSetMapper<>() {{
