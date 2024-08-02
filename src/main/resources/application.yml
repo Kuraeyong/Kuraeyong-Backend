@@ -45,5 +45,5 @@ spring:
 spring:
   batch:
     job:
-      name: simpleChunkJob
+      name: csvToDbJob
 
