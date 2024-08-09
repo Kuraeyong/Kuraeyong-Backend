@@ -1,4 +1,4 @@
-package kuraeyong.backend.dao.repository;
+package kuraeyong.backend.repository;
 
 import kuraeyong.backend.domain.EdgeInfo;
 import kuraeyong.backend.domain.StationInfo;

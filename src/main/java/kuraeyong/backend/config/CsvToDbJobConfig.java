@@ -1,6 +1,6 @@
 package kuraeyong.backend.config;
 
-import kuraeyong.backend.dao.repository.StationTimeTableRepository;
+import kuraeyong.backend.repository.StationTimeTableRepository;
 import kuraeyong.backend.domain.StationTimeTable;
 import kuraeyong.backend.dto.StationTimeTableDto;
 import lombok.extern.slf4j.Slf4j;

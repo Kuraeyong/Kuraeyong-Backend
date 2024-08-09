@@ -1,6 +1,6 @@
 package kuraeyong.backend.service;
 
-import kuraeyong.backend.dao.repository.EdgeInfoRepository;
+import kuraeyong.backend.repository.EdgeInfoRepository;
 import kuraeyong.backend.domain.EdgeInfo;
 import kuraeyong.backend.util.Converter;
 import kuraeyong.backend.util.FlatFileUtil;

@@ -1,7 +1,9 @@
 package kuraeyong.backend.service;
 
-import kuraeyong.backend.dao.StationDao;
 import kuraeyong.backend.domain.StationInfo;
+import kuraeyong.backend.repository.StationInfoRepository;
+import kuraeyong.backend.util.Converter;
+import kuraeyong.backend.util.FlatFileUtil;
 import kuraeyong.backend.util.OpenApiUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -9,6 +11,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +25,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StationService {
 
-    private final StationDao stationDao;
+    @Autowired
+    private StationInfoRepository stationInfoRepository;
     private static String csvFilePath, logFilePath;
 
     @Value("${csv-file-path}")
@@ -37,13 +41,22 @@ public class StationService {
 
     public String createStationInfoDB() {
         // TODO: StationInfo DB 생성 및 초기화
-        return stationDao.initStationInfoDB();
+        List<List<String>> rowList = FlatFileUtil.getDataListFromExcel("src/main/resources/xlsx/station_code_info.xlsx");
+        List<StationInfo> stationInfoList = Converter.toStationInfoList(rowList);
+
+        stationInfoRepository.deleteAll();
+        List<StationInfo> saveResult = stationInfoRepository.saveAll(stationInfoList);
+
+        if (saveResult.size() == stationInfoList.size()) {
+            return "SUCCESS";
+        }
+        return "FAILED";
     }
 
     // 반환값 수정 필요
     public void saveApiResultToCsv() {
         // TODO: API 결과 CSV 파일에 저장
-        List<StationInfo> stationInfoList = stationDao.getStationList();
+        List<StationInfo> stationInfoList = stationInfoRepository.findAll();
         String format = "json";
         String dayCd = "7";
         int stationCount = 0, lineCount = 0, logCount = 0;
