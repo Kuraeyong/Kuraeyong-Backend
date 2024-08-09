@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/test")
 public class TestController {
 
-    @GetMapping("")
+    @GetMapping("/excel")
     public String getDataListFromExcelTest() {
         log.info("[TestController.getDataListFromExcelTest]");
 
@@ -27,6 +27,12 @@ public class TestController {
             System.out.println();
         }
 //        System.out.println(rowList.size());
+        return "ok";
+    }
+
+    @GetMapping("")
+    public String test() {
+//        FlatFileUtil.ListToEntityList(FlatFileUtil.getDataListFromExcel("src/main/resources/xlsx/station_code_info.xlsx"), EntityType.STATION_INFO);
         return "ok";
     }
 }

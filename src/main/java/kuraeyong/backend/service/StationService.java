@@ -35,9 +35,9 @@ public class StationService {
         logFilePath = path;
     }
 
-    public String createStationDB() {
-        // TODO: Station DB 생성 및 초기화
-        return stationDao.initStationDB();
+    public String createStationInfoDB() {
+        // TODO: StationInfo DB 생성 및 초기화
+        return stationDao.initStationInfoDB();
     }
 
     // 반환값 수정 필요

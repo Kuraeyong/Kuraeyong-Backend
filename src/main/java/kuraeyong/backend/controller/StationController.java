@@ -22,8 +22,8 @@ public class StationController {
 //    }
 
     @GetMapping("/init-db")
-    public String initStationDB() {
-        return stationService.createStationDB();
+    public String initStationInfoDB() {
+        return stationService.createStationInfoDB();
     }
 
     @GetMapping("/save-to-csv")
