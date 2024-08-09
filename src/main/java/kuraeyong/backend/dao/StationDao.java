@@ -2,7 +2,7 @@ package kuraeyong.backend.dao;
 
 import kuraeyong.backend.dao.repository.StationInfoRepository;
 import kuraeyong.backend.domain.StationInfo;
-import kuraeyong.backend.util.ExcelUtil;
+import kuraeyong.backend.util.FlatFileUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
@@ -17,7 +17,7 @@ public class StationDao {
     private StationInfoRepository stationInfoRepository;
 
     public String initStationDB() {
-        List<StationInfo> stationInfoList = ExcelUtil.getStationListFromExcel("src/main/resources/xlsx/station_code_info.xlsx");
+        List<StationInfo> stationInfoList = FlatFileUtil.getStationListFromExcel("src/main/resources/xlsx/station_code_info.xlsx");
         stationInfoRepository.deleteAll();
         List<StationInfo> saveResult = stationInfoRepository.saveAll(stationInfoList);
         if (saveResult.size() == stationInfoList.size()) {
