@@ -23,7 +23,7 @@ public class EdgeService {
         List<List<String>> rowList = FlatFileUtil.getDataListFromExcel("src/main/resources/xlsx/edge_info.xlsx");
         List<EdgeInfo> edgeInfoList = Converter.toEdgeInfoList(rowList);
 
-        edgeInfoRepository.deleteAll();
+//        edgeInfoRepository.deleteAll();
         List<EdgeInfo> saveResult = edgeInfoRepository.saveAll(edgeInfoList);
 
         if (saveResult.size() == edgeInfoList.size()) {

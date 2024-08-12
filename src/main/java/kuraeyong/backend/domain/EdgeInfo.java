@@ -42,8 +42,8 @@ public class EdgeInfo {
     private String trfStinNm;
 
     @Column
-    private String weight;
+    private int weight;
 
     @Column
-    private String isTrfStin;
+    private int isTrfStin;
 }
