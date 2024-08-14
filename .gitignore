@@ -39,4 +39,4 @@ out/
 # user-defined
 /src/main/resources/*.csv
 /src/main/resources/xlsx/*.xlsx
-/src/main/java/kuraeyong/backend/controller/Test2Controller.java
+/src/main/java/kuraeyong/backend/controller/TestController.java

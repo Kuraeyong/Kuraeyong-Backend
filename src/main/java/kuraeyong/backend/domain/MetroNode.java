@@ -17,19 +17,30 @@ public class MetroNode {
     private String lnCd;
     private String stinCd;
     private String stinNm;
+    private int nodeNo;
 
     public void addEdge(MetroEdge edge) {
         edgeList.add(edge);
     }
 
+    public int getWeightToDestNode(int destNodeNo) {
+        for (MetroEdge edge : edgeList) {
+            if (edge.getTrfNodeNo() == destNodeNo) {
+                return edge.getWeight();
+            }
+        }
+        return -1;
+    }
+
     @Override
     public String toString() {
         return "MetroNode{" +
-                "railOprIsttCd='" + railOprIsttCd + '\'' +
+                "nodeNo=" + nodeNo +
+                ", railOprIsttCd='" + railOprIsttCd + '\'' +
                 ", lnCd='" + lnCd + '\'' +
                 ", stinCd='" + stinCd + '\'' +
                 ", stinNm='" + stinNm + '\'' +
-                ", edgeList=" + edgeList + '\'' +
+                ", edgeList=" + edgeList +
                 '}';
     }
 }
