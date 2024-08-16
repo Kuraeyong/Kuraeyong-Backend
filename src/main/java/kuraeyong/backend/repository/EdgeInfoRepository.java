@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface EdgeInfoRepository extends JpaRepository<EdgeInfo, Long> {
     List<EdgeInfo> findByIsTrfStinGreaterThan(int number);
+    List<EdgeInfo> findByRailOprIsttCdAndLnCdAndStinCd(String railOprIsttCd, String lnCd, String stinCd);
 }

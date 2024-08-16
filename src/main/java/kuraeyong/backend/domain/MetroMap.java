@@ -1,5 +1,6 @@
 package kuraeyong.backend.domain;
 
+import jakarta.annotation.PostConstruct;
 import kuraeyong.backend.repository.EdgeInfoRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ public class MetroMap {
     private HashMap<String, Integer> lineSeparator;
     private final EdgeInfoRepository edgeInfoRepository;
 
+    @PostConstruct
     public void initMap() {
         graph = new ArrayList<>();
         lineSeparator = new HashMap<>();
@@ -75,8 +77,8 @@ public class MetroMap {
         }
     }
 
-    public MetroNode getNode(int idx) {
-        return graph.get(idx);
+    public MetroNode getNode(int nodeNo) {
+        return graph.get(nodeNo);
     }
 
     public MetroNode getNode(String railOprIsttCd, String lnCd, String stinCd) {
@@ -101,6 +103,15 @@ public class MetroMap {
 
     private boolean isSameLine(String lnCd, String prevLnCd) {
         return lnCd.equals(prevLnCd);
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (MetroNode node : graph) {
+            sb.append(node).append('\n');
+        }
+        return sb.toString();
     }
 }
 

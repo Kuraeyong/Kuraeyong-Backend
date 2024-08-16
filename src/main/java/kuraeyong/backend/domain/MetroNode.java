@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Builder
@@ -42,5 +43,23 @@ public class MetroNode {
                 ", stinNm='" + stinNm + '\'' +
                 ", edgeList=" + edgeList +
                 '}';
+    }
+
+    public void printEdgeList() {
+        for (MetroEdge edge : edgeList) {
+            System.out.println(edge);
+        }
+    }
+
+    public MetroNode(MetroNode node) {
+        this.edgeList = new ArrayList<>();
+        for (MetroEdge edge : node.getEdgeList()) {
+            this.edgeList.add(new MetroEdge(edge));
+        }
+        this.railOprIsttCd = node.railOprIsttCd;
+        this.lnCd = node.lnCd;
+        this.stinCd = node.stinCd;
+        this.stinNm = node.stinNm;
+        this.nodeNo = node.nodeNo;
     }
 }

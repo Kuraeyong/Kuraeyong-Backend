@@ -1,18 +1,17 @@
 package kuraeyong.backend.domain;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Builder
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class MetroEdge {
     private String trfRailOprIsttCd;
     private String trflnCd;
     private String trfStinCd;
     private String trfStinNm;
     private int weight;
-
     @Setter
     private int trfNodeNo;
 
@@ -26,5 +25,14 @@ public class MetroEdge {
                 ", weight=" + weight +
                 ", trfNodeNo=" + trfNodeNo +
                 '}';
+    }
+
+    public MetroEdge(MetroEdge edge) {
+        this.trfRailOprIsttCd = edge.trfRailOprIsttCd;
+        this.trflnCd = edge.trflnCd;
+        this.trfStinCd = edge.trfStinCd;
+        this.trfStinNm = edge.trfStinNm;
+        this.weight = edge.weight;
+        this.trfNodeNo = edge.trfNodeNo;
     }
 }

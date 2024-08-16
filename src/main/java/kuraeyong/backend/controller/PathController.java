@@ -1,12 +1,10 @@
 package kuraeyong.backend.controller;
 
-import kuraeyong.backend.service.EdgeService;
+import kuraeyong.backend.dto.request.PostPathSearchRequest;
 import kuraeyong.backend.service.PathService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
@@ -17,11 +15,16 @@ public class PathController {
     private final PathService pathService;
 
     /**
-     * 환승역 번호   0~268
+     * 환승역 번호   0~268 (총 환승역 269개)
      */
-    @GetMapping("")
-    public String pathSearch() {
-        pathService.pathSearch(148);
+    @PostMapping("")
+    public String searchPath(@RequestBody PostPathSearchRequest postPathSearchRequest) {
+        pathService.searchPath(postPathSearchRequest.getOrgRailOprIsttCd(),
+                postPathSearchRequest.getOrgLnCd(),
+                postPathSearchRequest.getOrgStinCd(),
+                postPathSearchRequest.getDestRailOprIsttCd(),
+                postPathSearchRequest.getDestLnCd(),
+                postPathSearchRequest.getDestStinCd());
         return "successfully searched";
     }
 }
