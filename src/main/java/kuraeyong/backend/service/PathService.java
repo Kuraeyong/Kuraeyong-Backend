@@ -5,10 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.*;
 
 @Slf4j
 @Service
@@ -27,7 +24,7 @@ public class PathService {
         int destNo = addNode(destRailOprIsttCd, destLnCd, destStinCd);
         updateEdgeList(orgNo);
         updateEdgeList(destNo);
-        searchPath(orgNo);
+        searchPath(orgNo, destNo);
     }
 
     /**
@@ -124,10 +121,11 @@ public class PathService {
         }
     }
 
-    private void searchPath(int orgNo) {
+    private void searchPath(int orgNo, int destNo) {
         int graphSize = graphForPathSearch.size();
         boolean[] check = new boolean[graphSize];
         double[] dist = new double[graphSize];
+        int[] path = new int[graphSize];
 
         Arrays.fill(dist, Integer.MAX_VALUE);
         dist[orgNo] = 0;
@@ -149,16 +147,36 @@ public class PathService {
                 double weight = edge.getWeight();
                 if (dist[edge.getTrfNodeNo()] > dist[nowNo] + weight) {
                     dist[edge.getTrfNodeNo()] = dist[nowNo] + weight;
+                    path[edge.getTrfNodeNo()] = nowNo;
 //                    pq.offer(new NodeForPathSearch(metroMap.getNode(edge.getTrfNodeNo()), dist[edge.getTrfNodeNo()]));
                     pq.offer(new NodeForPathSearch(graphForPathSearch.get(edge.getTrfNodeNo()), dist[edge.getTrfNodeNo()]));
                 }
             }
         }
 
-        printPath(dist);
+        printDist(dist);
+        printPath(path, orgNo, destNo);
     }
 
-    private void printPath(double[] dist) {
+    private void printPath(int[] path, int orgNo, int destNo) {
+        StringBuilder sb = new StringBuilder();
+        Stack<MetroNode> pathStack = new Stack<>();
+
+        // push
+        while (destNo != orgNo) {
+            pathStack.push(graphForPathSearch.get(destNo));
+            destNo = path[destNo];
+        }
+        pathStack.push(graphForPathSearch.get(orgNo));
+
+        // pop
+        while (!pathStack.isEmpty()) {
+            sb.append(pathStack.pop().getStinNm()).append(' ');
+        }
+        System.out.println(sb);
+    }
+
+    private void printDist(double[] dist) {
         for (int i = 0; i < dist.length; i++) {
 //            MetroNode node = metroMap.getNode(i);
             MetroNode node = graphForPathSearch.get(i);
