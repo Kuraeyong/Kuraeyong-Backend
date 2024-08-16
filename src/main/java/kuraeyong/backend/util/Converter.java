@@ -38,7 +38,7 @@ public class Converter {
                     .trfLnCd(row.get(5))
                     .trfStinCd(row.get(6))
                     .trfStinNm(row.get(7))
-                    .weight(Integer.parseInt(row.get(8).split("\\.")[0]))
+                    .weight(Double.parseDouble(row.get(8)))
                     .isTrfStin(Integer.parseInt(row.get(9).split("\\.")[0]))
                     .build());
         }

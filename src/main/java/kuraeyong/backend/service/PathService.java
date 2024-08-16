@@ -22,7 +22,7 @@ public class PathService {
     public void searchPath(String orgRailOprIsttCd, String orgLnCd, String orgStinCd,
                            String destRailOprIsttCd, String destLnCd, String destStinCd) {
         initForPathSearch();
-        System.out.println(metroMap);
+//        System.out.println(metroMap);
         int orgNo = addNode(orgRailOprIsttCd, orgLnCd, orgStinCd);
         int destNo = addNode(destRailOprIsttCd, destLnCd, destStinCd);
         updateEdgeList(orgNo);
@@ -61,7 +61,8 @@ public class PathService {
                         .weight(edgeInfo.getWeight())
                         .trfNodeNo(trfNode.getNodeNo())
                         .build();
-                node.getEdgeList().add(edge);
+                node.addEdge(edge);
+//                node.getEdgeList().add(edge);
             }
 
             graphForPathSearch.add(node);
@@ -126,7 +127,7 @@ public class PathService {
     private void searchPath(int orgNo) {
         int graphSize = graphForPathSearch.size();
         boolean[] check = new boolean[graphSize];
-        int[] dist = new int[graphSize];
+        double[] dist = new double[graphSize];
 
         Arrays.fill(dist, Integer.MAX_VALUE);
         dist[orgNo] = 0;
@@ -145,7 +146,7 @@ public class PathService {
             check[nowNo] = true;
 
             for (MetroEdge edge : now.getEdgeList()) {
-                int weight = edge.getWeight();
+                double weight = edge.getWeight();
                 if (dist[edge.getTrfNodeNo()] > dist[nowNo] + weight) {
                     dist[edge.getTrfNodeNo()] = dist[nowNo] + weight;
 //                    pq.offer(new NodeForPathSearch(metroMap.getNode(edge.getTrfNodeNo()), dist[edge.getTrfNodeNo()]));
@@ -154,14 +155,14 @@ public class PathService {
             }
         }
 
-//        printPath(dist);
+        printPath(dist);
     }
 
-    private void printPath(int[] dist) {
+    private void printPath(double[] dist) {
         for (int i = 0; i < dist.length; i++) {
 //            MetroNode node = metroMap.getNode(i);
             MetroNode node = graphForPathSearch.get(i);
-            System.out.printf("%s\t%s\t%d\n", node.getLnCd(), node.getStinNm(), dist[i]);
+            System.out.printf("%s\t%s\t%.1f\n", node.getLnCd(), node.getStinNm(), dist[i]);
         }
     }
 }

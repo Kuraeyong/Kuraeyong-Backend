@@ -9,7 +9,7 @@ import java.util.List;
 @AllArgsConstructor
 public class NodeForPathSearch implements Comparable<NodeForPathSearch> {
     private MetroNode node;
-    private int weight;
+    private double weight;
 
     public int getNodeNo() {
         return node.getNodeNo();
@@ -22,6 +22,6 @@ public class NodeForPathSearch implements Comparable<NodeForPathSearch> {
     // 가중치를 기준으로 우선순위 결정
     @Override
     public int compareTo(NodeForPathSearch o) {
-        return Integer.compare(this.weight, o.weight);
+        return Double.compare(this.weight, o.weight);
     }
 }

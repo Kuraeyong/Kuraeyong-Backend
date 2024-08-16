@@ -24,7 +24,7 @@ public class MetroNode {
         edgeList.add(edge);
     }
 
-    public int getWeightToDestNode(int destNodeNo) {
+    public double getWeightToDestNode(int destNodeNo) {
         for (MetroEdge edge : edgeList) {
             if (edge.getTrfNodeNo() == destNodeNo) {
                 return edge.getWeight();
@@ -54,7 +54,8 @@ public class MetroNode {
     public MetroNode(MetroNode node) {
         this.edgeList = new ArrayList<>();
         for (MetroEdge edge : node.getEdgeList()) {
-            this.edgeList.add(new MetroEdge(edge));
+            addEdge(new MetroEdge(edge));
+//            this.edgeList.add(new MetroEdge(edge));
         }
         this.railOprIsttCd = node.railOprIsttCd;
         this.lnCd = node.lnCd;

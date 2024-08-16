@@ -11,7 +11,7 @@ public class MetroEdge {
     private String trflnCd;
     private String trfStinCd;
     private String trfStinNm;
-    private int weight;
+    private double weight;
     @Setter
     private int trfNodeNo;
 
