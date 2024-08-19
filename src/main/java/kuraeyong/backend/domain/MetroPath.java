@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @AllArgsConstructor
@@ -29,5 +30,21 @@ public class MetroPath {
             sb.append(node).append(' ');
         }
         return sb.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        MetroPath metroPath = (MetroPath) o;
+        return toString().equals(metroPath.toString());
+    }
+
+    /**
+     * Set<MetroPath>에서 MetroPath 객체의 동등성을 판단
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(toString());
     }
 }

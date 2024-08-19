@@ -1,5 +1,6 @@
 package kuraeyong.backend.controller;
 
+import kuraeyong.backend.domain.MetroPath;
 import kuraeyong.backend.dto.request.PostPathSearchRequest;
 import kuraeyong.backend.service.PathService;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +20,13 @@ public class PathController {
      */
     @PostMapping("")
     public String searchPath(@RequestBody PostPathSearchRequest postPathSearchRequest) {
-        pathService.searchPath(postPathSearchRequest.getOrgRailOprIsttCd(),
+        MetroPath path = pathService.searchPath(postPathSearchRequest.getOrgRailOprIsttCd(),
                 postPathSearchRequest.getOrgLnCd(),
                 postPathSearchRequest.getOrgStinCd(),
                 postPathSearchRequest.getDestRailOprIsttCd(),
                 postPathSearchRequest.getDestLnCd(),
                 postPathSearchRequest.getDestStinCd());
+        pathService.printPath(path);
         return "successfully searched";
     }
 }

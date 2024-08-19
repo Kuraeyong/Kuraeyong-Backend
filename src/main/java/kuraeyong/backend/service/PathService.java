@@ -16,7 +16,7 @@ public class PathService {
     private final MetroMap metroMap;
     private final List<MetroNode> graphForPathSearch;
 
-    public void searchPath(String orgRailOprIsttCd, String orgLnCd, String orgStinCd,
+    public MetroPath searchPath(String orgRailOprIsttCd, String orgLnCd, String orgStinCd,
                            String destRailOprIsttCd, String destLnCd, String destStinCd) {
         initForPathSearch();
 //        System.out.println(metroMap);
@@ -24,7 +24,8 @@ public class PathService {
         int destNo = addNode(destRailOprIsttCd, destLnCd, destStinCd);
         updateEdgeList(orgNo);
         updateEdgeList(destNo);
-        searchPath(orgNo, destNo);
+
+        return searchPath(orgNo, destNo);
     }
 
     /**
@@ -130,7 +131,7 @@ public class PathService {
      * pq               경로 탐색에서 사용할 우선순위 큐
      * e.g.) [(1, 0), (2, 10), (4, 20), (5, 30)]
      */
-    private void searchPath(int orgNo, int destNo) {
+    private MetroPath searchPath(int orgNo, int destNo) {
         int graphSize = graphForPathSearch.size();
         boolean[] check = new boolean[graphSize];
         double[] dist = new double[graphSize];
@@ -162,7 +163,7 @@ public class PathService {
         }
 
 //        printDist(dist);
-        printPath(createPath(prevNode, orgNo, destNo));
+        return createPath(prevNode, orgNo, destNo);
     }
 
     private MetroPath createPath(MetroNodeWithWeight[] prevNode, int orgNo, int destNo) {
@@ -183,12 +184,12 @@ public class PathService {
         return path;
     }
 
-    private void printPath(MetroPath path) {
+    public void printPath(MetroPath path) {
         System.out.println(path);
         System.out.println(path.getPathWeight());
     }
 
-    private void printDist(double[] dist) {
+    public void printDist(double[] dist) {
         for (int i = 0; i < dist.length; i++) {
 //            MetroNode node = metroMap.getNode(i);
             MetroNode node = graphForPathSearch.get(i);
