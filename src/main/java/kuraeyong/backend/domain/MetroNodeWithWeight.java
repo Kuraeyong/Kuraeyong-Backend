@@ -7,12 +7,16 @@ import java.util.List;
 
 @Getter
 @AllArgsConstructor
-public class NodeForPathSearch implements Comparable<NodeForPathSearch> {
+public class MetroNodeWithWeight implements Comparable<MetroNodeWithWeight> {
     private MetroNode node;
     private double weight;
 
     public int getNodeNo() {
         return node.getNodeNo();
+    }
+
+    public String getStinNm() {
+        return node.getStinNm();
     }
 
     public List<MetroEdge> getEdgeList() {
@@ -21,7 +25,12 @@ public class NodeForPathSearch implements Comparable<NodeForPathSearch> {
 
     // 가중치를 기준으로 우선순위 결정
     @Override
-    public int compareTo(NodeForPathSearch o) {
+    public int compareTo(MetroNodeWithWeight o) {
         return Double.compare(this.weight, o.weight);
+    }
+
+    @Override
+    public String toString() {
+        return '(' + getStinNm() + ", " + weight + ')';
     }
 }
