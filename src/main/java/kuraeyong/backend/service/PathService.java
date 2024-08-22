@@ -24,7 +24,7 @@ public class PathService {
         graphForPathSearch.updateEdgeList(orgNo);
         graphForPathSearch.updateEdgeList(destNo);
 
-        return searchPath(orgNo, destNo);
+        return searchPath(orgNo, destNo, null);
     }
 
     /**
@@ -36,7 +36,7 @@ public class PathService {
      * pq               경로 탐색에서 사용할 우선순위 큐
      * e.g.) [(1, 0), (2, 10), (4, 20), (5, 30)]
      */
-    private MetroPath searchPath(int orgNo, int destNo) {
+    private MetroPath searchPath(int orgNo, int destNo, MetroPath rootPath) {
         int graphSize = graphForPathSearch.size();
         boolean[] check = new boolean[graphSize];
         double[] dist = new double[graphSize];
@@ -44,6 +44,14 @@ public class PathService {
 
         Arrays.fill(dist, Integer.MAX_VALUE);
         dist[orgNo] = 0;
+
+        // rootPath를 기반으로 check 초기화
+        if (rootPath != null) {
+            for (MetroNodeWithWeight node : rootPath.getPath()) {
+                check[node.getNodeNo()] = true;
+            }
+            check[orgNo] = false;
+        }
 
         PriorityQueue<MetroNodeWithWeight> pq = new PriorityQueue<>();
         pq.offer(new MetroNodeWithWeight(graphForPathSearch.get(orgNo), 0));    // (1, 0)
@@ -79,7 +87,7 @@ public class PathService {
         Set<MetroPath> pathSet = new HashSet<>();
 
         // 첫 번째 최단 경로 계산
-        MetroPath initialPath = searchPath(orgNo, destNo);
+        MetroPath initialPath = searchPath(orgNo, destNo, null);
         shortestPathList.add(initialPath);
         pathSet.add(initialPath);
 
@@ -106,7 +114,7 @@ public class PathService {
                     }
                 }
 
-                MetroPath spurPath = searchPath(spurNode.getNodeNo(), destNo);
+                MetroPath spurPath = searchPath(spurNode.getNodeNo(), destNo, rootPath);
                 if (spurPath != null) {
                     MetroPath totalPath = new MetroPath(rootPath);
                     totalPath.concat(spurPath);
