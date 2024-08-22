@@ -11,6 +11,11 @@ public class MetroNodeWithWeight implements Comparable<MetroNodeWithWeight> {
     private MetroNode node;
     private double weight;
 
+    public MetroNodeWithWeight(MetroNodeWithWeight node) {
+        this.node = new MetroNode(node.node);
+        this.weight = node.weight;
+    }
+
     public int getNodeNo() {
         return node.getNodeNo();
     }

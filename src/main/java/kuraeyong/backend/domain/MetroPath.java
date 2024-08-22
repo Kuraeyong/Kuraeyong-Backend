@@ -3,16 +3,30 @@ package kuraeyong.backend.domain;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Getter
 @AllArgsConstructor
-public class MetroPath {
+public class MetroPath implements Comparable<MetroPath> {
     private List<MetroNodeWithWeight> path;
+
+    public MetroPath(MetroPath path) {
+        this.path = new ArrayList<>();
+        for (MetroNodeWithWeight node : path.getPath()) {
+            addNode(new MetroNodeWithWeight(node));
+        }
+    }
 
     public void addNode(MetroNodeWithWeight node) {
         path.add(node);
+    }
+
+    public void concat(MetroPath path) {    // 깊은 복사
+        for (MetroNodeWithWeight node : path.subPath(1, path.size()).getPath()) {
+            addNode(new MetroNodeWithWeight(node));
+        }
     }
 
     public double getPathWeight() {
@@ -21,6 +35,18 @@ public class MetroPath {
             sum += node.getWeight();
         }
         return sum;
+    }
+
+    public int size() {
+        return path.size();
+    }
+
+    public MetroNodeWithWeight get(int idx) {
+        return path.get(idx);
+    }
+
+    public MetroPath subPath(int start, int end) {
+        return new MetroPath(path.subList(start, end));
     }
 
     @Override
@@ -46,5 +72,10 @@ public class MetroPath {
     @Override
     public int hashCode() {
         return Objects.hash(toString());
+    }
+
+    @Override
+    public int compareTo(MetroPath o) {
+        return Double.compare(this.getPathWeight(), o.getPathWeight());
     }
 }

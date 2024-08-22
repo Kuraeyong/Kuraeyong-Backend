@@ -1,5 +1,6 @@
 package kuraeyong.backend.domain;
 
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ public class GraphForPathSearch {
     private List<MetroNode> graphForPathSearch;
     private final MetroMap metroMap;
 
+    @PostConstruct
     public void init() {
         graphForPathSearch = new ArrayList<>();
         for (MetroNode node : metroMap.getGraph()) {
@@ -100,13 +102,19 @@ public class GraphForPathSearch {
         removeEdge(connectedTrfStinList.get(1), connectedTrfStinList.get(0));
     }
 
-    private void removeEdge(MetroNode src, MetroNode dest) {
-//        for (MetroEdge edge : src.getEdgeList()) {
-//            if (edge.getTrfNodeNo() == dest.getNodeNo()) {
-//                src.getEdgeList().remove(edge);
-//            }
-//        }
-        src.getEdgeList().removeIf(edge -> edge.getTrfNodeNo() == dest.getNodeNo());
+    public void addEdge(MetroNode src, MetroEdge edge) {
+        MetroNode node = get(src.getNodeNo());
+        node.addEdge(edge);
+    }
+
+    public MetroEdge removeEdge(MetroNode src, MetroNode dest) {
+        for (MetroEdge edge : src.getEdgeList()) {
+            if (edge.getTrfNodeNo() == dest.getNodeNo()) {
+                src.getEdgeList().remove(edge);
+                return edge;
+            }
+        }
+        return null;
     }
 
     public int size() {

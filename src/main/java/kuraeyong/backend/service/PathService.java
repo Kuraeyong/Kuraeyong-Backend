@@ -1,3 +1,5 @@
+
+
 package kuraeyong.backend.service;
 
 import kuraeyong.backend.domain.*;
@@ -66,7 +68,69 @@ public class PathService {
         }
 
 //        printDist(dist);
+        if (dist[destNo] == Integer.MAX_VALUE) {
+            return null;
+        }
         return createPath(prevNode, orgNo, destNo);
+    }
+
+    public List<MetroPath> searchCandidatePathList(int orgNo, int destNo, int k) {
+        List<MetroPath> shortestPathList = new ArrayList<>();
+        Set<MetroPath> pathSet = new HashSet<>();
+
+        // 첫 번째 최단 경로 계산
+        MetroPath initialPath = searchPath(orgNo, destNo);
+        shortestPathList.add(initialPath);
+        pathSet.add(initialPath);
+
+        // 후보 경로들을 저장할 우선순위 큐
+        PriorityQueue<MetroPath> candidates = new PriorityQueue<>();
+
+        // 남은 (k-1)개의 경로를 탐색
+        for (int i = 1; i < k; i++) {
+            MetroPath prevPath = shortestPathList.get(i - 1);   // 이전에 찾은 최단 경로
+
+            // 각 스퍼 노드에 대해 새로운 경로를 탐색
+            for (int j = 0; j < prevPath.size() - 1; j++) {
+                MetroNodeWithWeight spurNode = prevPath.get(j);
+                MetroPath rootPath = prevPath.subPath(0, j + 1); // 루트 경로 계산
+
+                // 루트 경로와 중복되지 않도록 기존 경로에서 간선을 제거
+                List<MetroEdge> removedEdgeList = new ArrayList<>();
+                for (MetroPath path : shortestPathList) {
+                    if (path.size() > j && path.subPath(0, j + 1).equals(rootPath)) {
+                        MetroEdge removedEdge = graphForPathSearch.removeEdge(path.get(j).getNode(), path.get(j + 1).getNode());
+                        if (removedEdge != null) {
+                            removedEdgeList.add(removedEdge);
+                        }
+                    }
+                }
+
+                MetroPath spurPath = searchPath(spurNode.getNodeNo(), destNo);
+                if (spurPath != null) {
+                    MetroPath totalPath = new MetroPath(rootPath);
+                    totalPath.concat(spurPath);
+
+                    if (!pathSet.contains(totalPath)) {
+                        candidates.add(totalPath);
+                        pathSet.add(totalPath);
+                    }
+                }
+
+                // 제거된 간선을 복원
+                for (MetroEdge edge : removedEdgeList) {
+                    graphForPathSearch.addEdge(spurNode.getNode(), edge);
+                }
+            }
+
+            // 후보 경로 중 최단 경로를 선택하여, 최단 경로 리스트에 추가
+            if (candidates.isEmpty()) {
+                break;
+            }
+            shortestPathList.add(candidates.poll());
+        }
+
+        return shortestPathList;
     }
 
     private MetroPath createPath(MetroNodeWithWeight[] prevNode, int orgNo, int destNo) {
