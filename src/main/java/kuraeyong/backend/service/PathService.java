@@ -162,12 +162,12 @@ public class PathService {
             shortestPathList.add(candidates.poll());
         }
 
-        removeUnnecessaryPath(pathSet, shortestPathList, candidates);
+        removeUnnecessaryPath(pathSet, shortestPathList, candidates, k);
 
         return shortestPathList;
     }
 
-    private void removeUnnecessaryPath(Set<MetroPath> pathSet, List<MetroPath> shortestPathList, PriorityQueue<MetroPath> candidates) {
+    private void removeUnnecessaryPath(Set<MetroPath> pathSet, List<MetroPath> shortestPathList, PriorityQueue<MetroPath> candidates, int k) {
         // 불필요한 경로 제거 후, 중복을 제거하기 위해 pathSet에 모두 집합
         pathSet.clear();
         for (MetroPath shortestPath : shortestPathList) {
@@ -183,9 +183,9 @@ public class PathService {
         candidates.clear();
         candidates.addAll(pathSet);
 
-        // 상위 5개에 대해서 조회
+        // 상위 k개에 대해서 조회
         shortestPathList.clear();
-        while (!candidates.isEmpty() && shortestPathList.size() < 5) {
+        while (!candidates.isEmpty() && shortestPathList.size() < k) {
             MetroPath candidate = candidates.poll();
             if (isEfficientPath(candidate)) {
                 shortestPathList.add(candidate);
