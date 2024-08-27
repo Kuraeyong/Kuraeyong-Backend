@@ -2,6 +2,7 @@ package kuraeyong.backend.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.List;
 
@@ -9,6 +10,7 @@ import java.util.List;
 @AllArgsConstructor
 public class MetroNodeWithWeight implements Comparable<MetroNodeWithWeight> {
     private MetroNode node;
+    @Setter
     private double weight;
 
     public MetroNodeWithWeight(MetroNodeWithWeight node) {
@@ -24,6 +26,10 @@ public class MetroNodeWithWeight implements Comparable<MetroNodeWithWeight> {
         return node.getStinNm();
     }
 
+    public String getLnCd() {
+        return node.getLnCd();
+    }
+
     public List<MetroEdge> getEdgeList() {
         return node.getEdgeList();
     }
@@ -36,6 +42,7 @@ public class MetroNodeWithWeight implements Comparable<MetroNodeWithWeight> {
 
     @Override
     public String toString() {
-        return '(' + getStinNm() + ", " + weight + ')';
+//        return '(' + getStinNm() + ", " + weight + ')';
+        return '(' + getLnCd() + ", " + getStinNm() + ", " + weight + ')';
     }
 }

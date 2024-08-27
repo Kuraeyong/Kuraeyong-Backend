@@ -45,8 +45,39 @@ public class MetroPath implements Comparable<MetroPath> {
         return path.get(idx);
     }
 
+    public String getStinNm(int idx) {
+        return path.get(idx).getStinNm();
+    }
+
     public MetroPath subPath(int start, int end) {
         return new MetroPath(path.subList(start, end));
+    }
+
+    public void removeUnnecessaryPath() {
+        // 출발역과 동일한 이름의 마지막 역의 인덱스 기록
+        String orgStinNm = getStinNm(0);
+        int lastIdxWithOrgNm = 0;
+        for (int i = size() - 1; i > 0; i--) {
+            if (getStinNm(i).equals(orgStinNm)) {   // 출발점 갱신
+                get(i).setWeight(0);
+                lastIdxWithOrgNm = i;
+                break;
+            }
+        }
+
+        // 도착역과 동일한 이름의 첫번째 역의 인덱스 기록
+        String destStinNm = getStinNm(size() - 1);
+        int firstIdxWithDestNm = size() - 1;
+        for (int i = lastIdxWithOrgNm; i < size() - 1; i++) {
+            if (getStinNm(i).equals(destStinNm)) {  // 도착점 갱신
+                firstIdxWithDestNm = i;
+                break;
+            }
+        }
+
+        path = path.subList(lastIdxWithOrgNm, firstIdxWithDestNm + 1);
+
+        // path를 한바퀴 돌면서 pprev prev curr
     }
 
     @Override

@@ -107,13 +107,27 @@ public class GraphForPathSearch {
         node.addEdge(edge);
     }
 
+    /**
+     * 인자로 GraphForPathSearch의 MetroNode를 주어야 제대로 동작함
+     */
     public MetroEdge removeEdge(MetroNode src, MetroNode dest) {
+        for (MetroEdge edge : src.getEdgeList()) {
+            System.out.printf("edge(전): %s\n", edge);
+        }
         for (MetroEdge edge : src.getEdgeList()) {
             if (edge.getTrfNodeNo() == dest.getNodeNo()) {
                 src.getEdgeList().remove(edge);
+                System.out.printf("%s, %s을(를) 잘랐어\n", edge.getTrflnCd(), edge.getTrfStinNm());
+                for (MetroEdge edge1 : src.getEdgeList()) {
+                    System.out.printf("edge(후): %s\n", edge1);
+                }
+                System.out.println();
                 return edge;
             }
         }
+        System.out.println("안잘랐어");
+        System.out.println();
+        System.out.println(src.getEdgeList());
         return null;
     }
 

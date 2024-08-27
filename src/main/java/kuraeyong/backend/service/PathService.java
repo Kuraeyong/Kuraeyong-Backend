@@ -88,6 +88,10 @@ public class PathService {
 
         // 첫 번째 최단 경로 계산
         MetroPath initialPath = searchPath(orgNo, destNo, null);
+        if (initialPath == null) {
+            return null;
+        }
+//        initialPath.removeUnnecessaryPath();
         shortestPathList.add(initialPath);
         pathSet.add(initialPath);
 
@@ -105,9 +109,13 @@ public class PathService {
 
                 // 루트 경로와 중복되지 않도록 기존 경로에서 간선을 제거
                 List<MetroEdge> removedEdgeList = new ArrayList<>();
+                System.out.printf("[%d, %d 이전, 자르기 작업]\n", i, j);
                 for (MetroPath path : shortestPathList) {
                     if (path.size() > j && path.subPath(0, j + 1).equals(rootPath)) {
-                        MetroEdge removedEdge = graphForPathSearch.removeEdge(path.get(j).getNode(), path.get(j + 1).getNode());
+                        MetroNode orgNode = graphForPathSearch.get(path.get(j).getNodeNo());
+                        MetroNode destNode = graphForPathSearch.get(path.get(j + 1).getNodeNo());
+                        MetroEdge removedEdge = graphForPathSearch.removeEdge(orgNode, destNode);
+
                         if (removedEdge != null) {
                             removedEdgeList.add(removedEdge);
                         }
@@ -118,6 +126,22 @@ public class PathService {
                 if (spurPath != null) {
                     MetroPath totalPath = new MetroPath(rootPath);
                     totalPath.concat(spurPath);
+//                    totalPath.removeUnnecessaryPath();
+
+                    System.out.printf("[%d, %d]\n", i, j);
+                    for (int t = 0; t < shortestPathList.size(); t++) {
+                        System.out.printf("shortestPath[%d]: %s\n", t, shortestPathList.get(t));
+                    }
+                    for (int t = 0; t < removedEdgeList.size(); t++) {
+                        System.out.printf("removedEdgeList[%d]: %s\n", t, removedEdgeList.get(t));
+                    }
+                    System.out.printf("rootPath: %s\n", rootPath);
+                    System.out.printf("spurPath: %s\n", spurPath);
+                    System.out.printf("spurNode: %s\n", spurPath.get(0).getNode());
+//                    System.out.printf("spurNode: %s\n", graphForPathSearch.get(spurNode.getNodeNo()));
+                    System.out.printf("totalPath: %s\n", totalPath);
+                    System.out.printf("totalPath.getPathWeight(): %.1f\n", totalPath.getPathWeight());
+                    System.out.println();
 
                     if (!pathSet.contains(totalPath)) {
                         candidates.add(totalPath);
@@ -138,7 +162,51 @@ public class PathService {
             shortestPathList.add(candidates.poll());
         }
 
+        removeUnnecessaryPath(pathSet, shortestPathList, candidates);
+
         return shortestPathList;
+    }
+
+    private void removeUnnecessaryPath(Set<MetroPath> pathSet, List<MetroPath> shortestPathList, PriorityQueue<MetroPath> candidates) {
+        // 불필요한 경로 제거 후, 중복을 제거하기 위해 pathSet에 모두 집합
+        pathSet.clear();
+        for (MetroPath shortestPath : shortestPathList) {
+            shortestPath.removeUnnecessaryPath();
+            pathSet.add(shortestPath);
+        }
+        for (MetroPath candidate : candidates) {
+            candidate.removeUnnecessaryPath();
+            pathSet.add(candidate);
+        }
+
+        // 정렬을 위해 우선순위 큐에 삽입
+        candidates.clear();
+        candidates.addAll(pathSet);
+
+        // 상위 5개에 대해서 조회
+        shortestPathList.clear();
+        while (!candidates.isEmpty() && shortestPathList.size() < 5) {
+            MetroPath candidate = candidates.poll();
+            if (isEfficientPath(candidate)) {
+                shortestPathList.add(candidate);
+            }
+        }
+    }
+
+    private boolean isEfficientPath(MetroPath candidate) {
+        HashMap<String, Integer> firstOccurrenceIdx = new HashMap<>();
+
+        for (int idx = 0; idx < candidate.size(); idx++) {
+            String stinNm = candidate.get(idx).getStinNm();
+            if (!firstOccurrenceIdx.containsKey(stinNm)) {  // 처음 등장하는 역명은 맵에 추가
+                firstOccurrenceIdx.put(stinNm, idx);
+                continue;
+            }
+            if (firstOccurrenceIdx.get(stinNm) + 1 != idx) {    // 동일 역명이 연속된 경로가 아니라면
+                return false;
+            }
+        }
+        return true;
     }
 
     private MetroPath createPath(MetroNodeWithWeight[] prevNode, int orgNo, int destNo) {
