@@ -40,6 +40,7 @@ public class Converter {
                     .trfStinNm(row.get(7))
                     .weight(Double.parseDouble(row.get(8)))
                     .isTrfStin(Integer.parseInt(row.get(9).split("\\.")[0]))
+                    .isJctStin(Integer.parseInt(row.get(10).split("\\.")[0]))
                     .build());
         }
 

@@ -42,6 +42,7 @@ public class MetroMap {
                         .stinNm(edgeInfo.getStinNm())
                         .edgeList(new ArrayList<>())
                         .nodeNo(nodeNo++)
+                        .isJctStin(edgeInfo.getIsJctStin())
                         .build();
             }
 
@@ -68,12 +69,6 @@ public class MetroMap {
                 MetroNode trfNode = getNode(edge.getTrfRailOprIsttCd(), edge.getTrflnCd(), edge.getTrfStinCd());
                 edge.setTrfNodeNo(trfNode.getNodeNo());
             }
-        }
-    }
-
-    public void printMap() {
-        for (MetroNode node : graph) {
-            System.out.println(node);
         }
     }
 

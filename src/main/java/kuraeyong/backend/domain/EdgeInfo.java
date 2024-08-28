@@ -46,4 +46,7 @@ public class EdgeInfo {
 
     @Column
     private int isTrfStin;
+
+    @Column
+    private int isJctStin;
 }

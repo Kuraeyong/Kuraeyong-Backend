@@ -19,48 +19,35 @@ public class MetroNode {
     private String stinCd;
     private String stinNm;
     private int nodeNo;
+    private int isJctStin;
 
     public void addEdge(MetroEdge edge) {
         edgeList.add(edge);
     }
 
-    public double getWeightToDestNode(int destNodeNo) {
-        for (MetroEdge edge : edgeList) {
-            if (edge.getTrfNodeNo() == destNodeNo) {
-                return edge.getWeight();
-            }
-        }
-        return -1;
-    }
-
     @Override
     public String toString() {
         return "MetroNode{" +
-                "nodeNo=" + nodeNo +
-                ", railOprIsttCd='" + railOprIsttCd + '\'' +
+                "railOprIsttCd='" + railOprIsttCd + '\'' +
                 ", lnCd='" + lnCd + '\'' +
                 ", stinCd='" + stinCd + '\'' +
                 ", stinNm='" + stinNm + '\'' +
+                ", nodeNo=" + nodeNo +
+                ", isJctStin=" + isJctStin +
                 ", edgeList=" + edgeList +
                 '}';
-    }
-
-    public void printEdgeList() {
-        for (MetroEdge edge : edgeList) {
-            System.out.println(edge);
-        }
     }
 
     public MetroNode(MetroNode node) {
         this.edgeList = new ArrayList<>();
         for (MetroEdge edge : node.getEdgeList()) {
             addEdge(new MetroEdge(edge));
-//            this.edgeList.add(new MetroEdge(edge));
         }
         this.railOprIsttCd = node.railOprIsttCd;
         this.lnCd = node.lnCd;
         this.stinCd = node.stinCd;
         this.stinNm = node.stinNm;
         this.nodeNo = node.nodeNo;
+        this.isJctStin = node.isJctStin;
     }
 }

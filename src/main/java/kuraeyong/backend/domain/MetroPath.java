@@ -76,8 +76,31 @@ public class MetroPath implements Comparable<MetroPath> {
         }
 
         path = path.subList(lastIdxWithOrgNm, firstIdxWithDestNm + 1);
+    }
 
-        // path를 한바퀴 돌면서 pprev prev curr
+    /**
+     * 압축된 경로에서는 더 이상 weight가 유효하지 않음
+     */
+    public MetroPath getCompressedPath() {
+        MetroPath compressedPath = new MetroPath(new ArrayList<>());
+
+        compressedPath.addNode(new MetroNodeWithWeight(get(0)));    // 출발 노드
+        for (int i = 1; i < size() - 1; i++) {
+            MetroNodeWithWeight prev = get(i - 1);
+            MetroNodeWithWeight curr = get(i);
+
+            if (!prev.getLnCd().equals(curr.getLnCd())) {   // 환승역인 경우 (노선이 변경된 경우)
+                compressedPath.addNode(new MetroNodeWithWeight(prev));
+                compressedPath.addNode(new MetroNodeWithWeight(curr));
+                continue;
+            }
+            if (curr.isJctStin()) { // 분기점인 경우
+                compressedPath.addNode(new MetroNodeWithWeight(curr));
+            }
+        }
+        compressedPath.addNode(new MetroNodeWithWeight(get(size() - 1)));   // 종료 노드
+
+        return compressedPath;
     }
 
     @Override

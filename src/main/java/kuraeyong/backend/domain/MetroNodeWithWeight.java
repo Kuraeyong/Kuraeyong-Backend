@@ -30,8 +30,8 @@ public class MetroNodeWithWeight implements Comparable<MetroNodeWithWeight> {
         return node.getLnCd();
     }
 
-    public List<MetroEdge> getEdgeList() {
-        return node.getEdgeList();
+    public boolean isJctStin() {
+        return node.getIsJctStin() > 0;
     }
 
     // 가중치를 기준으로 우선순위 결정
@@ -42,7 +42,6 @@ public class MetroNodeWithWeight implements Comparable<MetroNodeWithWeight> {
 
     @Override
     public String toString() {
-//        return '(' + getStinNm() + ", " + weight + ')';
         return '(' + getLnCd() + ", " + getStinNm() + ", " + weight + ')';
     }
 }
