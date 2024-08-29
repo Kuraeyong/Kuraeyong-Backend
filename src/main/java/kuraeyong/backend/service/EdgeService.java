@@ -2,7 +2,6 @@ package kuraeyong.backend.service;
 
 import kuraeyong.backend.repository.EdgeInfoRepository;
 import kuraeyong.backend.domain.EdgeInfo;
-import kuraeyong.backend.util.Converter;
 import kuraeyong.backend.util.FlatFileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +20,7 @@ public class EdgeService {
 
     public String createEdgeInfoDB() {
         List<List<String>> rowList = FlatFileUtil.getDataListFromExcel("src/main/resources/xlsx/edge_info.xlsx");
-        List<EdgeInfo> edgeInfoList = Converter.toEdgeInfoList(rowList);
+        List<EdgeInfo> edgeInfoList = FlatFileUtil.toEdgeInfoList(rowList);
 
 //        edgeInfoRepository.deleteAll();
         List<EdgeInfo> saveResult = edgeInfoRepository.saveAll(edgeInfoList);

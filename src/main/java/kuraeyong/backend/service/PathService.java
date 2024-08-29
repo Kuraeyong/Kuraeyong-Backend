@@ -3,6 +3,7 @@
 package kuraeyong.backend.service;
 
 import kuraeyong.backend.domain.*;
+import kuraeyong.backend.dto.element.MinimumStationInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,16 +16,19 @@ import java.util.*;
 public class PathService {
 
     private final GraphForPathSearch graphForPathSearch;
+    private final StationService stationService;
+    private final static int YEN_CANDIDATE_CNT = 7;
 
-    public MetroPath searchPath(String orgRailOprIsttCd, String orgLnCd, String orgStinCd,
-                                String destRailOprIsttCd, String destLnCd, String destStinCd) {
+    public List<MetroPath> searchPath(String orgStinNm, String destStinNm, String dateType, int hour, int min) {
         graphForPathSearch.init();
-        int orgNo = graphForPathSearch.addNode(orgRailOprIsttCd, orgLnCd, orgStinCd);
-        int destNo = graphForPathSearch.addNode(destRailOprIsttCd, destLnCd, destStinCd);
+        MinimumStationInfo orgStin = stationService.getStationByName(orgStinNm);
+        MinimumStationInfo destStin = stationService.getStationByName(destStinNm);
+        int orgNo = graphForPathSearch.addNode(orgStin);
+        int destNo = graphForPathSearch.addNode(destStin);
         graphForPathSearch.updateEdgeList(orgNo);
         graphForPathSearch.updateEdgeList(destNo);
 
-        return searchPath(orgNo, destNo, null);
+        return searchCandidatePathList(orgNo, destNo);
     }
 
     /**
@@ -75,14 +79,13 @@ public class PathService {
             }
         }
 
-//        printDist(dist);
         if (dist[destNo] == Integer.MAX_VALUE) {
             return null;
         }
         return createPath(prevNode, orgNo, destNo);
     }
 
-    public List<MetroPath> searchCandidatePathList(int orgNo, int destNo, int k) {
+    private List<MetroPath> searchCandidatePathList(int orgNo, int destNo) {
         List<MetroPath> shortestPathList = new ArrayList<>();
         Set<MetroPath> pathSet = new HashSet<>();
 
@@ -98,8 +101,8 @@ public class PathService {
         // 후보 경로들을 저장할 우선순위 큐
         PriorityQueue<MetroPath> candidates = new PriorityQueue<>();
 
-        // 남은 (k-1)개의 경로를 탐색
-        for (int i = 1; i < k; i++) {
+        // 남은 (YEN_CANDIDATE_CNT-1)개의 경로를 탐색
+        for (int i = 1; i < YEN_CANDIDATE_CNT; i++) {
             MetroPath prevPath = shortestPathList.get(i - 1);   // 이전에 찾은 최단 경로
 
             // 각 스퍼 노드에 대해 새로운 경로를 탐색
@@ -162,12 +165,12 @@ public class PathService {
             shortestPathList.add(candidates.poll());
         }
 
-        removeUnnecessaryPath(pathSet, shortestPathList, candidates, k);
+        removeUnnecessaryPath(pathSet, shortestPathList, candidates);
 
         return shortestPathList;
     }
 
-    private void removeUnnecessaryPath(Set<MetroPath> pathSet, List<MetroPath> shortestPathList, PriorityQueue<MetroPath> candidates, int k) {
+    private void removeUnnecessaryPath(Set<MetroPath> pathSet, List<MetroPath> shortestPathList, PriorityQueue<MetroPath> candidates) {
         // 불필요한 경로 제거 후, 중복을 제거하기 위해 pathSet에 모두 집합
         pathSet.clear();
         for (MetroPath shortestPath : shortestPathList) {
@@ -185,7 +188,7 @@ public class PathService {
 
         // 상위 k개에 대해서 조회
         shortestPathList.clear();
-        while (!candidates.isEmpty() && shortestPathList.size() < k) {
+        while (!candidates.isEmpty() && shortestPathList.size() < YEN_CANDIDATE_CNT) {
             MetroPath candidate = candidates.poll();
             if (isEfficientPath(candidate)) {
                 shortestPathList.add(candidate);
@@ -230,13 +233,5 @@ public class PathService {
     public void printPath(MetroPath path) {
         System.out.println(path);
         System.out.println(path.getPathWeight());
-    }
-
-    public void printDist(double[] dist) {
-        for (int i = 0; i < dist.length; i++) {
-//            MetroNode node = metroMap.getNode(i);
-            MetroNode node = graphForPathSearch.get(i);
-            System.out.printf("%s\t%s\t%.1f\n", node.getLnCd(), node.getStinNm(), dist[i]);
-        }
     }
 }

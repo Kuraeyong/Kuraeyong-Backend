@@ -95,7 +95,9 @@ public class MetroPath implements Comparable<MetroPath> {
                 continue;
             }
             if (curr.isJctStin()) { // 분기점인 경우
+                MetroNode node = curr.getNode();
                 compressedPath.addNode(new MetroNodeWithWeight(curr));
+                compressedPath.addNode(new MetroNodeWithWeight(new MetroNode(node), node.getIsJctStin()));  // (노드, 분기점 환승 소요시간)
             }
         }
         compressedPath.addNode(new MetroNodeWithWeight(get(size() - 1)));   // 종료 노드

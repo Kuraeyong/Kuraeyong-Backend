@@ -1,6 +1,7 @@
 package kuraeyong.backend.domain;
 
 import jakarta.annotation.PostConstruct;
+import kuraeyong.backend.dto.element.MinimumStationInfo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -32,7 +33,10 @@ public class GraphForPathSearch {
      * trfNode      상봉, (군자)
      * edge         중곡->상봉
      */
-    public int addNode(String railOprIsttCd, String lnCd, String stinCd) {
+    public int addNode(MinimumStationInfo minimumStationInfo) {
+        String railOprIsttCd = minimumStationInfo.getRailOprIsttCd();
+        String lnCd = minimumStationInfo.getLnCd();
+        String stinCd = minimumStationInfo.getStinCd();
         List<EdgeInfo> edgeInfoList = metroMap.getEdgeInfoRepository().findByRailOprIsttCdAndLnCdAndStinCd(railOprIsttCd, lnCd, stinCd);
         if (edgeInfoList.get(0).getIsTrfStin() == 0) {
             // 새로운 노드(일반역) 생성

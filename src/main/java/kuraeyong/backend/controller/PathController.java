@@ -20,13 +20,13 @@ public class PathController {
      */
     @PostMapping("")
     public String searchPath(@RequestBody PostPathSearchRequest postPathSearchRequest) {
-        MetroPath path = pathService.searchPath(postPathSearchRequest.getOrgRailOprIsttCd(),
-                postPathSearchRequest.getOrgLnCd(),
-                postPathSearchRequest.getOrgStinCd(),
-                postPathSearchRequest.getDestRailOprIsttCd(),
-                postPathSearchRequest.getDestLnCd(),
-                postPathSearchRequest.getDestStinCd());
-        pathService.printPath(path);
-        return "successfully searched";
+//        MetroPath path = pathService.searchPath(postPathSearchRequest.getOrgStinNm(),
+//                postPathSearchRequest.getDestStinNm(),
+//                postPathSearchRequest.getDateType(),
+//                postPathSearchRequest.getHour(),
+//                postPathSearchRequest.getMin());
+//        pathService.printPath(path);
+//        return "successfully searched";
+        return "not implemented";
     }
 }

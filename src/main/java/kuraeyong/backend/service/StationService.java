@@ -1,8 +1,8 @@
 package kuraeyong.backend.service;
 
 import kuraeyong.backend.domain.StationInfo;
+import kuraeyong.backend.dto.element.MinimumStationInfo;
 import kuraeyong.backend.repository.StationInfoRepository;
-import kuraeyong.backend.util.Converter;
 import kuraeyong.backend.util.FlatFileUtil;
 import kuraeyong.backend.util.OpenApiUtil;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +42,7 @@ public class StationService {
     public String createStationInfoDB() {
         // TODO: StationInfo DB 생성 및 초기화
         List<List<String>> rowList = FlatFileUtil.getDataListFromExcel("src/main/resources/xlsx/station_code_info.xlsx");
-        List<StationInfo> stationInfoList = Converter.toStationInfoList(rowList);
+        List<StationInfo> stationInfoList = FlatFileUtil.toStationInfoList(rowList);
 
         stationInfoRepository.deleteAll();
         List<StationInfo> saveResult = stationInfoRepository.saveAll(stationInfoList);
@@ -180,4 +180,18 @@ public class StationService {
 //        // TODO: 해당 역이 속한 노선명 리스트 조회
 //        return stationDao.getLineNameListByStationName(stationName);
 //    }
+
+    public MinimumStationInfo getStationByName(String stinNm) {
+        List<StationInfo> stationInfoList = stationInfoRepository.findByStinNm(stinNm);
+        if (stationInfoList == null) {
+            return null;
+        }
+
+        StationInfo stationInfo = stationInfoList.get(0);
+        return MinimumStationInfo.builder()
+                .railOprIsttCd(stationInfo.getRailOprIsttCd())
+                .lnCd(stationInfo.getLnCd())
+                .stinCd(stationInfo.getStinCd())
+                .build();
+    }
 }
