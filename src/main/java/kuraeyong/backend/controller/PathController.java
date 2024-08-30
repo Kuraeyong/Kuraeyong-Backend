@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -20,13 +22,17 @@ public class PathController {
      */
     @PostMapping("")
     public String searchPath(@RequestBody PostPathSearchRequest postPathSearchRequest) {
-//        MetroPath path = pathService.searchPath(postPathSearchRequest.getOrgStinNm(),
-//                postPathSearchRequest.getDestStinNm(),
-//                postPathSearchRequest.getDateType(),
-//                postPathSearchRequest.getHour(),
-//                postPathSearchRequest.getMin());
-//        pathService.printPath(path);
-//        return "successfully searched";
-        return "not implemented";
+        List<MetroPath> shortestPathList = pathService.searchPath(postPathSearchRequest.getOrgStinNm(),
+                postPathSearchRequest.getDestStinNm(),
+                postPathSearchRequest.getDateType(),
+                postPathSearchRequest.getHour(),
+                postPathSearchRequest.getMin());
+        for (MetroPath path : shortestPathList) {
+            System.out.println(path);
+            System.out.println(path.getCompressedPath());
+            System.out.println(path.getPathWeight());
+        }
+        return "successfully searched";
+//        return "not implemented";
     }
 }

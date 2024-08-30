@@ -1,7 +1,7 @@
 package kuraeyong.backend.service;
 
 import kuraeyong.backend.domain.StationInfo;
-import kuraeyong.backend.dto.element.MinimumStationInfo;
+import kuraeyong.backend.dto.MinimumStationInfo;
 import kuraeyong.backend.repository.StationInfoRepository;
 import kuraeyong.backend.util.FlatFileUtil;
 import kuraeyong.backend.util.OpenApiUtil;
@@ -25,8 +25,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StationService {
 
-    @Autowired
-    private StationInfoRepository stationInfoRepository;
+    private final StationInfoRepository stationInfoRepository;
     private static String csvFilePath, logFilePath;
 
     @Value("${csv-file-path}")

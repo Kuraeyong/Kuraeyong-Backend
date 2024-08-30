@@ -1,4 +1,4 @@
-package kuraeyong.backend.dto.element;
+package kuraeyong.backend.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

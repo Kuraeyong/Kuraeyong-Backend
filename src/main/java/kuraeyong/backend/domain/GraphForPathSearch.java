@@ -1,7 +1,7 @@
 package kuraeyong.backend.domain;
 
 import jakarta.annotation.PostConstruct;
-import kuraeyong.backend.dto.element.MinimumStationInfo;
+import kuraeyong.backend.dto.MinimumStationInfo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

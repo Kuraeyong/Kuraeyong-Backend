@@ -1,8 +1,9 @@
 package kuraeyong.backend.config;
 
 import kuraeyong.backend.repository.StationTimeTableRepository;
-import kuraeyong.backend.domain.StationTimeTable;
-import kuraeyong.backend.dto.StationTimeTableDto;
+import kuraeyong.backend.domain.StationTimeTableElement;
+import kuraeyong.backend.dto.StationTimeTableElementDto;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -22,11 +23,11 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 @Slf4j
 @Configuration
+@RequiredArgsConstructor
 public class CsvToDbJobConfig {
     private final int chunkSize = 1000;
 
-    @Autowired
-    private StationTimeTableRepository stationTimeTableRepository;
+    private final StationTimeTableRepository stationTimeTableRepository;
 
     private static String csvFilePath;
 
@@ -48,7 +49,7 @@ public class CsvToDbJobConfig {
     public Step csvToDbStep(JobRepository jobRepository, PlatformTransactionManager platformTransactionManager) throws Exception {
         log.info("ACCESS csvToDbStep");
         return new StepBuilder("csvToDbStep", jobRepository)
-                .<StationTimeTableDto, StationTimeTable>chunk(chunkSize, platformTransactionManager)
+                .<StationTimeTableElementDto, StationTimeTableElement>chunk(chunkSize, platformTransactionManager)
                 .reader(csvReader())
                 .processor(dtoToEntityProcessor())
                 .writer(dbWriter())
@@ -56,9 +57,9 @@ public class CsvToDbJobConfig {
     }
 
     @Bean
-    public ItemReader<StationTimeTableDto> csvReader() {
+    public ItemReader<StationTimeTableElementDto> csvReader() {
         log.info("ACCESS csvReader");
-        return new FlatFileItemReaderBuilder<StationTimeTableDto>()
+        return new FlatFileItemReaderBuilder<StationTimeTableElementDto>()
                 .name("csvReader")
                 .resource(new FileSystemResource(csvFilePath))
                 .delimited().delimiter(",") // 기본 구분자는 ,
@@ -66,7 +67,7 @@ public class CsvToDbJobConfig {
 //                .fieldSetMapper(new BeanWrapperFieldSetMapper<>() {{
 //                    setTargetType(StationTimeTableDto.class);
 //                }})
-                .fieldSetMapper(fieldSet -> StationTimeTableDto.builder()
+                .fieldSetMapper(fieldSet -> StationTimeTableElementDto.builder()
                         .lnCd(fieldSet.readString("LN_CD"))
                         .orgStinCd(fieldSet.readString("ORG_STIN_CD"))
                         .dayCd(fieldSet.readString("DAY_CD"))
@@ -83,12 +84,12 @@ public class CsvToDbJobConfig {
     }
 
     @Bean
-    public ItemProcessor<StationTimeTableDto, StationTimeTable> dtoToEntityProcessor() {
-        return StationTimeTableDto::toEntity;
+    public ItemProcessor<StationTimeTableElementDto, StationTimeTableElement> dtoToEntityProcessor() {
+        return StationTimeTableElementDto::toEntity;
     }
 
     @Bean
-    public ItemWriter<StationTimeTable> dbWriter() {
+    public ItemWriter<StationTimeTableElement> dbWriter() {
         log.info("ACCESS dbWriter");
         return items -> stationTimeTableRepository.saveAll(items);
 //        return new ItemWriter<StationTimeTable>() {

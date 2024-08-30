@@ -1,6 +1,6 @@
 package kuraeyong.backend.dto;
 
-import kuraeyong.backend.domain.StationTimeTable;
+import kuraeyong.backend.domain.StationTimeTableElement;
 import lombok.*;
 
 @Getter
@@ -8,7 +8,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StationTimeTableDto {
+public class StationTimeTableElementDto {
     private String lnCd;
     private String orgStinCd;
     private String dayCd;
@@ -36,8 +36,8 @@ public class StationTimeTableDto {
                 '}';
     }
 
-    public StationTimeTable toEntity() {
-        return StationTimeTable.builder()
+    public StationTimeTableElement toEntity() {
+        return StationTimeTableElement.builder()
                 .lnCd(lnCd)
                 .orgStinCd(orgStinCd)
                 .dayCd(dayCd)

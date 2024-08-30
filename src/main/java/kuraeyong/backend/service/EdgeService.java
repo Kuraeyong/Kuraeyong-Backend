@@ -15,8 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EdgeService {
 
-    @Autowired
-    private EdgeInfoRepository edgeInfoRepository;
+    private final EdgeInfoRepository edgeInfoRepository;
 
     public String createEdgeInfoDB() {
         List<List<String>> rowList = FlatFileUtil.getDataListFromExcel("src/main/resources/xlsx/edge_info.xlsx");

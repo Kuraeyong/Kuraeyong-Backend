@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class StationTimeTable {
+public class StationTimeTableElement {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

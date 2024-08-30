@@ -3,7 +3,7 @@
 package kuraeyong.backend.service;
 
 import kuraeyong.backend.domain.*;
-import kuraeyong.backend.dto.element.MinimumStationInfo;
+import kuraeyong.backend.dto.MinimumStationInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
