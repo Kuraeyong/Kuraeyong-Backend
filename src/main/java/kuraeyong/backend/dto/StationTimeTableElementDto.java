@@ -22,7 +22,7 @@ public class StationTimeTableElementDto {
 
     @Override
     public String toString() {
-        return "StationTimeTableDto{" +
+        return "StationTimeTableElementDto{" +
                 "lnCd='" + lnCd + '\'' +
                 ", orgStinCd='" + orgStinCd + '\'' +
                 ", dayCd='" + dayCd + '\'' +

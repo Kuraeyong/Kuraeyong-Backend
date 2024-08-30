@@ -1,8 +1,10 @@
 package kuraeyong.backend.service;
 
 import kuraeyong.backend.domain.StationInfo;
+import kuraeyong.backend.domain.StationTimeTableMap;
 import kuraeyong.backend.dto.MinimumStationInfo;
 import kuraeyong.backend.repository.StationInfoRepository;
+import kuraeyong.backend.repository.StationTimeTableElementRepository;
 import kuraeyong.backend.util.FlatFileUtil;
 import kuraeyong.backend.util.OpenApiUtil;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +13,6 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,7 @@ import java.util.List;
 public class StationService {
 
     private final StationInfoRepository stationInfoRepository;
+    private final StationTimeTableElementRepository stationTimeTableElementRepository;
     private static String csvFilePath, logFilePath;
 
     @Value("${csv-file-path}")
@@ -37,6 +39,7 @@ public class StationService {
     public void setLogFilePath(String path) {
         logFilePath = path;
     }
+
 
     public String createStationInfoDB() {
         // TODO: StationInfo DB 생성 및 초기화
@@ -192,5 +195,9 @@ public class StationService {
                 .lnCd(stationInfo.getLnCd())
                 .stinCd(stationInfo.getStinCd())
                 .build();
+    }
+
+    public void initTimeTable() {
+        StationTimeTableMap stationTimeTableMap = new StationTimeTableMap(stationTimeTableElementRepository.findAll());
     }
 }

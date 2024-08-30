@@ -1,6 +1,6 @@
 package kuraeyong.backend.config;
 
-import kuraeyong.backend.repository.StationTimeTableRepository;
+import kuraeyong.backend.repository.StationTimeTableElementRepository;
 import kuraeyong.backend.domain.StationTimeTableElement;
 import kuraeyong.backend.dto.StationTimeTableElementDto;
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,6 @@ import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.batch.item.file.builder.FlatFileItemReaderBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,7 +26,7 @@ import org.springframework.transaction.PlatformTransactionManager;
 public class CsvToDbJobConfig {
     private final int chunkSize = 1000;
 
-    private final StationTimeTableRepository stationTimeTableRepository;
+    private final StationTimeTableElementRepository stationTimeTableElementRepository;
 
     private static String csvFilePath;
 
@@ -91,7 +90,7 @@ public class CsvToDbJobConfig {
     @Bean
     public ItemWriter<StationTimeTableElement> dbWriter() {
         log.info("ACCESS dbWriter");
-        return items -> stationTimeTableRepository.saveAll(items);
+        return items -> stationTimeTableElementRepository.saveAll(items);
 //        return new ItemWriter<StationTimeTable>() {
 //            @Override
 //            public void write(Chunk<? extends StationTimeTable> items) throws Exception {

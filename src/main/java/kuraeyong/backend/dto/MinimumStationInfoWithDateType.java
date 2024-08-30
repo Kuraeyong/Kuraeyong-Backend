@@ -7,25 +7,22 @@ import lombok.NoArgsConstructor;
 
 import java.util.Objects;
 
-@Builder
 @Getter
-@NoArgsConstructor
 @AllArgsConstructor
-public class MinimumStationInfo {
-    private String railOprIsttCd;
-    private String lnCd;
+public class MinimumStationInfoWithDateType {
+    private MinimumStationInfo minimumStationInfo;
     private String stinCd;
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        MinimumStationInfo that = (MinimumStationInfo) o;
-        return Objects.equals(railOprIsttCd, that.railOprIsttCd) && Objects.equals(lnCd, that.lnCd) && Objects.equals(stinCd, that.stinCd);
+        MinimumStationInfoWithDateType that = (MinimumStationInfoWithDateType) o;
+        return Objects.equals(minimumStationInfo, that.minimumStationInfo) && Objects.equals(stinCd, that.stinCd);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(railOprIsttCd, lnCd, stinCd);
+        return Objects.hash(minimumStationInfo, stinCd);
     }
 }
