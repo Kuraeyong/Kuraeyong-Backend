@@ -2,20 +2,21 @@ package kuraeyong.backend.domain;
 
 import kuraeyong.backend.dto.MinimumStationInfo;
 import kuraeyong.backend.dto.MinimumStationInfoWithDateType;
+import kuraeyong.backend.repository.StationTimeTableElementRepository;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
-import java.util.List;
 
+@Component
 @Getter
 public class StationTimeTableMap {
     private final HashMap<MinimumStationInfoWithDateType, StationTimeTable> map;
 
-    public StationTimeTableMap(List<StationTimeTableElement> stationTimeTableElementList) {
+    public StationTimeTableMap(StationTimeTableElementRepository stationTimeTableElementRepository) {
         map = new HashMap<>();
 
-        for (StationTimeTableElement row : stationTimeTableElementList) {
+        for (StationTimeTableElement row : stationTimeTableElementRepository.findAll()) {
             MinimumStationInfo minimumStationInfo = MinimumStationInfo.builder()
                     .railOprIsttCd(row.getRailOprIsttCd())
                     .lnCd(row.getLnCd())

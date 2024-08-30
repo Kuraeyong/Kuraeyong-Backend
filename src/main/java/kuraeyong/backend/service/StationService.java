@@ -4,7 +4,6 @@ import kuraeyong.backend.domain.StationInfo;
 import kuraeyong.backend.domain.StationTimeTableMap;
 import kuraeyong.backend.dto.MinimumStationInfo;
 import kuraeyong.backend.repository.StationInfoRepository;
-import kuraeyong.backend.repository.StationTimeTableElementRepository;
 import kuraeyong.backend.util.FlatFileUtil;
 import kuraeyong.backend.util.OpenApiUtil;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +26,7 @@ import java.util.List;
 public class StationService {
 
     private final StationInfoRepository stationInfoRepository;
-    private final StationTimeTableElementRepository stationTimeTableElementRepository;
+    private final StationTimeTableMap stationTimeTableMap;
     private static String csvFilePath, logFilePath;
 
     @Value("${csv-file-path}")
@@ -195,9 +194,5 @@ public class StationService {
                 .lnCd(stationInfo.getLnCd())
                 .stinCd(stationInfo.getStinCd())
                 .build();
-    }
-
-    public void initTimeTable() {
-        StationTimeTableMap stationTimeTableMap = new StationTimeTableMap(stationTimeTableElementRepository.findAll());
     }
 }
