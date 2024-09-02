@@ -1,5 +1,6 @@
 package kuraeyong.backend.service;
 
+import kuraeyong.backend.domain.MetroPath;
 import kuraeyong.backend.domain.StationInfo;
 import kuraeyong.backend.domain.StationTimeTableMap;
 import kuraeyong.backend.dto.MinimumStationInfo;
@@ -143,6 +144,7 @@ public class StationService {
     }
 
     public void loadCsv() {
+        // TODO: CSV 파일 로드
         String filePath = "src/main/resources/station_time_table_holiday.csv";
         File file;
         BufferedReader br;
@@ -183,6 +185,7 @@ public class StationService {
 //    }
 
     public MinimumStationInfo getStationByName(String stinNm) {
+        // TODO: 역명으로 고유역 조회
         List<StationInfo> stationInfoList = stationInfoRepository.findByStinNm(stinNm);
         if (stationInfoList == null) {
             return null;

@@ -90,14 +90,15 @@ public class MetroPath implements Comparable<MetroPath> {
             MetroNodeWithWeight curr = get(i);
 
             if (!prev.getLnCd().equals(curr.getLnCd())) {   // 환승역인 경우 (노선이 변경된 경우)
-                compressedPath.addNode(new MetroNodeWithWeight(prev));
+                if (!prev.isJctStin()) {
+                    compressedPath.addNode(new MetroNodeWithWeight(prev));
+                }
                 compressedPath.addNode(new MetroNodeWithWeight(curr));
                 continue;
             }
             if (curr.isJctStin()) { // 분기점인 경우
-                MetroNode node = curr.getNode();
+                // 지선 환승은 현재 단계에서 고려 X (실제 시간표 조회에서 고려)
                 compressedPath.addNode(new MetroNodeWithWeight(curr));
-                compressedPath.addNode(new MetroNodeWithWeight(new MetroNode(node), node.getIsJctStin()));  // (노드, 분기점 환승 소요시간)
             }
         }
         compressedPath.addNode(new MetroNodeWithWeight(get(size() - 1)));   // 종료 노드
