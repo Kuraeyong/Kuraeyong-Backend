@@ -18,6 +18,9 @@ public class GraphForPathSearch {
     private List<MetroNode> graphForPathSearch;
     private final MetroMap metroMap;
 
+    /**
+     * 경로 탐색을 위한 그래프 초기화
+     */
     @PostConstruct
     public void init() {
         graphForPathSearch = new ArrayList<>();
@@ -27,11 +30,12 @@ public class GraphForPathSearch {
     }
 
     /**
+     *
      * 일반역을 추가하는 함수
-     * edgeInfoList 중곡->상봉, 중곡->군자
-     * node         중곡
-     * trfNode      상봉, (군자)
-     * edge         중곡->상봉
+     * @inline-variable edgeInfoList 중곡->상봉, 중곡->군자
+     * @inline-variable node         중곡
+     * @inline-variable trfNode      상봉, (군자)
+     * @inline-variable edge         중곡->상봉
      */
     public int addNode(MinimumStationInfo minimumStationInfo) {
         String railOprIsttCd = minimumStationInfo.getRailOprIsttCd();
@@ -71,11 +75,11 @@ public class GraphForPathSearch {
 
     /**
      * 일반역을 추가함에 따라, 기존 환승역의 간선 리스트를 갱신하는 함수
-     * node                 중곡
-     * connectedTrfStinList 군자, 상봉
-     * node.getEdgeList()   중곡->군자, (중곡->상봉)
-     * trfNode              군자
-     * newEdge              군자->중곡
+     * @inline-variable node                 중곡
+     * @inline-variable connectedTrfStinList 군자, 상봉
+     * @inline-variable node.getEdgeList()   중곡->군자, (중곡->상봉)
+     * @inline-variable trfNode              군자
+     * @inline-variable newEdge              군자->중곡
      */
     public void updateEdgeList(int nodeNo) {
         // 기존에 있는 역(환승역)이었다면 간선 리스트를 갱신하지 않음

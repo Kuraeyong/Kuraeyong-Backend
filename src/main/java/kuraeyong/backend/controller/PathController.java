@@ -1,6 +1,7 @@
 package kuraeyong.backend.controller;
 
 import kuraeyong.backend.domain.MetroPath;
+import kuraeyong.backend.dto.MoveInfo;
 import kuraeyong.backend.dto.request.PostPathSearchRequest;
 import kuraeyong.backend.service.PathService;
 import lombok.RequiredArgsConstructor;
@@ -22,17 +23,7 @@ public class PathController {
      */
     @PostMapping("")
     public String searchPath(@RequestBody PostPathSearchRequest postPathSearchRequest) {
-        List<MetroPath> shortestPathList = pathService.searchPath(postPathSearchRequest.getOrgStinNm(),
-                postPathSearchRequest.getDestStinNm(),
-                postPathSearchRequest.getDateType(),
-                postPathSearchRequest.getHour(),
-                postPathSearchRequest.getMin());
-        for (MetroPath path : shortestPathList) {
-            System.out.println(path);
-            System.out.println(path.getCompressedPath());
-            System.out.println(path.getPathWeight());
-        }
-        return "successfully searched";
-//        return "not implemented";
+        return pathService.searchPath(postPathSearchRequest.getOrgStinNm(), postPathSearchRequest.getDestStinNm(),
+                postPathSearchRequest.getDateType(), postPathSearchRequest.getHour(), postPathSearchRequest.getMin());
     }
 }

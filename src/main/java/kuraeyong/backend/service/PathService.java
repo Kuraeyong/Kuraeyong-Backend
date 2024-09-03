@@ -4,6 +4,8 @@ package kuraeyong.backend.service;
 
 import kuraeyong.backend.domain.*;
 import kuraeyong.backend.dto.MinimumStationInfo;
+import kuraeyong.backend.dto.MoveInfo;
+import kuraeyong.backend.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -17,9 +19,10 @@ public class PathService {
 
     private final GraphForPathSearch graphForPathSearch;
     private final StationService stationService;
-    private final static int YEN_CANDIDATE_CNT = 7;
+    private final static int YEN_CANDIDATE_CNT = 10;
 
-    public List<MetroPath> searchPath(String orgStinNm, String destStinNm, String dateType, int hour, int min) {
+    public String searchPath(String orgStinNm, String destStinNm, String dateType, int hour, int min) {
+        // TODO 1. 시간표 API를 조회할 간이 경로 조회
         graphForPathSearch.init();
         MinimumStationInfo orgStin = stationService.getStationByName(orgStinNm);
         MinimumStationInfo destStin = stationService.getStationByName(destStinNm);
@@ -27,17 +30,32 @@ public class PathService {
         int destNo = graphForPathSearch.addNode(destStin);
         graphForPathSearch.updateEdgeList(orgNo);
         graphForPathSearch.updateEdgeList(destNo);
+        List<MetroPath> shortestPathList = searchCandidatePathList(orgNo, destNo);
+        if (shortestPathList == null) {
+            // FIXME: 간이 경로를 하나도 못 찾은 경우
+            return "not existed";
+        }
 
-        return searchCandidatePathList(orgNo, destNo);
+        // TODO 2. 간이 경로와 시간표 API를 이용해 실소요시간을 포함한 이동 정보 조회
+        for (MetroPath path : shortestPathList) {
+            System.out.println(path.getPathWeight());
+            System.out.println(path);
+            System.out.println(path.getCompressedPath());
+            List<MoveInfo> moveInfoList = getMoveInfoList(path.getCompressedPath(), dateType, hour, min);
+            for (MoveInfo moveInfo : moveInfoList) {
+                System.out.println(moveInfo);
+            }
+            System.out.println();
+        }
+        return "successfully searched";
     }
 
     /**
-     * 경로 탐색
-     * 같은 MetroNodeWithWeight여도 다음과 같이 사용하는 방식이 조금씩 다름
-     * ---
-     * prevNode         이전 노드를 담고 있는 배열
+     * 다익스트라 알고리즘을 통해서 하나의 간이 경로를 탐색
+     * @description 같은 MetroNodeWithWeight여도 다음과 같이 사용하는 방식이 조금씩 다름
+     * @inline-variable prevNode         이전 노드를 담고 있는 배열
      * e.g.) [(1, 10), (2, 20), (4, 30)]
-     * pq               경로 탐색에서 사용할 우선순위 큐
+     * @inline-variable pq               경로 탐색에서 사용할 우선순위 큐
      * e.g.) [(1, 0), (2, 10), (4, 20), (5, 30)]
      */
     private MetroPath searchPath(int orgNo, int destNo, MetroPath rootPath) {
@@ -85,6 +103,9 @@ public class PathService {
         return createPath(prevNode, orgNo, destNo);
     }
 
+    /**
+     * 옌 알고리즘을 통해서 여러 간이 경로를 탐색
+     */
     private List<MetroPath> searchCandidatePathList(int orgNo, int destNo) {
         List<MetroPath> shortestPathList = new ArrayList<>();
         Set<MetroPath> pathSet = new HashSet<>();
@@ -170,6 +191,9 @@ public class PathService {
         return shortestPathList;
     }
 
+    /**
+     *  출발역->출발역 및 도착역->도착역인 불필요한 경로 제거
+     */
     private void removeUnnecessaryPath(Set<MetroPath> pathSet, List<MetroPath> shortestPathList, PriorityQueue<MetroPath> candidates) {
         // 불필요한 경로 제거 후, 중복을 제거하기 위해 pathSet에 모두 집합
         pathSet.clear();
@@ -196,6 +220,9 @@ public class PathService {
         }
     }
 
+    /**
+     * 공딴딴공 제거
+     */
     private boolean isEfficientPath(MetroPath candidate) {
         HashMap<String, Integer> firstOccurrenceIdx = new HashMap<>();
 
@@ -212,6 +239,9 @@ public class PathService {
         return true;
     }
 
+    /**
+     * 다익스트라 알고리즘의 결과로, MetroPath를 일차적으로 완성 (이후 가공)
+     */
     private MetroPath createPath(MetroNodeWithWeight[] prevNode, int orgNo, int destNo) {
         Stack<MetroNodeWithWeight> pathStack = new Stack<>();
 
@@ -230,8 +260,7 @@ public class PathService {
         return path;
     }
 
-    public void printPath(MetroPath path) {
-        System.out.println(path);
-        System.out.println(path.getPathWeight());
+    public List<MoveInfo> getMoveInfoList(MetroPath compressedPath, String dateType, int hour, int min) {
+        return stationService.getMoveInfoList(compressedPath, dateType, hour, min);
     }
 }

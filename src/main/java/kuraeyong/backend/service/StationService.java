@@ -1,10 +1,13 @@
 package kuraeyong.backend.service;
 
+import kuraeyong.backend.domain.MetroNodeWithWeight;
 import kuraeyong.backend.domain.MetroPath;
 import kuraeyong.backend.domain.StationInfo;
 import kuraeyong.backend.domain.StationTimeTableMap;
 import kuraeyong.backend.dto.MinimumStationInfo;
+import kuraeyong.backend.dto.MoveInfo;
 import kuraeyong.backend.repository.StationInfoRepository;
+import kuraeyong.backend.util.DateUtil;
 import kuraeyong.backend.util.FlatFileUtil;
 import kuraeyong.backend.util.OpenApiUtil;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -40,9 +44,10 @@ public class StationService {
         logFilePath = path;
     }
 
-
+    /**
+     *  StationInfo DB 생성 및 초기화
+     */
     public String createStationInfoDB() {
-        // TODO: StationInfo DB 생성 및 초기화
         List<List<String>> rowList = FlatFileUtil.getDataListFromExcel("src/main/resources/xlsx/station_code_info.xlsx");
         List<StationInfo> stationInfoList = FlatFileUtil.toStationInfoList(rowList);
 
@@ -55,9 +60,10 @@ public class StationService {
         return "FAILED";
     }
 
-    // 반환값 수정 필요
+    /**
+     * API 결과 CSV 파일에 저장
+     */
     public void saveApiResultToCsv() {
-        // TODO: API 결과 CSV 파일에 저장
         List<StationInfo> stationInfoList = stationInfoRepository.findAll();
         String format = "json";
         String dayCd = "7";
@@ -141,10 +147,13 @@ public class StationService {
         } catch (IOException | ParseException e) {
             throw new RuntimeException(e);
         }
+        // FIXME: 반환값 수정 필요
     }
 
+    /**
+     * CSV 파일 로드
+     */
     public void loadCsv() {
-        // TODO: CSV 파일 로드
         String filePath = "src/main/resources/station_time_table_holiday.csv";
         File file;
         BufferedReader br;
@@ -162,6 +171,9 @@ public class StationService {
         }
     }
 
+    /**
+     *  JSON 데이터 파싱
+     */
     private static JSONArray getParseBody(String queryString) throws IOException, ParseException {
         String urlStr = OpenApiUtil.getKricOpenApiURL("convenientInfo", "stationTimetable", queryString);
 
@@ -177,15 +189,10 @@ public class StationService {
         return (JSONArray) jsonObject.get("body");
     }
 
-//    public GetListResponse getLineNameListByStationName(String stationName) {
-//        log.info("[StationService.getLineNameListByStationName]");
-//
-//        // TODO: 해당 역이 속한 노선명 리스트 조회
-//        return stationDao.getLineNameListByStationName(stationName);
-//    }
-
+    /**
+     * 역명으로 고유역 조회
+     */
     public MinimumStationInfo getStationByName(String stinNm) {
-        // TODO: 역명으로 고유역 조회
         List<StationInfo> stationInfoList = stationInfoRepository.findByStinNm(stinNm);
         if (stationInfoList == null) {
             return null;
@@ -197,5 +204,29 @@ public class StationService {
                 .lnCd(stationInfo.getLnCd())
                 .stinCd(stationInfo.getStinCd())
                 .build();
+    }
+
+    /**
+     *
+     * @param compressedPath    e.g.) (K4, 행신, 0.0) (K4, 홍대입구, 2.5) (2, 홍대입구, 6.5) (2, 성수, 5.5) (2, 용답, 3.5)
+     * @param dateType  날짜 종류 (평일 | 토요일 | 공휴일)
+     * @param hour  사용자의 해당 역 도착 시간 (시간)
+     * @param min   사용자의 해당 역 도착 시간 (분)
+     * @return  이동 정보 리스트
+     */
+    public List<MoveInfo> getMoveInfoList(MetroPath compressedPath, String dateType, int hour, int min) {
+        List<MoveInfo> moveInfoList = new ArrayList<>();
+
+        String currTime = DateUtil.getCurrTime(hour, min);
+        for (int i = 0; i < compressedPath.size() - 1; i++) {
+            MetroNodeWithWeight curr = compressedPath.get(i);
+            MetroNodeWithWeight next = compressedPath.get(i + 1);
+
+            MoveInfo moveInfo = stationTimeTableMap.getMoveInfo(curr, next, dateType, currTime);
+            currTime = moveInfo.getArvTm();
+            moveInfoList.add(moveInfo);
+        }
+
+        return moveInfoList;
     }
 }

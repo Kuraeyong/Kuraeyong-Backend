@@ -26,8 +26,16 @@ public class MetroNodeWithWeight implements Comparable<MetroNodeWithWeight> {
         return node.getStinNm();
     }
 
+    public String getStinCd() {
+        return node.getStinCd();
+    }
+
     public String getLnCd() {
         return node.getLnCd();
+    }
+
+    public String getRailOprIsttCd() {
+        return node.getRailOprIsttCd();
     }
 
     public boolean isJctStin() {
