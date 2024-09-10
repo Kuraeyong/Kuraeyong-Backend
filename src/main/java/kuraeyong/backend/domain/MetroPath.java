@@ -2,7 +2,6 @@ package kuraeyong.backend.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,28 +10,28 @@ import java.util.Objects;
 @Getter
 @AllArgsConstructor
 public class MetroPath implements Comparable<MetroPath> {
-    private List<MetroNodeWithWeight> path;
+    private List<MetroNodeWithEdge> path;
 
     public MetroPath(MetroPath path) {
         this.path = new ArrayList<>();
-        for (MetroNodeWithWeight node : path.getPath()) {
-            addNode(new MetroNodeWithWeight(node));
+        for (MetroNodeWithEdge node : path.getPath()) {
+            addNode(new MetroNodeWithEdge(node));
         }
     }
 
-    public void addNode(MetroNodeWithWeight node) {
+    public void addNode(MetroNodeWithEdge node) {
         path.add(node);
     }
 
     public void concat(MetroPath path) {    // 깊은 복사
-        for (MetroNodeWithWeight node : path.subPath(1, path.size()).getPath()) {
-            addNode(new MetroNodeWithWeight(node));
+        for (MetroNodeWithEdge node : path.subPath(1, path.size()).getPath()) {
+            addNode(new MetroNodeWithEdge(node));
         }
     }
 
     public double getPathWeight() {
         double sum = 0;
-        for (MetroNodeWithWeight node : path) {
+        for (MetroNodeWithEdge node : path) {
             sum += node.getWeight();
         }
         return Math.round(sum * 10) / 10.0;
@@ -42,7 +41,7 @@ public class MetroPath implements Comparable<MetroPath> {
         int cnt = 0;
         String lnCd = get(0).getLnCd();
 
-        for (MetroNodeWithWeight node : path) {
+        for (MetroNodeWithEdge node : path) {
             if (lnCd.equals(node.getLnCd())) {
                 continue;
             }
@@ -57,7 +56,7 @@ public class MetroPath implements Comparable<MetroPath> {
         return path.size();
     }
 
-    public MetroNodeWithWeight get(int idx) {
+    public MetroNodeWithEdge get(int idx) {
         return path.get(idx);
     }
 
@@ -100,24 +99,24 @@ public class MetroPath implements Comparable<MetroPath> {
     public MetroPath getCompressedPath() {
         MetroPath compressedPath = new MetroPath(new ArrayList<>());
 
-        compressedPath.addNode(new MetroNodeWithWeight(get(0)));    // 출발 노드
+        compressedPath.addNode(new MetroNodeWithEdge(get(0)));    // 출발 노드
         for (int i = 1; i < size() - 1; i++) {
-            MetroNodeWithWeight prev = get(i - 1);
-            MetroNodeWithWeight curr = get(i);
+            MetroNodeWithEdge prev = get(i - 1);
+            MetroNodeWithEdge curr = get(i);
 
             if (!prev.getLnCd().equals(curr.getLnCd())) {   // 환승역인 경우 (노선이 변경된 경우)
                 if (!prev.isJctStin()) {
-                    compressedPath.addNode(new MetroNodeWithWeight(prev));
+                    compressedPath.addNode(new MetroNodeWithEdge(prev));
                 }
-                compressedPath.addNode(new MetroNodeWithWeight(curr));
+                compressedPath.addNode(new MetroNodeWithEdge(curr));
                 continue;
             }
             if (curr.isJctStin()) { // 분기점인 경우
                 // 지선 환승은 현재 단계에서 고려 X (실제 시간표 조회에서 고려)
-                compressedPath.addNode(new MetroNodeWithWeight(curr));
+                compressedPath.addNode(new MetroNodeWithEdge(curr));
             }
         }
-        compressedPath.addNode(new MetroNodeWithWeight(get(size() - 1)));   // 종료 노드
+        compressedPath.addNode(new MetroNodeWithEdge(get(size() - 1)));   // 종료 노드
 
         return compressedPath;
     }
@@ -125,7 +124,7 @@ public class MetroPath implements Comparable<MetroPath> {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (MetroNodeWithWeight node : path) {
+        for (MetroNodeWithEdge node : path) {
             sb.append(node).append('\t');
         }
         return sb.toString();

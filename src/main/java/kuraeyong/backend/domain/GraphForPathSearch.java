@@ -121,8 +121,8 @@ public class GraphForPathSearch {
         if (connectedTrfStinList.size() == 1) {
             return;
         }
-        removeEdge(connectedTrfStinList.get(0), connectedTrfStinList.get(1));
-        removeEdge(connectedTrfStinList.get(1), connectedTrfStinList.get(0));
+        removeEdge(connectedTrfStinList.get(0), connectedTrfStinList.get(1), 0);
+        removeEdge(connectedTrfStinList.get(1), connectedTrfStinList.get(0), 0);
     }
 
     public void addEdge(MetroNode src, MetroEdge edge) {
@@ -132,26 +132,28 @@ public class GraphForPathSearch {
 
     /**
      * 인자로 GraphForPathSearch의 MetroNode를 주어야 제대로 동작함
+     * @param isExpEdge 자를 간선의 종류
+     * @return  자른 간선
      */
-    public MetroEdge removeEdge(MetroNode src, MetroNode dest) {
+    public MetroEdge removeEdge(MetroNode src, MetroNode dest, int isExpEdge) {
+//        for (MetroEdge edge : src.getEdgeList()) {
+//            System.out.printf("edge(전): %s\n", edge);
+//        }
         for (MetroEdge edge : src.getEdgeList()) {
-            System.out.printf("edge(전): %s\n", edge);
-        }
-        // TODO: 출발역과 도착역을 잇는 간선이 있으면 자른다.
-        for (MetroEdge edge : src.getEdgeList()) {
-            if (edge.getTrfNodeNo() == dest.getNodeNo()) {
+            if (edge.getIsExpEdge() == isExpEdge &&
+                    edge.getTrfNodeNo() == dest.getNodeNo()) {
                 src.getEdgeList().remove(edge);
-                System.out.printf("%s, %s을(를) 잘랐어\n", edge.getTrflnCd(), edge.getTrfStinNm());
-                for (MetroEdge edge1 : src.getEdgeList()) {
-                    System.out.printf("edge(후): %s\n", edge1);
-                }
-                System.out.println();
+//                System.out.printf("%s, %s을(를) 잘랐어\n", edge.getTrflnCd(), edge.getTrfStinNm());
+//                for (MetroEdge edge1 : src.getEdgeList()) {
+//                    System.out.printf("edge(후): %s\n", edge1);
+//                }
+//                System.out.println();
                 return edge;
             }
         }
-        System.out.printf("%s->%s 간선이 없어\n", src.getStinNm(), dest.getStinNm());
-        System.out.println();
-        System.out.println(src.getEdgeList());
+//        System.out.printf("%s->%s 간선이 없어\n", src.getStinNm(), dest.getStinNm());
+//        System.out.println();
+//        System.out.println(src.getEdgeList());
         return null;
     }
 

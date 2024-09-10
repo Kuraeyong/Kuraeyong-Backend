@@ -1,6 +1,6 @@
 package kuraeyong.backend.service;
 
-import kuraeyong.backend.domain.MetroNodeWithWeight;
+import kuraeyong.backend.domain.MetroNodeWithEdge;
 import kuraeyong.backend.domain.MetroPath;
 import kuraeyong.backend.domain.StationInfo;
 import kuraeyong.backend.domain.StationTimeTableMap;
@@ -220,8 +220,8 @@ public class StationService {
 
         String currTime = DateUtil.getCurrTime(hour, min);
         for (int i = 0; i < compressedPath.size() - 1; i++) {
-            MetroNodeWithWeight curr = compressedPath.get(i);
-            MetroNodeWithWeight next = compressedPath.get(i + 1);
+            MetroNodeWithEdge curr = compressedPath.get(i);
+            MetroNodeWithEdge next = compressedPath.get(i + 1);
 
             MoveInfo moveInfo = stationTimeTableMap.getMoveInfo(curr, next, dateType, currTime);
             currTime = moveInfo.getArvTm();

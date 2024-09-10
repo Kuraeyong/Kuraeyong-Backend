@@ -52,7 +52,7 @@ public class StationTimeTableMap {
      * @param currTime 현재 시간
      * @return 이동 정보
      */
-    public MoveInfo getMoveInfo(MetroNodeWithWeight curr, MetroNodeWithWeight next, String dateType, String currTime) {
+    public MoveInfo getMoveInfo(MetroNodeWithEdge curr, MetroNodeWithEdge next, String dateType, String currTime) {
         if (curr.getStinNm().equals(next.getStinNm())) {    // 환승역인 경우
             int weight = (int) next.getWeight();
             return MoveInfo.builder()
@@ -121,7 +121,7 @@ public class StationTimeTableMap {
         return (double) totalDuration / (trainList.size() - 1);
     }
 
-    private static MinimumStationInfo getMinimumStationInfo(MetroNodeWithWeight node) {
+    private static MinimumStationInfo getMinimumStationInfo(MetroNodeWithEdge node) {
         return MinimumStationInfo.builder()
                 .railOprIsttCd(node.getRailOprIsttCd())
                 .lnCd(node.getLnCd())

@@ -4,18 +4,18 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.List;
-
 @Getter
 @AllArgsConstructor
-public class MetroNodeWithWeight implements Comparable<MetroNodeWithWeight> {
+public class MetroNodeWithEdge implements Comparable<MetroNodeWithEdge> {
     private MetroNode node;
     @Setter
     private double weight;
+    private int isExpEdge;
 
-    public MetroNodeWithWeight(MetroNodeWithWeight node) {
+    public MetroNodeWithEdge(MetroNodeWithEdge node) {
         this.node = new MetroNode(node.node);
         this.weight = node.weight;
+        this.isExpEdge = node.isExpEdge;
     }
 
     public int getNodeNo() {
@@ -44,7 +44,7 @@ public class MetroNodeWithWeight implements Comparable<MetroNodeWithWeight> {
 
     // 가중치를 기준으로 우선순위 결정
     @Override
-    public int compareTo(MetroNodeWithWeight o) {
+    public int compareTo(MetroNodeWithEdge o) {
         return Double.compare(this.weight, o.weight);
     }
 

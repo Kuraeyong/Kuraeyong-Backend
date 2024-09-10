@@ -64,8 +64,6 @@ public class MetroMap {
         }
         graph.add(node);    // 마지막 노드 개별 추가
 
-        initTrfNodeNo();
-
         // TODO 2. 급행 간선 정보 조회
         for (EdgeInfo edgeInfo : edgeInfoRepository.findByIsExpEdgeGreaterThan(0)) {
             node = getNode(edgeInfo.getRailOprIsttCd(), edgeInfo.getLnCd(), edgeInfo.getStinCd());
@@ -79,6 +77,8 @@ public class MetroMap {
                     .build();
             node.addEdge(edge);
         }
+
+        initTrfNodeNo();
     }
 
     private void initTrfNodeNo() {
