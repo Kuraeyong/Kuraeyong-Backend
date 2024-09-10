@@ -14,7 +14,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GraphForPathSearch {
 
-    private final int TRF_STIN_CNT = 269;
+    //    private final int TRF_STIN_CNT = 269;
+    private final int TRF_OR_EXP_STIN_CNT = 378;
     private List<MetroNode> graphForPathSearch;
     private final MetroMap metroMap;
 
@@ -30,8 +31,8 @@ public class GraphForPathSearch {
     }
 
     /**
-     *
      * 일반역을 추가하는 함수
+     *
      * @inline-variable edgeInfoList 중곡->상봉, 중곡->군자
      * @inline-variable node         중곡
      * @inline-variable trfNode      상봉, (군자)
@@ -42,15 +43,18 @@ public class GraphForPathSearch {
         String lnCd = minimumStationInfo.getLnCd();
         String stinCd = minimumStationInfo.getStinCd();
         List<EdgeInfo> edgeInfoList = metroMap.getEdgeInfoRepository().findByRailOprIsttCdAndLnCdAndStinCd(railOprIsttCd, lnCd, stinCd);
-        if (edgeInfoList.get(0).getIsTrfStin() == 0) {
+        EdgeInfo anyEdgeInfo = edgeInfoList.get(0);
+        if (isGeneralStin(anyEdgeInfo)) {
             // 새로운 노드(일반역) 생성
             MetroNode node = MetroNode.builder()
                     .edgeList(new ArrayList<>())
                     .railOprIsttCd(railOprIsttCd)
                     .lnCd(lnCd)
                     .stinCd(stinCd)
-                    .stinNm(edgeInfoList.get(0).getStinNm())
+                    .stinNm(anyEdgeInfo.getStinNm())
                     .nodeNo(graphForPathSearch.size())
+                    .isJctStin(anyEdgeInfo.getIsJctStin())
+                    .isExpStin(anyEdgeInfo.getIsExpStin())
                     .build();
 
             // 새로운 노드에 간선 추가
@@ -63,6 +67,7 @@ public class GraphForPathSearch {
                         .trfStinNm(edgeInfo.getTrfStinNm())
                         .weight(edgeInfo.getWeight())
                         .trfNodeNo(trfNode.getNodeNo())
+                        .isExpEdge(edgeInfo.getIsExpEdge())
                         .build();
                 node.addEdge(edge);
             }
@@ -74,7 +79,16 @@ public class GraphForPathSearch {
     }
 
     /**
-     * 일반역을 추가함에 따라, 기존 환승역의 간선 리스트를 갱신하는 함수
+     * @param edgeInfo 해당역의 임의의 간선
+     * @return 일반역 여부 판별 (환승역도 아니고, 급행 정차역도 아닌지)
+     */
+    private static boolean isGeneralStin(EdgeInfo edgeInfo) {
+        return edgeInfo.getIsTrfStin() == 0 && edgeInfo.getIsExpStin() == 0;
+    }
+
+    /**
+     * 일반역을 추가함에 따라, 기존 환승역(또는 급행 정차역)의 간선 리스트를 갱신하는 함수
+     *
      * @inline-variable node                 중곡
      * @inline-variable connectedTrfStinList 군자, 상봉
      * @inline-variable node.getEdgeList()   중곡->군자, (중곡->상봉)
@@ -82,8 +96,8 @@ public class GraphForPathSearch {
      * @inline-variable newEdge              군자->중곡
      */
     public void updateEdgeList(int nodeNo) {
-        // 기존에 있는 역(환승역)이었다면 간선 리스트를 갱신하지 않음
-        if (nodeNo < TRF_STIN_CNT) {
+        // 기존에 있는 역(환승역이거나 급행 정차역)이었다면 간선 리스트를 갱신하지 않음
+        if (nodeNo < TRF_OR_EXP_STIN_CNT) {
             return;
         }
         MetroNode node = graphForPathSearch.get(nodeNo);
@@ -98,6 +112,7 @@ public class GraphForPathSearch {
                     .trfStinNm(node.getStinNm())
                     .weight(edge.getWeight())
                     .trfNodeNo(node.getNodeNo())
+                    .isExpEdge(edge.getIsExpEdge())
                     .build();
             trfNode.addEdge(newEdge);
         }
@@ -122,6 +137,7 @@ public class GraphForPathSearch {
         for (MetroEdge edge : src.getEdgeList()) {
             System.out.printf("edge(전): %s\n", edge);
         }
+        // TODO: 출발역과 도착역을 잇는 간선이 있으면 자른다.
         for (MetroEdge edge : src.getEdgeList()) {
             if (edge.getTrfNodeNo() == dest.getNodeNo()) {
                 src.getEdgeList().remove(edge);
@@ -133,7 +149,7 @@ public class GraphForPathSearch {
                 return edge;
             }
         }
-        System.out.println("안잘랐어");
+        System.out.printf("%s->%s 간선이 없어\n", src.getStinNm(), dest.getStinNm());
         System.out.println();
         System.out.println(src.getEdgeList());
         return null;

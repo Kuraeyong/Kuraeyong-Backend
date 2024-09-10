@@ -103,6 +103,24 @@ public class StationTimeTableMap {
                 .build();
     }
 
+    /**
+     * @param stin  고유한 역 정보
+     * @return  특정역에서의 평균 배차시간을 반환
+     */
+    public double getAvgWaitingTime(MinimumStationInfoWithDateType stin) {
+        if (!map.containsKey(stin)) {
+            return -1;
+        }
+        StationTimeTable trainList = map.get(stin);
+        StationTimeTableElement firstTrain = trainList.get(0);
+        StationTimeTableElement lastTrain = trainList.get(trainList.size() - 1);
+        int firstTrainArvTm = DateUtil.getTimeForCompare(firstTrain.getArvTm(), firstTrain.getDptTm());
+        int lastTrainArvTm = DateUtil.getTimeForCompare(lastTrain.getArvTm(), lastTrain.getDptTm());
+        int totalDuration = DateUtil.timeToMinute(lastTrainArvTm - firstTrainArvTm);
+
+        return (double) totalDuration / (trainList.size() - 1);
+    }
+
     private static MinimumStationInfo getMinimumStationInfo(MetroNodeWithWeight node) {
         return MinimumStationInfo.builder()
                 .railOprIsttCd(node.getRailOprIsttCd())

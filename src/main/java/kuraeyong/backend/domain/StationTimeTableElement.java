@@ -1,6 +1,7 @@
 package kuraeyong.backend.domain;
 
 import jakarta.persistence.*;
+import kuraeyong.backend.util.DateUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -72,19 +73,9 @@ public class StationTimeTableElement implements Comparable<StationTimeTableEleme
      */
     @Override
     public int compareTo(StationTimeTableElement o) {
-        int time1 = getTimeForCompare(this.arvTm, this.dptTm);
-        int time2 = getTimeForCompare(o.arvTm, o.dptTm);
+        int time1 = DateUtil.getTimeForCompare(this.arvTm, this.dptTm);
+        int time2 = DateUtil.getTimeForCompare(o.arvTm, o.dptTm);
 
         return Integer.compare(time1, time2);
-    }
-
-    private boolean isNull(String str) {
-        return !str.matches("[0-9]{6}");
-    }
-
-    private int getTimeForCompare(String arvTm, String dptTm) {
-        int time = isNull(dptTm) ? Integer.parseInt(arvTm) : Integer.parseInt(dptTm);
-
-        return (time < 30000) ? time + 240000 : time;
     }
 }

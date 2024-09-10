@@ -49,4 +49,10 @@ public class EdgeInfo {
 
     @Column
     private int isJctStin;
+
+    @Column
+    private int isExpStin;
+
+    @Column
+    private int isExpEdge;
 }

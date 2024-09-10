@@ -5,6 +5,7 @@ import kuraeyong.backend.domain.MetroPath;
 import kuraeyong.backend.domain.StationInfo;
 import kuraeyong.backend.domain.StationTimeTableMap;
 import kuraeyong.backend.dto.MinimumStationInfo;
+import kuraeyong.backend.dto.MinimumStationInfoWithDateType;
 import kuraeyong.backend.dto.MoveInfo;
 import kuraeyong.backend.repository.StationInfoRepository;
 import kuraeyong.backend.util.DateUtil;
@@ -228,5 +229,9 @@ public class StationService {
         }
 
         return moveInfoList;
+    }
+
+    public double getAvgWaitingTime(MinimumStationInfoWithDateType stin) {
+        return stationTimeTableMap.getAvgWaitingTime(stin);
     }
 }

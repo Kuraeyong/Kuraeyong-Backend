@@ -1,11 +1,10 @@
 package kuraeyong.backend.service;
 
-import kuraeyong.backend.repository.EdgeInfoRepository;
 import kuraeyong.backend.domain.EdgeInfo;
+import kuraeyong.backend.repository.EdgeInfoRepository;
 import kuraeyong.backend.util.FlatFileUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -16,9 +15,11 @@ import java.util.List;
 public class EdgeService {
 
     private final EdgeInfoRepository edgeInfoRepository;
+    private final static String BASE_URL = "src/main/resources/xlsx/";
 
     public String createEdgeInfoDB() {
-        List<List<String>> rowList = FlatFileUtil.getDataListFromExcel("src/main/resources/xlsx/edge_info.xlsx");
+        String file = BASE_URL + "edge_info.xlsx";
+        List<List<String>> rowList = FlatFileUtil.getDataListFromExcel(file);
         List<EdgeInfo> edgeInfoList = FlatFileUtil.toEdgeInfoList(rowList);
 
 //        edgeInfoRepository.deleteAll();

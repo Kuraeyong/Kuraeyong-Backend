@@ -5,6 +5,9 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class DateUtil {
+    public final static int DATE_CHANGE_TIME = 30000;  // 날짜 변경 기준 시간
+    public final static int CORRECTION_VALUE = 240000; // 날짜 변경 기준 시간에 따른 보정 값
+
     public static String getCurrTime(int hour, int min) {
         return makeDoubleDigits(hour) + makeDoubleDigits(min) + "00";
     }
@@ -28,5 +31,22 @@ public class DateUtil {
             return "0" + num;
         }
         return String.valueOf(num);
+    }
+
+    public static int getTimeForCompare(String arvTm, String dptTm) {
+        int time = isNull(dptTm) ? Integer.parseInt(arvTm) : Integer.parseInt(dptTm);
+
+        return (time < DATE_CHANGE_TIME) ? time + CORRECTION_VALUE : time;
+    }
+
+    public static int timeToMinute(int time) {
+        int hour = time / 10000;
+        int min = (time % 10000) / 100;
+
+        return hour * 60 + min;
+    }
+
+    private static boolean isNull(String str) {
+        return !str.matches("[0-9]{6}");
     }
 }

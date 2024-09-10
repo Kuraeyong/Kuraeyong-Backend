@@ -14,6 +14,7 @@ public class MetroEdge {
     private double weight;
     @Setter
     private int trfNodeNo;
+    private int isExpEdge;
 
     @Override
     public String toString() {
@@ -24,6 +25,7 @@ public class MetroEdge {
                 ", trfStinNm='" + trfStinNm + '\'' +
                 ", weight=" + weight +
                 ", trfNodeNo=" + trfNodeNo +
+                ", isExpEdge=" + isExpEdge +
                 '}';
     }
 
@@ -34,5 +36,10 @@ public class MetroEdge {
         this.trfStinNm = edge.trfStinNm;
         this.weight = edge.weight;
         this.trfNodeNo = edge.trfNodeNo;
+        this.isExpEdge = edge.isExpEdge;
+    }
+
+    public boolean isExpEdge() {
+        return isExpEdge == 1;
     }
 }

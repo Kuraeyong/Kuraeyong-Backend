@@ -2,6 +2,7 @@ package kuraeyong.backend.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +35,22 @@ public class MetroPath implements Comparable<MetroPath> {
         for (MetroNodeWithWeight node : path) {
             sum += node.getWeight();
         }
-        return sum;
+        return Math.round(sum * 10) / 10.0;
+    }
+
+    public int getTrfCnt() {
+        int cnt = 0;
+        String lnCd = get(0).getLnCd();
+
+        for (MetroNodeWithWeight node : path) {
+            if (lnCd.equals(node.getLnCd())) {
+                continue;
+            }
+            cnt++;
+            lnCd = node.getLnCd();
+        }
+
+        return cnt;
     }
 
     public int size() {
@@ -110,7 +126,7 @@ public class MetroPath implements Comparable<MetroPath> {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (MetroNodeWithWeight node : path) {
-            sb.append(node).append(' ');
+            sb.append(node).append('\t');
         }
         return sb.toString();
     }

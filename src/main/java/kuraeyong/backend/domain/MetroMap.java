@@ -27,7 +27,9 @@ public class MetroMap {
         EdgeInfo prevEdgeInfo = new EdgeInfo();
         String prevLnCd = "";
         int nodeNo = 0;
-        for (EdgeInfo edgeInfo : edgeInfoRepository.findByIsTrfStinGreaterThan(0)) {
+
+        // TODO 1. 일반 간선 정보 조회
+        for (EdgeInfo edgeInfo : edgeInfoRepository.findGeneralEdgeInfo()) {
             if (!isSameLine(edgeInfo.getLnCd(), prevLnCd)) {
                 lineSeparator.put(edgeInfo.getLnCd(), nodeNo);
             }
@@ -43,6 +45,7 @@ public class MetroMap {
                         .edgeList(new ArrayList<>())
                         .nodeNo(nodeNo++)
                         .isJctStin(edgeInfo.getIsJctStin())
+                        .isExpStin(edgeInfo.getIsExpStin())
                         .build();
             }
 
@@ -52,6 +55,7 @@ public class MetroMap {
                     .trfStinCd(edgeInfo.getTrfStinCd())
                     .trfStinNm(edgeInfo.getTrfStinNm())
                     .weight(edgeInfo.getWeight())
+                    .isExpEdge(edgeInfo.getIsExpEdge())
                     .build();
             node.addEdge(edge);
 
@@ -61,6 +65,20 @@ public class MetroMap {
         graph.add(node);    // 마지막 노드 개별 추가
 
         initTrfNodeNo();
+
+        // TODO 2. 급행 간선 정보 조회
+        for (EdgeInfo edgeInfo : edgeInfoRepository.findByIsExpEdgeGreaterThan(0)) {
+            node = getNode(edgeInfo.getRailOprIsttCd(), edgeInfo.getLnCd(), edgeInfo.getStinCd());
+            MetroEdge edge = MetroEdge.builder()
+                    .trfRailOprIsttCd(edgeInfo.getTrfRailOprIsttCd())
+                    .trflnCd(edgeInfo.getTrfLnCd())
+                    .trfStinCd(edgeInfo.getTrfStinCd())
+                    .trfStinNm(edgeInfo.getTrfStinNm())
+                    .weight(edgeInfo.getWeight())
+                    .isExpEdge(edgeInfo.getIsExpEdge())
+                    .build();
+            node.addEdge(edge);
+        }
     }
 
     private void initTrfNodeNo() {
