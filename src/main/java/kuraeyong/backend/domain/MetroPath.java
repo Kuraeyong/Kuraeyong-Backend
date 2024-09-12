@@ -29,24 +29,26 @@ public class MetroPath implements Comparable<MetroPath> {
         }
     }
 
-    public double getPathWeight() {
+    public double getTotalWeight() {
         double sum = 0;
         for (MetroNodeWithEdge node : path) {
             sum += node.getWeight();
+            sum += node.getWaitingTime();
         }
         return Math.round(sum * 10) / 10.0;
     }
 
     public int getTrfCnt() {
         int cnt = 0;
-        String lnCd = get(0).getLnCd();
+        EdgeType prevEdgeType = get(1).getEdgeType();
 
-        for (MetroNodeWithEdge node : path) {
-            if (lnCd.equals(node.getLnCd())) {
-                continue;
+        for (int i = 2; i < path.size(); i++) {
+            MetroNodeWithEdge node = path.get(i);
+            EdgeType currEdgeType = node.getEdgeType();
+            if (EdgeType.checkLineTrf(prevEdgeType, currEdgeType) || EdgeType.checkGenExpTrf(prevEdgeType, currEdgeType)) {
+                cnt++;
             }
-            cnt++;
-            lnCd = node.getLnCd();
+            prevEdgeType = currEdgeType;
         }
 
         return cnt;
@@ -75,6 +77,8 @@ public class MetroPath implements Comparable<MetroPath> {
         for (int i = size() - 1; i > 0; i--) {
             if (getStinNm(i).equals(orgStinNm)) {   // 출발점 갱신
                 get(i).setWeight(0);
+                get(i).setEdgeType(EdgeType.GEN_EDGE);
+                get(i + 1).setWaitingTime(0);
                 lastIdxWithOrgNm = i;
                 break;
             }
@@ -148,6 +152,6 @@ public class MetroPath implements Comparable<MetroPath> {
 
     @Override
     public int compareTo(MetroPath o) {
-        return Double.compare(this.getPathWeight(), o.getPathWeight());
+        return Double.compare(this.getTotalWeight(), o.getTotalWeight());
     }
 }

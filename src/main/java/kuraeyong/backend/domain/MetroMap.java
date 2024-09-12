@@ -29,7 +29,7 @@ public class MetroMap {
         int nodeNo = 0;
 
         // TODO 1. 일반 간선 정보 조회
-        for (EdgeInfo edgeInfo : edgeInfoRepository.findGeneralEdgeInfo()) {
+        for (EdgeInfo edgeInfo : edgeInfoRepository.findNotExpEdgeInfo()) {
             if (!isSameLine(edgeInfo.getLnCd(), prevLnCd)) {
                 lineSeparator.put(edgeInfo.getLnCd(), nodeNo);
             }
@@ -55,7 +55,7 @@ public class MetroMap {
                     .trfStinCd(edgeInfo.getTrfStinCd())
                     .trfStinNm(edgeInfo.getTrfStinNm())
                     .weight(edgeInfo.getWeight())
-                    .isExpEdge(edgeInfo.getIsExpEdge())
+                    .edgeType(EdgeType.intToEdgeType(edgeInfo.getEdgeType()))
                     .build();
             node.addEdge(edge);
 
@@ -65,7 +65,7 @@ public class MetroMap {
         graph.add(node);    // 마지막 노드 개별 추가
 
         // TODO 2. 급행 간선 정보 조회
-        for (EdgeInfo edgeInfo : edgeInfoRepository.findByIsExpEdgeGreaterThan(0)) {
+        for (EdgeInfo edgeInfo : edgeInfoRepository.findByEdgeTypeEquals(1)) {
             node = getNode(edgeInfo.getRailOprIsttCd(), edgeInfo.getLnCd(), edgeInfo.getStinCd());
             MetroEdge edge = MetroEdge.builder()
                     .trfRailOprIsttCd(edgeInfo.getTrfRailOprIsttCd())
@@ -73,7 +73,7 @@ public class MetroMap {
                     .trfStinCd(edgeInfo.getTrfStinCd())
                     .trfStinNm(edgeInfo.getTrfStinNm())
                     .weight(edgeInfo.getWeight())
-                    .isExpEdge(edgeInfo.getIsExpEdge())
+                    .edgeType(EdgeType.intToEdgeType(edgeInfo.getEdgeType()))
                     .build();
             node.addEdge(edge);
         }

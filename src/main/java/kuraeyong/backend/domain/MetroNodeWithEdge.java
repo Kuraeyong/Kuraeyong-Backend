@@ -1,21 +1,25 @@
 package kuraeyong.backend.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+@Builder
 @Getter
+@NoArgsConstructor
 @AllArgsConstructor
 public class MetroNodeWithEdge implements Comparable<MetroNodeWithEdge> {
     private MetroNode node;
     @Setter
     private double weight;
-    private int isExpEdge;
+    @Setter
+    private EdgeType edgeType;
+    @Setter
+    private double waitingTime;
 
     public MetroNodeWithEdge(MetroNodeWithEdge node) {
         this.node = new MetroNode(node.node);
         this.weight = node.weight;
-        this.isExpEdge = node.isExpEdge;
+        this.edgeType = node.edgeType;
+        this.waitingTime = node.waitingTime;
     }
 
     public int getNodeNo() {
@@ -50,6 +54,10 @@ public class MetroNodeWithEdge implements Comparable<MetroNodeWithEdge> {
 
     @Override
     public String toString() {
-        return '(' + getLnCd() + ", " + getStinNm() + ", " + weight + ')';
+        return switch (edgeType) {
+            case EXP_EDGE -> "<<" + getLnCd() + ", " + getStinNm() + ", " + weight + ", " + waitingTime + ">>";
+            case TRF_EDGE -> "[[" + getLnCd() + ", " + getStinNm() + ", " + weight + ", " + waitingTime + "]]";
+            default -> '(' + getLnCd() + ", " + getStinNm() + ", " + weight + ", " + waitingTime + ')';
+        };
     }
 }

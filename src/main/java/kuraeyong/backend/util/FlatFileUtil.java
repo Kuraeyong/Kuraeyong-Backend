@@ -49,7 +49,7 @@ public class FlatFileUtil {
                     .isTrfStin(Integer.parseInt(row.get(9).split("\\.")[0]))
                     .isJctStin(Integer.parseInt(row.get(10).split("\\.")[0]))
                     .isExpStin(Integer.parseInt(row.get(11).split("\\.")[0]))
-                    .isExpEdge(Integer.parseInt(row.get(12).split("\\.")[0]))
+                    .edgeType(Integer.parseInt(row.get(12).split("\\.")[0]))
                     .build());
         }
 

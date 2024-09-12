@@ -54,5 +54,5 @@ public class EdgeInfo {
     private int isExpStin;
 
     @Column
-    private int isExpEdge;
+    private int edgeType;
 }

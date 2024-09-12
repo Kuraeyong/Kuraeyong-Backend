@@ -67,7 +67,7 @@ public class GraphForPathSearch {
                         .trfStinNm(edgeInfo.getTrfStinNm())
                         .weight(edgeInfo.getWeight())
                         .trfNodeNo(trfNode.getNodeNo())
-                        .isExpEdge(edgeInfo.getIsExpEdge())
+                        .edgeType(EdgeType.intToEdgeType(edgeInfo.getEdgeType()))
                         .build();
                 node.addEdge(edge);
             }
@@ -112,7 +112,7 @@ public class GraphForPathSearch {
                     .trfStinNm(node.getStinNm())
                     .weight(edge.getWeight())
                     .trfNodeNo(node.getNodeNo())
-                    .isExpEdge(edge.getIsExpEdge())
+                    .edgeType(edge.getEdgeType())
                     .build();
             trfNode.addEdge(newEdge);
         }
@@ -121,8 +121,8 @@ public class GraphForPathSearch {
         if (connectedTrfStinList.size() == 1) {
             return;
         }
-        removeEdge(connectedTrfStinList.get(0), connectedTrfStinList.get(1), 0);
-        removeEdge(connectedTrfStinList.get(1), connectedTrfStinList.get(0), 0);
+        removeEdge(connectedTrfStinList.get(0), connectedTrfStinList.get(1), EdgeType.GEN_EDGE);
+        removeEdge(connectedTrfStinList.get(1), connectedTrfStinList.get(0), EdgeType.GEN_EDGE);
     }
 
     public void addEdge(MetroNode src, MetroEdge edge) {
@@ -132,28 +132,17 @@ public class GraphForPathSearch {
 
     /**
      * 인자로 GraphForPathSearch의 MetroNode를 주어야 제대로 동작함
-     * @param isExpEdge 자를 간선의 종류
+     * @param edgeType 자를 간선의 종류
      * @return  자른 간선
      */
-    public MetroEdge removeEdge(MetroNode src, MetroNode dest, int isExpEdge) {
-//        for (MetroEdge edge : src.getEdgeList()) {
-//            System.out.printf("edge(전): %s\n", edge);
-//        }
+    public MetroEdge removeEdge(MetroNode src, MetroNode dest, EdgeType edgeType) {
         for (MetroEdge edge : src.getEdgeList()) {
-            if (edge.getIsExpEdge() == isExpEdge &&
+            if (edge.getEdgeType() == edgeType &&
                     edge.getTrfNodeNo() == dest.getNodeNo()) {
                 src.getEdgeList().remove(edge);
-//                System.out.printf("%s, %s을(를) 잘랐어\n", edge.getTrflnCd(), edge.getTrfStinNm());
-//                for (MetroEdge edge1 : src.getEdgeList()) {
-//                    System.out.printf("edge(후): %s\n", edge1);
-//                }
-//                System.out.println();
                 return edge;
             }
         }
-//        System.out.printf("%s->%s 간선이 없어\n", src.getStinNm(), dest.getStinNm());
-//        System.out.println();
-//        System.out.println(src.getEdgeList());
         return null;
     }
 

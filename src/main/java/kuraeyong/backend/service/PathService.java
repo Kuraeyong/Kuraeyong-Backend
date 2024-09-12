@@ -4,7 +4,6 @@ package kuraeyong.backend.service;
 
 import kuraeyong.backend.domain.*;
 import kuraeyong.backend.dto.MinimumStationInfo;
-import kuraeyong.backend.dto.MinimumStationInfoWithDateType;
 import kuraeyong.backend.dto.MoveInfo;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +18,7 @@ public class PathService {
 
     private final GraphForPathSearch graphForPathSearch;
     private final StationService stationService;
-    private final static int YEN_CANDIDATE_CNT = 20;
+    private final static int YEN_CANDIDATE_CNT = 10;
 
     public String searchPath(String orgStinNm, String destStinNm, String dateType, int hour, int min) {
         // TODO 1. 시간표 API를 조회할 간이 경로 조회
@@ -40,13 +39,14 @@ public class PathService {
         if (shortestPathListWithExpEdge != null) {
             shortestPathList.addAll(shortestPathListWithExpEdge);
         }
-//        shortestPathList = removeDuplicatedElement(shortestPathList);
+        shortestPathList = removeDuplicatedElement(shortestPathList);
 
         for (MetroPath path : shortestPathList) {
             System.out.println(path);
-            System.out.println(path.getPathWeight());
+            System.out.println(path.getTotalWeight());
             System.out.println(path.getTrfCnt());
         }
+        System.out.println(shortestPathList.size());
         return "test 1";
 
 //        // TODO 2. 간이 경로와 시간표 API를 이용해 실소요시간을 포함한 이동 정보 조회
@@ -93,10 +93,24 @@ public class PathService {
                 check[node.getNodeNo()] = true;
             }
             check[orgNo] = false;
+
+            // rootPath 기반으로 출발역(org)의 prevNode 설정
+            MetroNodeWithEdge lastNodeOfRootPath = rootPath.get(rootPath.size() - 1);
+            if (rootPath.size() >= 2) {
+                prevNode[orgNo] = MetroNodeWithEdge.builder()
+                        .node(rootPath.get(rootPath.size() - 2).getNode())
+                        .weight(lastNodeOfRootPath.getWeight())
+                        .edgeType(lastNodeOfRootPath.getEdgeType())
+                        .waitingTime(lastNodeOfRootPath.getWaitingTime())
+                        .build();
+            }
         }
 
         PriorityQueue<MetroNodeWithEdge> pq = new PriorityQueue<>();
-        pq.offer(new MetroNodeWithEdge(graphForPathSearch.get(orgNo), 0, -1));    // (1, 0, -1)
+        pq.offer(MetroNodeWithEdge.builder()
+                .node(graphForPathSearch.get(orgNo))
+                .weight(0)
+                .build());    // (1, 0)
 
         while (!pq.isEmpty()) {
             MetroNode now = pq.poll().getNode();    // 1
@@ -112,11 +126,27 @@ public class PathService {
                     continue;
                 }
                 double weight = edge.getWeight();   // 10
-                int isExpEdge = edge.getIsExpEdge();    // 0
-                if (dist[edge.getTrfNodeNo()] > dist[nowNo] + weight) { // dist[2] > dist[1] + 10
-                    dist[edge.getTrfNodeNo()] = dist[nowNo] + weight;
-                    prevNode[edge.getTrfNodeNo()] = new MetroNodeWithEdge(now, weight, isExpEdge);    // prevNode[2] = (1, 10, 0)
-                    pq.offer(new MetroNodeWithEdge(graphForPathSearch.get(edge.getTrfNodeNo()), dist[edge.getTrfNodeNo()], -1));  // (2, 10, -1)
+                double waitingTime = 0;
+                if (prevNode[nowNo] != null) {
+                    EdgeType prevEdgeType = prevNode[nowNo].getEdgeType();
+                    EdgeType currEdgeType = edge.getEdgeType();  // 0
+                    if (EdgeType.checkLineTrf(prevEdgeType, currEdgeType) || EdgeType.checkGenExpTrf(prevEdgeType, currEdgeType)) {
+                        waitingTime = stationService.getAvgWaitingTime(now.getRailOprIsttCd(), now.getLnCd(), now.getStinCd(), dateType);
+                    }
+                }
+
+                if (dist[edge.getTrfNodeNo()] > dist[nowNo] + weight + waitingTime) { // dist[2] > dist[1] + 10
+                    dist[edge.getTrfNodeNo()] = dist[nowNo] + weight + waitingTime;
+                    prevNode[edge.getTrfNodeNo()] = MetroNodeWithEdge.builder()
+                            .node(now)
+                            .weight(weight)
+                            .edgeType(edge.getEdgeType())
+                            .waitingTime(waitingTime)
+                            .build();   // prevNode[2] = (1, 10, 0)
+                    pq.offer(MetroNodeWithEdge.builder()
+                            .node(graphForPathSearch.get(edge.getTrfNodeNo()))
+                            .weight(dist[edge.getTrfNodeNo()])
+                            .build());  // (2, 10)
                 }
             }
         }
@@ -124,7 +154,7 @@ public class PathService {
         if (dist[destNo] == Integer.MAX_VALUE) {
             return null;
         }
-        return createPath(prevNode, orgNo, destNo, dateType);
+        return createPath(prevNode, orgNo, destNo);
     }
 
     /**
@@ -166,10 +196,15 @@ public class PathService {
                     if (path.size() > j + 1 && path.subPath(0, j + 1).equals(rootPath)) {
                         MetroNode orgNode = graphForPathSearch.get(path.get(j).getNodeNo());
                         MetroNode destNode = graphForPathSearch.get(path.get(j + 1).getNodeNo());
-                        MetroEdge removedEdge = graphForPathSearch.removeEdge(orgNode, destNode, path.get(j + 1).getIsExpEdge());
+//                        MetroEdge removedEdge = graphForPathSearch.removeEdge(orgNode, destNode, path.get(j + 1).getIsExpEdge());
+                        MetroEdge removedGeneralEdge = graphForPathSearch.removeEdge(orgNode, destNode, EdgeType.GEN_EDGE);
+                        MetroEdge removedExpressEdge = graphForPathSearch.removeEdge(orgNode, destNode, EdgeType.EXP_EDGE);
 
-                        if (removedEdge != null) {
-                            removedEdgeList.add(removedEdge);
+                        if (removedGeneralEdge != null) {
+                            removedEdgeList.add(removedGeneralEdge);
+                        }
+                        if (removedExpressEdge != null) {
+                            removedEdgeList.add(removedExpressEdge);
                         }
                     }
                 }
@@ -192,7 +227,7 @@ public class PathService {
                     System.out.printf("spurNode: %s\n", spurPath.get(0).getNode());
 //                    System.out.printf("spurNode: %s\n", graphForPathSearch.get(spurNode.getNodeNo()));
                     System.out.printf("totalPath: %s\n", totalPath);
-                    System.out.printf("totalPath.getPathWeight(): %.1f\n", totalPath.getPathWeight());
+                    System.out.printf("totalPath.getPathWeight(): %.1f\n", totalPath.getTotalWeight());
                     System.out.println();
 
                     if (!pathSet.contains(totalPath)) {
@@ -270,42 +305,31 @@ public class PathService {
     /**
      * 다익스트라 알고리즘의 결과로, MetroPath를 일차적으로 완성 (이후 가공)
      */
-    private MetroPath createPath(MetroNodeWithEdge[] prevNode, int orgNo, int destNo, String dateType) {
+    private MetroPath createPath(MetroNodeWithEdge[] prevNode, int orgNo, int destNo) {
         Stack<MetroNodeWithEdge> pathStack = new Stack<>();
 
         // push
         while (destNo != orgNo) {
             MetroNodeWithEdge node = prevNode[destNo];
-            pathStack.push(new MetroNodeWithEdge(graphForPathSearch.get(destNo), node.getWeight(), node.getIsExpEdge()));    // (5, 20, 1)
+            pathStack.push(MetroNodeWithEdge.builder()
+                    .node(graphForPathSearch.get(destNo))
+                    .weight(node.getWeight())
+                    .edgeType(node.getEdgeType())
+                    .waitingTime(node.getWaitingTime())
+                    .build());    // (5, 20, 1)
             destNo = node.getNodeNo();
         }
-        pathStack.push(new MetroNodeWithEdge(graphForPathSearch.get(orgNo), 0, -1));    // (1, 0, -1)
+        pathStack.push(MetroNodeWithEdge.builder()
+                .node(graphForPathSearch.get(orgNo))
+                .weight(0)
+                .edgeType(EdgeType.NONE)
+                .waitingTime(0)
+                .build());    // (1, 0, -1)
 
         // pop
         MetroPath path = new MetroPath(new ArrayList<>());
         while (!pathStack.isEmpty()) {
             path.addNode(pathStack.pop());
-        }
-
-        // 노선 환승시, 평균 대기시간 반영
-        String lnCd = path.get(0).getLnCd();
-        for (int i = 0; i < path.size(); i++) {
-            MetroNodeWithEdge node = path.get(i);
-            if (lnCd.equals(node.getLnCd())) {
-                continue;
-            }
-            lnCd = node.getLnCd();
-            MinimumStationInfo minimumStationInfo = MinimumStationInfo.builder()
-                    .railOprIsttCd(node.getRailOprIsttCd())
-                    .lnCd(node.getLnCd())
-                    .stinCd(node.getStinCd())
-                    .build();
-            MinimumStationInfoWithDateType key = new MinimumStationInfoWithDateType(minimumStationInfo, dateType);
-
-            // FIXME: out of bounds 발생 (추후, i+1로 수정해야 함)
-            MetroNodeWithEdge nextNode = path.get(i);
-            double weight = nextNode.getWeight() + stationService.getAvgWaitingTime(key);
-            nextNode.setWeight(Math.round(weight * 10) / 10.0);
         }
 
         return path;

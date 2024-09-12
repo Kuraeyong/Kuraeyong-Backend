@@ -231,7 +231,14 @@ public class StationService {
         return moveInfoList;
     }
 
-    public double getAvgWaitingTime(MinimumStationInfoWithDateType stin) {
-        return stationTimeTableMap.getAvgWaitingTime(stin);
+    public double getAvgWaitingTime(String railOprIsttCd, String lnCd, String stinCd, String dateType) {
+        MinimumStationInfo minimumStationInfo = MinimumStationInfo.builder()
+                .railOprIsttCd(railOprIsttCd)
+                .lnCd(lnCd)
+                .stinCd(stinCd)
+                .build();
+        MinimumStationInfoWithDateType key = new MinimumStationInfoWithDateType(minimumStationInfo, dateType);
+        double avgWaitingTime = stationTimeTableMap.getAvgWaitingTime(key);
+        return Math.round(avgWaitingTime * 10) / 10.0;
     }
 }
