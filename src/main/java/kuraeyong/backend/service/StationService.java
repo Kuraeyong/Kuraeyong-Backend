@@ -1,9 +1,6 @@
 package kuraeyong.backend.service;
 
-import kuraeyong.backend.domain.MetroNodeWithEdge;
-import kuraeyong.backend.domain.MetroPath;
-import kuraeyong.backend.domain.StationInfo;
-import kuraeyong.backend.domain.StationTimeTableMap;
+import kuraeyong.backend.domain.*;
 import kuraeyong.backend.dto.MinimumStationInfo;
 import kuraeyong.backend.dto.MinimumStationInfoWithDateType;
 import kuraeyong.backend.dto.MoveInfo;
@@ -24,6 +21,7 @@ import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -240,5 +238,18 @@ public class StationService {
         MinimumStationInfoWithDateType key = new MinimumStationInfoWithDateType(minimumStationInfo, dateType);
         double avgWaitingTime = stationTimeTableMap.getAvgWaitingTime(key);
         return Math.round(avgWaitingTime * 10) / 10.0;
+    }
+
+    public void printSINDORIM() {
+        HashMap<MinimumStationInfoWithDateType, StationTimeTable> map = stationTimeTableMap.getMap();
+        MinimumStationInfo minimumStationInfo = MinimumStationInfo.builder()
+                .railOprIsttCd("S1")
+                .lnCd("2")
+                .stinCd("234")
+                .build();
+        MinimumStationInfoWithDateType key = new MinimumStationInfoWithDateType(minimumStationInfo, "평일");
+        for (StationTimeTableElement stationTimeTableElement :map.get(key).getList()) {
+            System.out.println(stationTimeTableElement);
+        }
     }
 }

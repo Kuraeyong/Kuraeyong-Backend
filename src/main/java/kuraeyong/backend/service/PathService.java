@@ -41,26 +41,19 @@ public class PathService {
         }
         shortestPathList = removeDuplicatedElement(shortestPathList);
 
+        // TODO 2. 간이 경로와 시간표 API를 이용해 실소요시간을 포함한 이동 정보 조회
         for (MetroPath path : shortestPathList) {
             System.out.println(path);
             System.out.println(path.getTotalWeight());
             System.out.println(path.getTrfCnt());
+            System.out.println(path.getCompressedPath());
+            List<MoveInfo> moveInfoList = getMoveInfoList(path.getCompressedPath(), dateType, hour, min);
+            for (MoveInfo moveInfo : moveInfoList) {
+                System.out.println(moveInfo);
+            }
+            System.out.println();
         }
-        System.out.println(shortestPathList.size());
-        return "test 1";
-
-//        // TODO 2. 간이 경로와 시간표 API를 이용해 실소요시간을 포함한 이동 정보 조회
-//        for (MetroPath path : shortestPathList) {
-//            System.out.println(path.getPathWeight());
-//            System.out.println(path);
-//            System.out.println(path.getCompressedPath());
-//            List<MoveInfo> moveInfoList = getMoveInfoList(path.getCompressedPath(), dateType, hour, min);
-//            for (MoveInfo moveInfo : moveInfoList) {
-//                System.out.println(moveInfo);
-//            }
-//            System.out.println();
-//        }
-//        return "successfully searched";
+        return "successfully searched";
     }
 
     private List<MetroPath> removeDuplicatedElement(List<MetroPath> shortestPathList) {
@@ -187,16 +180,10 @@ public class PathService {
 
                 // 루트 경로와 중복되지 않도록 기존 경로에서 간선을 제거
                 List<MetroEdge> removedEdgeList = new ArrayList<>();
-//                System.out.printf("[%d, %d 이전, 자르기 작업]\n", i, j);
                 for (MetroPath path : shortestPathList) {
-//                    System.out.printf("prevPath\t %s\n", prevPath);
-//                    System.out.println(prevPath.size());
-//                    System.out.printf("path\t\t %s\n", path);
-//                    System.out.println(path.size());
                     if (path.size() > j + 1 && path.subPath(0, j + 1).equals(rootPath)) {
                         MetroNode orgNode = graphForPathSearch.get(path.get(j).getNodeNo());
                         MetroNode destNode = graphForPathSearch.get(path.get(j + 1).getNodeNo());
-//                        MetroEdge removedEdge = graphForPathSearch.removeEdge(orgNode, destNode, path.get(j + 1).getIsExpEdge());
                         MetroEdge removedGeneralEdge = graphForPathSearch.removeEdge(orgNode, destNode, EdgeType.GEN_EDGE);
                         MetroEdge removedExpressEdge = graphForPathSearch.removeEdge(orgNode, destNode, EdgeType.EXP_EDGE);
 
@@ -225,7 +212,6 @@ public class PathService {
                     System.out.printf("rootPath: %s\n", rootPath);
                     System.out.printf("spurPath: %s\n", spurPath);
                     System.out.printf("spurNode: %s\n", spurPath.get(0).getNode());
-//                    System.out.printf("spurNode: %s\n", graphForPathSearch.get(spurNode.getNodeNo()));
                     System.out.printf("totalPath: %s\n", totalPath);
                     System.out.printf("totalPath.getPathWeight(): %.1f\n", totalPath.getTotalWeight());
                     System.out.println();

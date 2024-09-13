@@ -53,7 +53,7 @@ public class StationTimeTableMap {
      * @return 이동 정보
      */
     public MoveInfo getMoveInfo(MetroNodeWithEdge curr, MetroNodeWithEdge next, String dateType, String currTime) {
-        if (curr.getStinNm().equals(next.getStinNm())) {    // 환승역인 경우
+        if (next.getEdgeType() == EdgeType.TRF_EDGE) {    // 환승역인 경우
             int weight = (int) next.getWeight();
             return MoveInfo.builder()
                     .lnCd(null)
@@ -72,7 +72,7 @@ public class StationTimeTableMap {
         StationTimeTable B_TimeTable = map.get(new MinimumStationInfoWithDateType(B, dateType));
 
         // 현재 시간 이후에 A역에 오는 열차 리스트 (이후 상시 적용)
-        List<StationTimeTableElement> A_TrainList = A_TimeTable.findByDptTmGreaterThan(currTime);
+        List<StationTimeTableElement> A_TrainList = A_TimeTable.findByDptTmGreaterThanEqual(currTime);
         if (A_TrainList == null) {
             return null;
         }

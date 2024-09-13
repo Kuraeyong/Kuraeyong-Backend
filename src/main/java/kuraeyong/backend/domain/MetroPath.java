@@ -98,29 +98,48 @@ public class MetroPath implements Comparable<MetroPath> {
     }
 
     /**
-     * 압축된 경로에서는 더 이상 weight가 유효하지 않음
+     * 압축된 경로에서는 MSI만 유효함 (weight, edgeType, waitingTime 의미 X)
      */
     public MetroPath getCompressedPath() {
-        MetroPath compressedPath = new MetroPath(new ArrayList<>());
+        boolean[] check = new boolean[size()];  // compressedPath에 포함할 요소인지 판정
+        check[0] = true;
+        check[size() - 1] = true;
 
-        compressedPath.addNode(new MetroNodeWithEdge(get(0)));    // 출발 노드
-        for (int i = 1; i < size() - 1; i++) {
-            MetroNodeWithEdge prev = get(i - 1);
+        boolean recentExpState = false;
+        for (int i = 0; i < size(); i++) {
             MetroNodeWithEdge curr = get(i);
 
-            if (!prev.getLnCd().equals(curr.getLnCd())) {   // 환승역인 경우 (노선이 변경된 경우)
-                if (!prev.isJctStin()) {
-                    compressedPath.addNode(new MetroNodeWithEdge(prev));
-                }
-                compressedPath.addNode(new MetroNodeWithEdge(curr));
+            // TODO. 분기점 검사
+            if (curr.isJctStin()) {
+                check[i] = true;
+            }
+
+            // TODO. 환승역 여부 검사
+            if (curr.getEdgeType() == EdgeType.TRF_EDGE) {
+                recentExpState = false;
+                check[i - 1] = true;
+                check[i] = true;
+            }
+
+            // TODO. 급행 정차역 여부 검사
+            if (curr.isExpStin() == recentExpState) {
                 continue;
             }
-            if (curr.isJctStin()) { // 분기점인 경우
-                // 지선 환승은 현재 단계에서 고려 X (실제 시간표 조회에서 고려)
-                compressedPath.addNode(new MetroNodeWithEdge(curr));
+            if (curr.isExpStin()) {
+                check[i] = true;
+                recentExpState = true;
+                continue;
+            }
+            check[i - 1] = true;
+            recentExpState = false;
+        }
+
+        MetroPath compressedPath = new MetroPath(new ArrayList<>());
+        for (int i = 0; i < check.length; i++) {
+            if (check[i]) {
+                compressedPath.addNode(new MetroNodeWithEdge(get(i)));
             }
         }
-        compressedPath.addNode(new MetroNodeWithEdge(get(size() - 1)));   // 종료 노드
 
         return compressedPath;
     }

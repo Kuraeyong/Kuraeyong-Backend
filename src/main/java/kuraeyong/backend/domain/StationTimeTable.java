@@ -31,13 +31,15 @@ public class StationTimeTable {
     }
 
     /**
-     * 특정 시간(dptTm) 이후에 도착하는 열차 목록 조회
+     * 특정시간(time) 이후에 도착하는 열차 목록 조회
      */
-    public List<StationTimeTableElement> findByDptTmGreaterThan(String dptTm) {
+    public List<StationTimeTableElement> findByDptTmGreaterThanEqual(String time) {
         for (int i = 0; i < size(); i++) {
-            // 출발시간이 null이면 도착시간을 기준으로 비교
-            String time = get(i).getArvTm().equals("null")? get(i).getDptTm() : get(i).getArvTm();
-            if (dptTm.compareTo(time) <= 0) {
+            StationTimeTableElement train = get(i);
+
+            // 출발시간이 null이면(종점이면) 도착시간을 기준으로 비교
+            String dptTm = train.getDptTm().equals("null") ? train.getArvTm() : train.getDptTm();
+            if (dptTm.compareTo(time) >= 0) {
                 return list.subList(i, size());
             }
         }
@@ -45,10 +47,10 @@ public class StationTimeTable {
     }
 
     /**
-     * 특정시간(currTime) 이후에 이 열차(trnNo)가 해당 역에 도착하는지 조회 (도착하면 열차 반환)
+     * 특정시간(time) 이후에 이 열차(trnNo)가 해당 역에 도착하는지 조회 (도착하면 열차 반환)
      */
-    public StationTimeTableElement getStoppingTrainAfterCurrTime(String trnNo, String currTime) {
-        List<StationTimeTableElement> trainList = findByDptTmGreaterThan(currTime);
+    public StationTimeTableElement getStoppingTrainAfterCurrTime(String trnNo, String time) {
+        List<StationTimeTableElement> trainList = findByDptTmGreaterThanEqual(time);
         if (trainList == null) {
             return null;
         }

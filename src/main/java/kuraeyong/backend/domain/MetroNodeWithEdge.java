@@ -46,6 +46,10 @@ public class MetroNodeWithEdge implements Comparable<MetroNodeWithEdge> {
         return node.getIsJctStin() > 0;
     }
 
+    public boolean isExpStin() {
+        return node.getIsExpStin() == 1;
+    }
+
     // 가중치를 기준으로 우선순위 결정
     @Override
     public int compareTo(MetroNodeWithEdge o) {
