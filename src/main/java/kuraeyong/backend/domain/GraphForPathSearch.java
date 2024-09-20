@@ -15,7 +15,7 @@ import java.util.List;
 public class GraphForPathSearch {
 
     //    private final int TRF_STIN_CNT = 269;
-    private final int TRF_OR_EXP_STIN_CNT = 378;
+    public final int TRF_OR_EXP_STIN_CNT = 378;
     private List<MetroNode> graphForPathSearch;
     private final MetroMap metroMap;
 

@@ -28,10 +28,10 @@ public class PathService {
     public String searchPath(String orgStinNm, String destStinNm, String dateType, int hour, int min) {
         // TODO 1. 시간표 API를 조회할 간이 경로 조회
         graphForPathSearch.init();
-        MinimumStationInfo orgStin = stationService.getStationByName(orgStinNm);
-        MinimumStationInfo destStin = stationService.getStationByName(destStinNm);
-        int orgNo = graphForPathSearch.addNode(orgStin);
-        int destNo = graphForPathSearch.addNode(destStin);
+        MinimumStationInfo orgMSI = stationService.getStationByName(orgStinNm);
+        MinimumStationInfo destMSI = stationService.getStationByName(destStinNm);
+        int orgNo = graphForPathSearch.addNode(orgMSI);
+        int destNo = graphForPathSearch.addNode(destMSI);
         graphForPathSearch.updateEdgeList(orgNo);
         graphForPathSearch.updateEdgeList(destNo);
 
@@ -45,6 +45,7 @@ public class PathService {
             shortestPathList.addAll(shortestPathListWithExpEdge);
         }
         shortestPathList = removeDuplicatedElement(shortestPathList);
+        addDirectPath(shortestPathList, orgNo, destNo);
 
         // TODO 2. 간이 경로와 시간표 API를 이용해 실소요시간을 포함한 이동 정보 조회
         for (MetroPath path : shortestPathList) {
@@ -67,6 +68,29 @@ public class PathService {
         LinkedHashSet<MetroPath> linkedHashSet = new LinkedHashSet<>(shortestPathList);
 
         return new ArrayList<>(linkedHashSet);
+    }
+
+    private void addDirectPath(List<MetroPath> shortestPathList, int orgNo, int destNo) {
+        MetroNode org = graphForPathSearch.get(orgNo);
+        MetroNode dest = graphForPathSearch.get(destNo);
+        if (!org.getLnCd().equals(dest.getLnCd())) {    // 노선 환승이 필요한 경우
+            return;
+        }
+        if (orgNo < graphForPathSearch.TRF_OR_EXP_STIN_CNT || destNo < graphForPathSearch.TRF_OR_EXP_STIN_CNT) {    // 하나라도 일반역이 아닌 경우
+            return;
+        }
+
+        // TODO. 두 일반역을 직선으로 잇는 경로 하나 생성
+        MetroPath directPath = new MetroPath(new ArrayList<>());
+        directPath.addNode(MetroNodeWithEdge.builder()
+                .node(new MetroNode(org))
+                .edgeType(EdgeType.GEN_EDGE)
+                .build());
+        directPath.addNode(MetroNodeWithEdge.builder()
+                .node(new MetroNode(dest))
+                .edgeType(EdgeType.GEN_EDGE)
+                .build());
+        shortestPathList.add(directPath);
     }
 
     /**
@@ -331,12 +355,11 @@ public class PathService {
     }
 
     /**
-     *
-     * @param compressedPath    e.g.) (K4, 행신, 0.0) (K4, 홍대입구, 2.5) (2, 홍대입구, 6.5) (2, 성수, 5.5) (2, 용답, 3.5)
-     * @param dateType  날짜 종류 (평일 | 토요일 | 공휴일)
-     * @param hour  사용자의 해당 역 도착 시간 (시간)
-     * @param min   사용자의 해당 역 도착 시간 (분)
-     * @return  이동 정보 리스트
+     * @param compressedPath e.g.) (K4, 행신, 0.0) (K4, 홍대입구, 2.5) (2, 홍대입구, 6.5) (2, 성수, 5.5) (2, 용답, 3.5)
+     * @param dateType       날짜 종류 (평일 | 토요일 | 공휴일)
+     * @param hour           사용자의 해당 역 도착 시간 (시간)
+     * @param min            사용자의 해당 역 도착 시간 (분)
+     * @return 이동 정보 리스트
      */
     public List<MoveInfo> getMoveInfoList(MetroPath compressedPath, String dateType, int hour, int min) {
         List<MoveInfo> moveInfoList = new ArrayList<>();
