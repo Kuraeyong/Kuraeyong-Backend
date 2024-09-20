@@ -20,7 +20,7 @@ public enum DirectionType {
         return directionType;
     }
 
-    public static DirectionType convertTrfDirectionType(DirectionType prev, DirectionType next) {
+    public static DirectionType convertToTrfDirectionType(DirectionType prev, DirectionType next) {
         if (prev == UP && next == UP) {
             return UP_UP;
         }

@@ -16,6 +16,7 @@ public class MetroNodeWithEdge implements Comparable<MetroNodeWithEdge> {
     private double waitingTime;
     @Setter
     private DirectionType direction;   // UP, DOWN
+    private BranchDirectionType branchDirection;    // MAIN_TO_SUB, SUB_TO_MAIN
 
     public MetroNodeWithEdge(MetroNodeWithEdge node) {
         this.node = new MetroNode(node.node);
@@ -23,6 +24,7 @@ public class MetroNodeWithEdge implements Comparable<MetroNodeWithEdge> {
         this.edgeType = node.edgeType;
         this.waitingTime = node.waitingTime;
         this.direction = node.direction;
+        this.branchDirection = node.branchDirection;
     }
 
     public int getNodeNo() {
@@ -69,13 +71,12 @@ public class MetroNodeWithEdge implements Comparable<MetroNodeWithEdge> {
 
     @Override
     public String toString() {
+        String nodeInfo = getLnCd() + ", " + getStinNm() + ", " + weight + ", " + waitingTime + ", " + direction + ", " + branchDirection;
+
         return switch (edgeType) {
-            case EXP_EDGE ->
-                    "<<" + getLnCd() + ", " + getStinNm() + ", " + weight + ", " + waitingTime + ", " + direction + ">>";
-            case TRF_EDGE ->
-                    "[[" + getLnCd() + ", " + getStinNm() + ", " + weight + ", " + waitingTime + ", " + direction + "]]";
-            default ->
-                    '(' + getLnCd() + ", " + getStinNm() + ", " + weight + ", " + waitingTime + ", " + direction + ')';
+            case EXP_EDGE -> "<<" + nodeInfo + ">>";
+            case TRF_EDGE -> "[[" + nodeInfo + "]]";
+            default -> '(' + nodeInfo + ')';
         };
     }
 }

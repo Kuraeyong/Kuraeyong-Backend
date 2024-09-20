@@ -48,8 +48,7 @@ public class PathService {
 
         // TODO 2. 간이 경로와 시간표 API를 이용해 실소요시간을 포함한 이동 정보 조회
         for (MetroPath path : shortestPathList) {
-            MetroPath compressedPath = path.getCompressedPath();
-            compressedPath.setDirection();
+            MetroPath compressedPath = path.getCompressPath();
 
             System.out.println(path);
             System.out.println(path.getTotalWeight());
@@ -366,7 +365,7 @@ public class PathService {
         if (next.getEdgeType() == EdgeType.TRF_EDGE) {    // 환승역인 경우
             MinimumStationInfo currMSI = MinimumStationInfo.get(curr);
             MinimumStationInfo nextMSI = MinimumStationInfo.get(next);
-            int weight = stationTrfWeightMap.getStationTrfWeight(currMSI, nextMSI, next.getDirection());
+            int weight = stationTrfWeightMap.getStationTrfWeight(currMSI, nextMSI, next.getBranchDirection(), next.getDirection());
 
             return MoveInfo.builder()
                     .lnCd(null)

@@ -31,10 +31,15 @@ public class StationTrfWeightMap {
         return map.get(key);
     }
 
-    public int getStationTrfWeight(MinimumStationInfo org, MinimumStationInfo dest, DirectionType dir) {
+    public int getStationTrfWeight(MinimumStationInfo org, MinimumStationInfo dest, BranchDirectionType branchDir, DirectionType dir) {
         for (StationTrfWeight row : get(org).getList()) {
-            if (!dest.getLnCd().equals(row.getTrfLnCd())) {
+            if (!dest.getLnCd().equals(row.getTrfLnCd())) { // 환승하고자 하는 노선이 아닌 경우
                 continue;
+            }
+            if (branchDir != null) {
+                if (!branchDir.get().equals(row.getTrfType())) {
+                    continue;
+                }
             }
             return switch (dir) {
                 case UP_UP -> row.getUpUp();

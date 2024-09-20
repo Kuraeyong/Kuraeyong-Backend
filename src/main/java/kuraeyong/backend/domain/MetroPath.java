@@ -97,10 +97,21 @@ public class MetroPath implements Comparable<MetroPath> {
         path = path.subList(lastIdxWithOrgNm, firstIdxWithDestNm + 1);
     }
 
+    public MetroPath getCompressPath() {
+        MetroPath compressedPath = compressPath();
+        int idx = 1;
+        while (idx != -1) {
+            idx = compressedPath.addBranchTrfNode(idx);
+        }
+        compressedPath.setDirection();
+
+        return compressedPath;
+    }
+
     /**
      * 압축된 경로에서는 MSI만 유효함 (weight, edgeType, waitingTime 의미 X)
      */
-    public MetroPath getCompressedPath() {
+    private MetroPath compressPath() {
         boolean[] check = new boolean[size()];  // compressedPath에 포함할 요소인지 판정
         check[0] = true;
         check[size() - 1] = true;
@@ -144,11 +155,53 @@ public class MetroPath implements Comparable<MetroPath> {
         return compressedPath;
     }
 
-    public void setDirection() {
+    private int addBranchTrfNode(int idx) {
+        for (int i = idx; i < size() - 1; i++) {
+            MetroNodeWithEdge prev = get(i - 1);
+            MetroNodeWithEdge curr = get(i);
+            MetroNodeWithEdge next = get(i + 1);
+            String prevBranchInfo = prev.getBranchInfo();
+            String nextBranchInfo = next.getBranchInfo();
+
+            if (!isBranchTrf(prev, curr, next)) {
+                continue;
+            }
+            if (prevBranchInfo.equals(nextBranchInfo)) {
+                continue;
+            }
+            if (prevBranchInfo.length() != nextBranchInfo.length()) {
+                continue;
+            }
+            if (curr.getLnCd().equals("6")) {
+                int prevBranchVal = Integer.parseInt(prevBranchInfo);
+                int nextBranchVal = Integer.parseInt(nextBranchInfo);
+
+                if (prevBranchVal < 1 || nextBranchVal < 1) {
+                    continue;
+                }
+                if (prevBranchVal - nextBranchVal >= 0) {
+                    continue;
+                }
+            }
+            path.add(i + 1, MetroNodeWithEdge.builder()
+                    .node(curr.getNode())
+                    .edgeType(EdgeType.TRF_EDGE)
+                    .branchDirection(BranchDirectionType.convertToBranchDirectionType(prevBranchInfo, nextBranchInfo))
+                    .build());
+            return i + 2;
+        }
+        return -1;
+    }
+
+    private boolean isBranchTrf(MetroNodeWithEdge prev, MetroNodeWithEdge curr, MetroNodeWithEdge next) {
+        return curr.isJctStin() && prev.getLnCd().equals(next.getLnCd());
+    }
+
+    private void setDirection() {
         // TODO. 일반, 급행 간선의 방향 설정 (상, 하)
-        for (int i = 0; i < path.size() - 1; i++) {
-            MetroNodeWithEdge curr = path.get(i);
-            MetroNodeWithEdge next = path.get(i + 1);
+        for (int i = 0; i < size() - 1; i++) {
+            MetroNodeWithEdge curr = get(i);
+            MetroNodeWithEdge next = get(i + 1);
 
             if (next.getEdgeType() == EdgeType.TRF_EDGE) {
                 continue;
@@ -161,15 +214,15 @@ public class MetroPath implements Comparable<MetroPath> {
         }
 
         // TODO. 환승 간선의 방향 설정 (상상, 상하, 하상, 하하)
-        for (int i = 1; i < path.size() - 1; i++) {
-            MetroNodeWithEdge prev = path.get(i - 1);
-            MetroNodeWithEdge curr = path.get(i);
-            MetroNodeWithEdge next = path.get(i + 1);
+        for (int i = 1; i < size() - 1; i++) {
+            MetroNodeWithEdge prev = get(i - 1);
+            MetroNodeWithEdge curr = get(i);
+            MetroNodeWithEdge next = get(i + 1);
 
             if (curr.getEdgeType() != EdgeType.TRF_EDGE) {
                 continue;
             }
-            curr.setDirection(DirectionType.convertTrfDirectionType(prev.getDirection(), next.getDirection()));
+            curr.setDirection(DirectionType.convertToTrfDirectionType(prev.getDirection(), next.getDirection()));
         }
     }
 
