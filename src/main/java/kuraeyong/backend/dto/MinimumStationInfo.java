@@ -1,5 +1,6 @@
 package kuraeyong.backend.dto;
 
+import kuraeyong.backend.domain.MetroNodeWithEdge;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,5 +28,17 @@ public class MinimumStationInfo {
     @Override
     public int hashCode() {
         return Objects.hash(railOprIsttCd, lnCd, stinCd);
+    }
+
+    public static MinimumStationInfo build(String railOprIsttCd, String lnCd, String stinCd) {
+        return MinimumStationInfo.builder()
+                .railOprIsttCd(railOprIsttCd)
+                .lnCd(lnCd)
+                .stinCd(stinCd)
+                .build();
+    }
+
+    public static MinimumStationInfo get(MetroNodeWithEdge node) {
+        return build(node.getRailOprIsttCd(), node.getLnCd(), node.getStinCd());
     }
 }

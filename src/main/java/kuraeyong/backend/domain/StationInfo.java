@@ -18,20 +18,17 @@ public class StationInfo {
     private String railOprIsttCd;
 
     @Column
-    private String railOprIsttNm;
-
-    @Column
     private String lnCd;
-
-    @Column
-    private String lnNm;
-
-    @Column
-    private String stinNo;
 
     @Column
     private String stinCd;
 
     @Column
     private String stinNm;
+
+    @Column
+    private int upDownOrder;
+
+    @Column
+    private String branchInfo;
 }

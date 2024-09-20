@@ -18,8 +18,8 @@ public class EdgeService {
     private final static String BASE_URL = "src/main/resources/xlsx/";
 
     public String createEdgeInfoDB() {
-        String file = BASE_URL + "edge_info.xlsx";
-        List<List<String>> rowList = FlatFileUtil.getDataListFromExcel(file);
+        String filePath = BASE_URL + "edge_info.xlsx";
+        List<List<String>> rowList = FlatFileUtil.getDataListFromExcel(filePath);
         List<EdgeInfo> edgeInfoList = FlatFileUtil.toEdgeInfoList(rowList);
 
 //        edgeInfoRepository.deleteAll();

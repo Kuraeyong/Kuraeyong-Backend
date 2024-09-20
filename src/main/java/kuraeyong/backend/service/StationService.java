@@ -1,11 +1,10 @@
 package kuraeyong.backend.service;
 
-import kuraeyong.backend.domain.*;
+import kuraeyong.backend.domain.StationInfo;
+import kuraeyong.backend.domain.StationTrfWeight;
 import kuraeyong.backend.dto.MinimumStationInfo;
-import kuraeyong.backend.dto.MinimumStationInfoWithDateType;
-import kuraeyong.backend.dto.MoveInfo;
 import kuraeyong.backend.repository.StationInfoRepository;
-import kuraeyong.backend.util.DateUtil;
+import kuraeyong.backend.repository.StationTrfWeightRepository;
 import kuraeyong.backend.util.FlatFileUtil;
 import kuraeyong.backend.util.OpenApiUtil;
 import lombok.RequiredArgsConstructor;
@@ -20,8 +19,6 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 @Slf4j
@@ -30,7 +27,8 @@ import java.util.List;
 public class StationService {
 
     private final StationInfoRepository stationInfoRepository;
-    private final StationTimeTableMap stationTimeTableMap;
+    private final StationTrfWeightRepository stationTrfWeightRepository;
+    private final static String BASE_URL = "src/main/resources/xlsx/";
     private static String csvFilePath, logFilePath;
 
     @Value("${csv-file-path}")
@@ -47,7 +45,8 @@ public class StationService {
      *  StationInfo DB 생성 및 초기화
      */
     public String createStationInfoDB() {
-        List<List<String>> rowList = FlatFileUtil.getDataListFromExcel("src/main/resources/xlsx/station_code_info.xlsx");
+        String filePath = BASE_URL + "station_info.xlsx";
+        List<List<String>> rowList = FlatFileUtil.getDataListFromExcel(filePath);
         List<StationInfo> stationInfoList = FlatFileUtil.toStationInfoList(rowList);
 
         stationInfoRepository.deleteAll();
@@ -59,8 +58,22 @@ public class StationService {
         return "FAILED";
     }
 
+    public String createStationTrfWeightDB() {
+        String filePath = BASE_URL + "station_trf_weight.xlsx";
+        List<List<String>> rowList = FlatFileUtil.getDataListFromExcel(filePath);
+        List<StationTrfWeight> stationTrfWeightList = FlatFileUtil.toStationTrfWeightList(rowList);
+
+        stationTrfWeightRepository.deleteAll();
+        List<StationTrfWeight> saveResult = stationTrfWeightRepository.saveAll(stationTrfWeightList);
+
+        if (saveResult.size() == stationTrfWeightList.size()) {
+            return "SUCCESS";
+        }
+        return "FAILED";
+    }
+
     /**
-     * API 결과 CSV 파일에 저장
+     * 역사 시간표와 관련한 API 응답 결과를 station_time_table_[csvFilePath]에 저장
      */
     public void saveApiResultToCsv() {
         List<StationInfo> stationInfoList = stationInfoRepository.findAll();
@@ -119,7 +132,7 @@ public class StationService {
                     continue;
                 }
 
-                // csv 파일에 저장
+                // TODO. CSV 파일에 저장
                 for (Object parseLine : parseBody) {
                     lineCount++;
                     JSONObject line = (JSONObject) parseLine;
@@ -150,14 +163,13 @@ public class StationService {
     }
 
     /**
-     * CSV 파일 로드
+     * CSV 파일이 정상적으로 로드되는지 테스트
      */
     public void loadCsv() {
-        String filePath = "src/main/resources/station_time_table_holiday.csv";
         File file;
         BufferedReader br;
 
-        file = new File(filePath);
+        file = new File(csvFilePath);
         try {
             br = new BufferedReader(new InputStreamReader(new FileInputStream(file), StandardCharsets.UTF_8));
             String line;
@@ -197,59 +209,7 @@ public class StationService {
             return null;
         }
 
-        StationInfo stationInfo = stationInfoList.get(0);
-        return MinimumStationInfo.builder()
-                .railOprIsttCd(stationInfo.getRailOprIsttCd())
-                .lnCd(stationInfo.getLnCd())
-                .stinCd(stationInfo.getStinCd())
-                .build();
-    }
-
-    /**
-     *
-     * @param compressedPath    e.g.) (K4, 행신, 0.0) (K4, 홍대입구, 2.5) (2, 홍대입구, 6.5) (2, 성수, 5.5) (2, 용답, 3.5)
-     * @param dateType  날짜 종류 (평일 | 토요일 | 공휴일)
-     * @param hour  사용자의 해당 역 도착 시간 (시간)
-     * @param min   사용자의 해당 역 도착 시간 (분)
-     * @return  이동 정보 리스트
-     */
-    public List<MoveInfo> getMoveInfoList(MetroPath compressedPath, String dateType, int hour, int min) {
-        List<MoveInfo> moveInfoList = new ArrayList<>();
-
-        String currTime = DateUtil.getCurrTime(hour, min);
-        for (int i = 0; i < compressedPath.size() - 1; i++) {
-            MetroNodeWithEdge curr = compressedPath.get(i);
-            MetroNodeWithEdge next = compressedPath.get(i + 1);
-
-            MoveInfo moveInfo = stationTimeTableMap.getMoveInfo(curr, next, dateType, currTime);
-            currTime = moveInfo.getArvTm();
-            moveInfoList.add(moveInfo);
-        }
-
-        return moveInfoList;
-    }
-
-    public double getAvgWaitingTime(String railOprIsttCd, String lnCd, String stinCd, String dateType) {
-        MinimumStationInfo minimumStationInfo = MinimumStationInfo.builder()
-                .railOprIsttCd(railOprIsttCd)
-                .lnCd(lnCd)
-                .stinCd(stinCd)
-                .build();
-        MinimumStationInfoWithDateType key = new MinimumStationInfoWithDateType(minimumStationInfo, dateType);
-        double avgWaitingTime = stationTimeTableMap.getAvgWaitingTime(key);
-        return Math.round(avgWaitingTime * 10) / 10.0;
-    }
-
-    public void printSINDORIM() {
-        HashMap<MinimumStationInfoWithDateType, StationTimeTable> map = stationTimeTableMap.getMap();
-        MinimumStationInfo minimumStationInfo = MinimumStationInfo.builder()
-                .railOprIsttCd("S1")
-                .lnCd("2")
-                .stinCd("234")
-                .build();
-        MinimumStationInfoWithDateType key = new MinimumStationInfoWithDateType(minimumStationInfo, "평일");
-        for (StationTimeTableElement stationTimeTableElement :map.get(key).getList()) {
-            System.out.println(stationTimeTableElement);
-        }
+        StationInfo row = stationInfoList.get(0);
+        return MinimumStationInfo.build(row.getRailOprIsttCd(), row.getLnCd(), row.getStinCd());
     }
 }

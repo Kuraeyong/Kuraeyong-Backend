@@ -21,9 +21,14 @@ public class StationController {
 //        return new BaseResponse<>(stationService.getLineNameListByStationName(stationName));
 //    }
 
-    @GetMapping("/init-db")
+    @GetMapping("/init/station-info")
     public String initStationInfoDB() {
         return stationService.createStationInfoDB();
+    }
+
+    @GetMapping("/init/station-trf-weight")
+    public String initStationTrfWeightDB() {
+        return stationService.createStationTrfWeightDB();
     }
 
     @GetMapping("/save-to-csv")

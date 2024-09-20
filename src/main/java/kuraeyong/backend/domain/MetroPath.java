@@ -144,6 +144,35 @@ public class MetroPath implements Comparable<MetroPath> {
         return compressedPath;
     }
 
+    public void setDirection() {
+        // TODO. 일반, 급행 간선의 방향 설정 (상, 하)
+        for (int i = 0; i < path.size() - 1; i++) {
+            MetroNodeWithEdge curr = path.get(i);
+            MetroNodeWithEdge next = path.get(i + 1);
+
+            if (next.getEdgeType() == EdgeType.TRF_EDGE) {
+                continue;
+            }
+            if (curr.getUpDownOrder() > next.getUpDownOrder()) {
+                next.setDirection(DirectionType.UP);
+                continue;
+            }
+            next.setDirection(DirectionType.DOWN);
+        }
+
+        // TODO. 환승 간선의 방향 설정 (상상, 상하, 하상, 하하)
+        for (int i = 1; i < path.size() - 1; i++) {
+            MetroNodeWithEdge prev = path.get(i - 1);
+            MetroNodeWithEdge curr = path.get(i);
+            MetroNodeWithEdge next = path.get(i + 1);
+
+            if (curr.getEdgeType() != EdgeType.TRF_EDGE) {
+                continue;
+            }
+            curr.setDirection(DirectionType.convertTrfDirectionType(prev.getDirection(), next.getDirection()));
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();

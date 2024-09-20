@@ -42,6 +42,7 @@ public class GraphForPathSearch {
         String railOprIsttCd = minimumStationInfo.getRailOprIsttCd();
         String lnCd = minimumStationInfo.getLnCd();
         String stinCd = minimumStationInfo.getStinCd();
+        MinimumStationInfo key = MinimumStationInfo.build(railOprIsttCd, lnCd, stinCd);
         List<EdgeInfo> edgeInfoList = metroMap.getEdgeInfoRepository().findByRailOprIsttCdAndLnCdAndStinCd(railOprIsttCd, lnCd, stinCd);
         EdgeInfo anyEdgeInfo = edgeInfoList.get(0);
         if (isGeneralStin(anyEdgeInfo)) {
@@ -55,6 +56,8 @@ public class GraphForPathSearch {
                     .nodeNo(graphForPathSearch.size())
                     .isJctStin(anyEdgeInfo.getIsJctStin())
                     .isExpStin(anyEdgeInfo.getIsExpStin())
+                    .upDownOrder(metroMap.getStationInfoMap().getUpDownOrder(key))
+                    .branchInfo(metroMap.getStationInfoMap().getBranchInfo(key))
                     .build();
 
             // 새로운 노드에 간선 추가

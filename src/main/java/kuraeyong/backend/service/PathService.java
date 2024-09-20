@@ -4,7 +4,9 @@ package kuraeyong.backend.service;
 
 import kuraeyong.backend.domain.*;
 import kuraeyong.backend.dto.MinimumStationInfo;
+import kuraeyong.backend.dto.MinimumStationInfoWithDateType;
 import kuraeyong.backend.dto.MoveInfo;
+import kuraeyong.backend.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,7 +20,10 @@ public class PathService {
 
     private final GraphForPathSearch graphForPathSearch;
     private final StationService stationService;
+    private final StationTimeTableMap stationTimeTableMap;
+    private final StationTrfWeightMap stationTrfWeightMap;
     private final static int YEN_CANDIDATE_CNT = 10;
+    private final static int TRAIN_CANDIDATE_CNT = 3;
 
     public String searchPath(String orgStinNm, String destStinNm, String dateType, int hour, int min) {
         // TODO 1. 시간표 API를 조회할 간이 경로 조회
@@ -43,11 +48,14 @@ public class PathService {
 
         // TODO 2. 간이 경로와 시간표 API를 이용해 실소요시간을 포함한 이동 정보 조회
         for (MetroPath path : shortestPathList) {
+            MetroPath compressedPath = path.getCompressedPath();
+            compressedPath.setDirection();
+
             System.out.println(path);
             System.out.println(path.getTotalWeight());
             System.out.println(path.getTrfCnt());
-            System.out.println(path.getCompressedPath());
-            List<MoveInfo> moveInfoList = getMoveInfoList(path.getCompressedPath(), dateType, hour, min);
+            System.out.println(compressedPath);
+            List<MoveInfo> moveInfoList = getMoveInfoList(compressedPath, dateType, hour, min);
             for (MoveInfo moveInfo : moveInfoList) {
                 System.out.println(moveInfo);
             }
@@ -124,7 +132,9 @@ public class PathService {
                     EdgeType prevEdgeType = prevNode[nowNo].getEdgeType();
                     EdgeType currEdgeType = edge.getEdgeType();  // 0
                     if (EdgeType.checkLineTrf(prevEdgeType, currEdgeType) || EdgeType.checkGenExpTrf(prevEdgeType, currEdgeType)) {
-                        waitingTime = stationService.getAvgWaitingTime(now.getRailOprIsttCd(), now.getLnCd(), now.getStinCd(), dateType);
+                        MinimumStationInfo minimumStationInfo = MinimumStationInfo.build(now.getRailOprIsttCd(), now.getLnCd(), now.getStinCd());
+                        MinimumStationInfoWithDateType key = new MinimumStationInfoWithDateType(minimumStationInfo, dateType);
+                        waitingTime = stationTimeTableMap.getAvgWaitingTime(key);
                     }
                 }
 
@@ -321,7 +331,88 @@ public class PathService {
         return path;
     }
 
+    /**
+     *
+     * @param compressedPath    e.g.) (K4, 행신, 0.0) (K4, 홍대입구, 2.5) (2, 홍대입구, 6.5) (2, 성수, 5.5) (2, 용답, 3.5)
+     * @param dateType  날짜 종류 (평일 | 토요일 | 공휴일)
+     * @param hour  사용자의 해당 역 도착 시간 (시간)
+     * @param min   사용자의 해당 역 도착 시간 (분)
+     * @return  이동 정보 리스트
+     */
     public List<MoveInfo> getMoveInfoList(MetroPath compressedPath, String dateType, int hour, int min) {
-        return stationService.getMoveInfoList(compressedPath, dateType, hour, min);
+        List<MoveInfo> moveInfoList = new ArrayList<>();
+
+        String currTime = DateUtil.getCurrTime(hour, min);
+        for (int i = 0; i < compressedPath.size() - 1; i++) {
+            MetroNodeWithEdge curr = compressedPath.get(i);
+            MetroNodeWithEdge next = compressedPath.get(i + 1);
+
+            MoveInfo moveInfo = getMoveInfo(curr, next, dateType, currTime);
+            currTime = moveInfo.getArvTm();
+            moveInfoList.add(moveInfo);
+        }
+
+        return moveInfoList;
+    }
+
+    /**
+     * @param curr     현재 역 (A)
+     * @param next     다음 역 (B)
+     * @param dateType 날짜 유형 (평일 | 토요일 | 공휴일)
+     * @param currTime 현재 시간
+     * @return 이동 정보
+     */
+    public MoveInfo getMoveInfo(MetroNodeWithEdge curr, MetroNodeWithEdge next, String dateType, String currTime) {
+        if (next.getEdgeType() == EdgeType.TRF_EDGE) {    // 환승역인 경우
+            MinimumStationInfo currMSI = MinimumStationInfo.get(curr);
+            MinimumStationInfo nextMSI = MinimumStationInfo.get(next);
+            int weight = stationTrfWeightMap.getStationTrfWeight(currMSI, nextMSI, next.getDirection());
+
+            return MoveInfo.builder()
+                    .lnCd(null)
+                    .trnNo(null)
+                    .dptTm(currTime)
+                    .arvTm(DateUtil.plusMinutes(currTime, weight))
+                    .build();
+        }
+
+        // 현재역과 다음역을 고유하게 식별
+        MinimumStationInfo A = MinimumStationInfo.get(curr);
+        MinimumStationInfo B = MinimumStationInfo.get(next);
+
+        // 현재역과 다음역의 시간표
+        StationTimeTable A_TimeTable = stationTimeTableMap.get(new MinimumStationInfoWithDateType(A, dateType));
+        StationTimeTable B_TimeTable = stationTimeTableMap.get(new MinimumStationInfoWithDateType(B, dateType));
+
+        // 현재 시간 이후에 A역에 오는 열차 리스트 (이후 상시 적용)
+        List<StationTimeTableElement> A_TrainList = A_TimeTable.findByDptTmGreaterThanEqual(currTime);
+        if (A_TrainList == null) {
+            return null;
+        }
+
+        int cnt = 0;
+        StationTimeTableElement B_FastestTrain = null;   // A에서 B로 가장 빠르게 이동할 수 있는 열차 (B역 기준 시간표)
+        StationTimeTableElement A_FastestTrain = null;   // A에서 B로 가장 빠르게 이동할 수 있는 열차 (A역 기준 시간표)
+        for (StationTimeTableElement A_Train : A_TrainList) {
+            StationTimeTableElement B_Train = B_TimeTable.getStoppingTrainAfterCurrTime(A_Train.getTrnNo(), A_Train.getDptTm());    // A에서 B로 이동할 수 있는 열차 중 하나 (B역 기준 시간표)
+            if (B_Train == null) {  // 해당 열차가 B역에 정차하지 않는다면
+                continue;
+            }
+            if (B_FastestTrain == null || B_Train.getArvTm().compareTo(B_FastestTrain.getArvTm()) <= 0) {
+                B_FastestTrain = B_Train;
+                A_FastestTrain = A_Train;
+            }
+            if (++cnt >= TRAIN_CANDIDATE_CNT) {
+                break;
+            }
+        }
+
+        assert A_FastestTrain != null;
+        return MoveInfo.builder()
+                .lnCd(A_FastestTrain.getLnCd())
+                .trnNo(A_FastestTrain.getTrnNo())
+                .dptTm(A_FastestTrain.getDptTm())
+                .arvTm(B_FastestTrain.getArvTm())
+                .build();
     }
 }

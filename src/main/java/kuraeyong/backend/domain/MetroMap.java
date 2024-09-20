@@ -1,6 +1,7 @@
 package kuraeyong.backend.domain;
 
 import jakarta.annotation.PostConstruct;
+import kuraeyong.backend.dto.MinimumStationInfo;
 import kuraeyong.backend.repository.EdgeInfoRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ public class MetroMap {
     private List<MetroNode> graph;
     private HashMap<String, Integer> lineSeparator;
     private final EdgeInfoRepository edgeInfoRepository;
+    private final StationInfoMap stationInfoMap;
 
     @PostConstruct
     public void initMap() {
@@ -37,15 +39,21 @@ public class MetroMap {
                 if (node.getEdgeList() != null) {  // 최초에 노드가 깡통인 경우를 방지
                     graph.add(node);
                 }
+                String railOprIsttCd = edgeInfo.getRailOprIsttCd();
+                String lnCd = edgeInfo.getLnCd();
+                String stinCd = edgeInfo.getStinCd();
+                MinimumStationInfo key = MinimumStationInfo.build(railOprIsttCd, lnCd, stinCd);
                 node = MetroNode.builder()
-                        .railOprIsttCd(edgeInfo.getRailOprIsttCd())
-                        .lnCd(edgeInfo.getLnCd())
-                        .stinCd(edgeInfo.getStinCd())
+                        .railOprIsttCd(railOprIsttCd)
+                        .lnCd(lnCd)
+                        .stinCd(stinCd)
                         .stinNm(edgeInfo.getStinNm())
                         .edgeList(new ArrayList<>())
                         .nodeNo(nodeNo++)
                         .isJctStin(edgeInfo.getIsJctStin())
                         .isExpStin(edgeInfo.getIsExpStin())
+                        .upDownOrder(stationInfoMap.getUpDownOrder(key))
+                        .branchInfo(stationInfoMap.getBranchInfo(key))
                         .build();
             }
 

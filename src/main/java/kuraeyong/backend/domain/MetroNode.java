@@ -21,6 +21,8 @@ public class MetroNode {
     private int nodeNo;
     private int isJctStin;
     private int isExpStin;
+    private int upDownOrder;
+    private String branchInfo;
 
     public void addEdge(MetroEdge edge) {
         edgeList.add(edge);
@@ -36,6 +38,8 @@ public class MetroNode {
                 ", nodeNo=" + nodeNo +
                 ", isJctStin=" + isJctStin +
                 ", isExpStin=" + isExpStin +
+                ", upDownOrder=" + upDownOrder +
+                ", branchInfo='" + branchInfo + '\'' +
                 ", edgeList=" + edgeList +
                 '}';
     }
@@ -52,5 +56,7 @@ public class MetroNode {
         this.nodeNo = node.nodeNo;
         this.isJctStin = node.isJctStin;
         this.isExpStin = node.isExpStin;
+        this.upDownOrder = node.upDownOrder;
+        this.branchInfo = node.branchInfo;
     }
 }

@@ -2,6 +2,7 @@ package kuraeyong.backend.util;
 
 import kuraeyong.backend.domain.EdgeInfo;
 import kuraeyong.backend.domain.StationInfo;
+import kuraeyong.backend.domain.StationTrfWeight;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -20,16 +21,39 @@ public class FlatFileUtil {
         for (List<String> row : rowList) {
             stationInfoList.add(StationInfo.builder()
                     .railOprIsttCd(row.get(0))
-                    .railOprIsttNm(row.get(1))
-                    .lnCd(row.get(2))
-                    .lnNm(row.get(3))
-                    .stinNo(row.get(4))
-                    .stinCd(row.get(5))
-                    .stinNm(row.get(6))
+                    .lnCd(row.get(1))
+                    .stinCd(row.get(2))
+                    .stinNm(row.get(3))
+                    .upDownOrder(Integer.parseInt(row.get(4).split("\\.")[0]))
+                    .branchInfo(row.get(5))
                     .build());
         }
 
         return stationInfoList;
+    }
+
+    public static List<StationTrfWeight> toStationTrfWeightList(List<List<String>> rowList) {
+        List<StationTrfWeight> stationTrfWeightList = new ArrayList<>();
+
+        for (List<String> row : rowList) {
+            stationTrfWeightList.add(StationTrfWeight.builder()
+                    .railOprIsttCd(row.get(0))
+                    .lnCd(row.get(1))
+                    .stinCd(row.get(2))
+                    .stinNm(row.get(3))
+                    .trfRailOprIsttCd(row.get(4))
+                    .trfLnCd(row.get(5))
+                    .trfStinCd(row.get(6))
+                    .trfStinNm(row.get(7))
+                    .trfType(row.get(8))
+                    .upUp(Integer.parseInt(row.get(9)))
+                    .upDown(Integer.parseInt(row.get(10)))
+                    .downUp(Integer.parseInt(row.get(11)))
+                    .downDown(Integer.parseInt(row.get(12)))
+                    .build());
+        }
+
+        return stationTrfWeightList;
     }
 
     public static List<EdgeInfo> toEdgeInfoList(List<List<String>> rowList) {

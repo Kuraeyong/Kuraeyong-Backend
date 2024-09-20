@@ -11,35 +11,46 @@ public class MetroNodeWithEdge implements Comparable<MetroNodeWithEdge> {
     @Setter
     private double weight;
     @Setter
-    private EdgeType edgeType;
+    private EdgeType edgeType;  // GEN, EXP, TRF
     @Setter
     private double waitingTime;
+    @Setter
+    private DirectionType direction;   // UP, DOWN
 
     public MetroNodeWithEdge(MetroNodeWithEdge node) {
         this.node = new MetroNode(node.node);
         this.weight = node.weight;
         this.edgeType = node.edgeType;
         this.waitingTime = node.waitingTime;
+        this.direction = node.direction;
     }
 
     public int getNodeNo() {
         return node.getNodeNo();
     }
 
-    public String getStinNm() {
-        return node.getStinNm();
-    }
-
-    public String getStinCd() {
-        return node.getStinCd();
+    public String getRailOprIsttCd() {
+        return node.getRailOprIsttCd();
     }
 
     public String getLnCd() {
         return node.getLnCd();
     }
 
-    public String getRailOprIsttCd() {
-        return node.getRailOprIsttCd();
+    public String getStinCd() {
+        return node.getStinCd();
+    }
+
+    public String getStinNm() {
+        return node.getStinNm();
+    }
+
+    public int getUpDownOrder() {
+        return node.getUpDownOrder();
+    }
+
+    public String getBranchInfo() {
+        return node.getBranchInfo();
     }
 
     public boolean isJctStin() {
@@ -59,9 +70,12 @@ public class MetroNodeWithEdge implements Comparable<MetroNodeWithEdge> {
     @Override
     public String toString() {
         return switch (edgeType) {
-            case EXP_EDGE -> "<<" + getLnCd() + ", " + getStinNm() + ", " + weight + ", " + waitingTime + ">>";
-            case TRF_EDGE -> "[[" + getLnCd() + ", " + getStinNm() + ", " + weight + ", " + waitingTime + "]]";
-            default -> '(' + getLnCd() + ", " + getStinNm() + ", " + weight + ", " + waitingTime + ')';
+            case EXP_EDGE ->
+                    "<<" + getLnCd() + ", " + getStinNm() + ", " + weight + ", " + waitingTime + ", " + direction + ">>";
+            case TRF_EDGE ->
+                    "[[" + getLnCd() + ", " + getStinNm() + ", " + weight + ", " + waitingTime + ", " + direction + "]]";
+            default ->
+                    '(' + getLnCd() + ", " + getStinNm() + ", " + weight + ", " + waitingTime + ", " + direction + ')';
         };
     }
 }
