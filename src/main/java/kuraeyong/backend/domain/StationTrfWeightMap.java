@@ -5,6 +5,7 @@ import kuraeyong.backend.dto.MinimumStationInfoWithDateType;
 import kuraeyong.backend.repository.StationTimeTableElementRepository;
 import kuraeyong.backend.repository.StationTrfWeightRepository;
 import lombok.Getter;
+import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;

@@ -1,5 +1,7 @@
 package kuraeyong.backend.domain;
 
+import kuraeyong.backend.dto.MinimumStationInfo;
+import kuraeyong.backend.dto.MinimumStationInfoWithDateType;
 import lombok.Getter;
 
 import java.util.ArrayList;

@@ -1,9 +1,6 @@
 package kuraeyong.backend.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Builder
 @Getter
@@ -11,8 +8,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class MoveInfo {
     private String lnCd;
+    @Setter
     private String trnNo;
+    @Setter
     private String dptTm;   // 현재역 출발 시간
+    @Setter
     private String arvTm;   // 다음역 도착 시간
 
     @Override

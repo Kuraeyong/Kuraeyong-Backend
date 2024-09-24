@@ -39,11 +39,22 @@ public class DateUtil {
         return (time < DATE_CHANGE_TIME) ? time + CORRECTION_VALUE : time;
     }
 
+    private static int getTimeForCompare(String time) {
+        return getTimeForCompare(time, "null");   // 순서 상관 X
+    }
+
     public static int timeToMinute(int time) {
         int hour = time / 10000;
         int min = (time % 10000) / 100;
 
         return hour * 60 + min;
+    }
+
+    public static boolean isWithinNMinutes(String earlierTime, String laterTime, int n) {
+        int time1 = getTimeForCompare(plusMinutes(earlierTime, n));
+        int time2 = getTimeForCompare(laterTime);
+
+        return time1 >= time2;
     }
 
     private static boolean isNull(String str) {

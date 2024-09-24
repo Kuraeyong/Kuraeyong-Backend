@@ -363,8 +363,11 @@ public class PathService {
      */
     public List<MoveInfo> getMoveInfoList(MetroPath compressedPath, String dateType, int hour, int min) {
         List<MoveInfo> moveInfoList = new ArrayList<>();
-
         String currTime = DateUtil.getCurrTime(hour, min);
+
+        moveInfoList.add(MoveInfo.builder()
+                .arvTm(currTime)
+                .build());
         for (int i = 0; i < compressedPath.size() - 1; i++) {
             MetroNodeWithEdge curr = compressedPath.get(i);
             MetroNodeWithEdge next = compressedPath.get(i + 1);
@@ -373,6 +376,7 @@ public class PathService {
             currTime = moveInfo.getArvTm();
             moveInfoList.add(moveInfo);
         }
+        removeUnnecessaryTrain(moveInfoList, compressedPath, dateType);
 
         return moveInfoList;
     }
@@ -399,12 +403,12 @@ public class PathService {
         }
 
         // 현재역과 다음역을 고유하게 식별
-        MinimumStationInfo A = MinimumStationInfo.get(curr);
-        MinimumStationInfo B = MinimumStationInfo.get(next);
+        MinimumStationInfo A_MSI = MinimumStationInfo.get(curr);
+        MinimumStationInfo B_MSI = MinimumStationInfo.get(next);
 
         // 현재역과 다음역의 시간표
-        StationTimeTable A_TimeTable = stationTimeTableMap.get(new MinimumStationInfoWithDateType(A, dateType));
-        StationTimeTable B_TimeTable = stationTimeTableMap.get(new MinimumStationInfoWithDateType(B, dateType));
+        StationTimeTable A_TimeTable = stationTimeTableMap.get(new MinimumStationInfoWithDateType(A_MSI, dateType));
+        StationTimeTable B_TimeTable = stationTimeTableMap.get(new MinimumStationInfoWithDateType(B_MSI, dateType));
 
         // 현재 시간 이후에 A역에 오는 열차 리스트 (이후 상시 적용)
         List<StationTimeTableElement> A_TrainList = A_TimeTable.findByDptTmGreaterThanEqual(currTime);
@@ -436,5 +440,37 @@ public class PathService {
                 .dptTm(A_FastestTrain.getDptTm())
                 .arvTm(B_FastestTrain.getArvTm())
                 .build();
+    }
+
+    /**
+     * 동일 노선 내에서의 불필요한 환승 제거
+     */
+    public void removeUnnecessaryTrain(List<MoveInfo> moveInfoList, MetroPath compressedPath, String dateType) {
+        for (int i = moveInfoList.size() - 2; i >= 1; i--) {
+            MoveInfo TO_A = moveInfoList.get(i - 1);
+            MoveInfo TO_B = moveInfoList.get(i);
+            MoveInfo TO_C = moveInfoList.get(i + 1);
+            if (TO_B.getTrnNo() == null || TO_C.getTrnNo() == null) {
+                continue;
+            }
+            if (!TO_B.getLnCd().equals(TO_C.getLnCd())) {
+                continue;
+            }
+            if (stationTimeTableMap.isSameTrain(TO_B.getTrnNo(), TO_C.getTrnNo(), TO_B.getLnCd(), dateType)) {
+                continue;
+            }
+            MinimumStationInfoWithDateType A_Key = MinimumStationInfoWithDateType.get(compressedPath.get(i - 1), dateType);
+            StationTimeTableElement A_Train = stationTimeTableMap.getStoppingTrainAfterCurrTime(A_Key, TO_C.getTrnNo(), TO_A.getArvTm());
+            if (A_Train == null) {
+                continue;
+            }
+            MinimumStationInfoWithDateType B_Key = MinimumStationInfoWithDateType.get(compressedPath.get(i), dateType);
+            StationTimeTableElement B_Train = stationTimeTableMap.getStoppingTrainAfterCurrTime(B_Key, TO_C.getTrnNo(), TO_B.getArvTm());
+
+            // TODO. 불필요한 환승 제거
+            TO_B.setTrnNo(TO_C.getTrnNo());
+            TO_B.setDptTm(A_Train.getDptTm());
+            TO_B.setArvTm(B_Train.getArvTm());
+        }
     }
 }

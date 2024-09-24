@@ -41,4 +41,8 @@ public class MinimumStationInfo {
     public static MinimumStationInfo get(MetroNodeWithEdge node) {
         return build(node.getRailOprIsttCd(), node.getLnCd(), node.getStinCd());
     }
+
+    public boolean isSeongsu() {
+        return railOprIsttCd.equals("S1") && lnCd.equals("2") && stinCd.equals("211");
+    }
 }

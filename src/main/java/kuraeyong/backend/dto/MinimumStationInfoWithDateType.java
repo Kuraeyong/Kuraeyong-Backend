@@ -1,5 +1,6 @@
 package kuraeyong.backend.dto;
 
+import kuraeyong.backend.domain.MetroNodeWithEdge;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -22,5 +23,9 @@ public class MinimumStationInfoWithDateType {
     @Override
     public int hashCode() {
         return Objects.hash(minimumStationInfo, dateType);
+    }
+
+    public static MinimumStationInfoWithDateType get(MetroNodeWithEdge node, String dateType) {
+        return new MinimumStationInfoWithDateType(MinimumStationInfo.get(node), dateType);
     }
 }
