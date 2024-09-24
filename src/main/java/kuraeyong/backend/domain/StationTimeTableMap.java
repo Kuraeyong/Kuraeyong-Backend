@@ -11,6 +11,8 @@ import java.util.*;
 @Component
 public class StationTimeTableMap {
     private final HashMap<MinimumStationInfoWithDateType, StationTimeTable> map;
+    private final static MinimumStationInfo SEONGSU = MinimumStationInfo.build("S1", "2", "211");
+    private final static MinimumStationInfo EUNGAM = MinimumStationInfo.build("S1", "6", "2611");
 
     public StationTimeTableMap(StationTimeTableElementRepository stationTimeTableElementRepository) {
         map = new HashMap<>();
@@ -24,8 +26,8 @@ public class StationTimeTableMap {
             MinimumStationInfoWithDateType key = new MinimumStationInfoWithDateType(MSI, train.getDayNm());
 
             if (!map.containsKey(key)) {
-                if (MSI.isSeongsu()) {
-                    map.put(key, new SeongsuTimeTable());
+                if (MSI.isSeongsu() || MSI.isEungam()) {
+                    map.put(key, new TrnNoStdStationTimeTable());
                     continue;
                 }
                 map.put(key, new StationTimeTable());
@@ -39,50 +41,82 @@ public class StationTimeTableMap {
             map.get(key).sort();
         }
 
-        // TODO. 성수 처리
-        MinimumStationInfo MSI = MinimumStationInfo.build("S1", "2", "211");
+        // TODO. 성수, 응암 처리
+        initTrnNoStdStationSameTrainMap(SEONGSU);
+        initTrnNoStdStationSameTrainMap(EUNGAM);
+    }
+
+    private void initTrnNoStdStationSameTrainMap(MinimumStationInfo MSI) {
         List<String> dayNmList = new ArrayList<>(Arrays.asList("평일", "휴일"));
 
         for (String dayNm : dayNmList) {
             MinimumStationInfoWithDateType key = new MinimumStationInfoWithDateType(MSI, dayNm);
-            SeongsuTimeTable seongsuTimeTable = (SeongsuTimeTable) map.get(key);
+            TrnNoStdStationTimeTable trnNoStdStationTimeTable = (TrnNoStdStationTimeTable) map.get(key);
             HashMap<String, Integer> sameTrainMap = switch (dayNm) {
-                case "평일" -> seongsuTimeTable.getWeekdaySameTrainMap();
-                case "휴일" -> seongsuTimeTable.getHolidaySameTrainMap();
+                case "평일" -> trnNoStdStationTimeTable.getWeekdaySameTrainMap();
+                case "휴일" -> trnNoStdStationTimeTable.getHolidaySameTrainMap();
                 default -> null;
             };
             assert sameTrainMap != null;
 
-            // 성수에 도착하는 열차를 내선/외선, 기점/종점을 이용하여 총 4종류로 구분
-            StationTimeTable inOrgTimeTable = new StationTimeTable();     // 내선기점
-            StationTimeTable outOrgTimeTable = new StationTimeTable();    // 외선기점
-            StationTimeTable inTmnTimeTable = new StationTimeTable();     // 내선종점
-            StationTimeTable outTmnTimeTable = new StationTimeTable();    // 외선종점
-            for (StationTimeTableElement train : seongsuTimeTable.getList()) {
-                String trnNo = train.getTrnNo();
-                boolean isOdd = trnNo.charAt(trnNo.length() - 1) % 2 == 1;
-
-                if (trnNo.charAt(0) == '1') {    // 지선이면
-                    continue;
-                }
-                if (isOdd) {    // 외선이면
-                    if (train.getArvTm().equals("null")) {  // 기점이면
-                        outOrgTimeTable.add(train);
-                        continue;
-                    }
-                    outTmnTimeTable.add(train);
-                    continue;
-                }
-                if (train.getArvTm().equals("null")) {  // 기점이면
-                    inOrgTimeTable.add(train);
-                    continue;
-                }
-                inTmnTimeTable.add(train);
+            if (MSI.equals(SEONGSU)) {
+                initSeongsuSameTrainMap(sameTrainMap, trnNoStdStationTimeTable);
+                continue;
             }
-
-            int groupNum = initSameTrainMap(sameTrainMap, outTmnTimeTable, outOrgTimeTable, 0);    // 외선
-            initSameTrainMap(sameTrainMap, inTmnTimeTable, inOrgTimeTable, groupNum);  // 내선
+            if (MSI.equals(EUNGAM)) {
+                initEungamSameTrainMap(sameTrainMap, trnNoStdStationTimeTable);
+            }
+            // FIXME. 유효하지 않은 MSI를 입력한 경우, 오류 메시지 출력
         }
+    }
+
+    private void initSeongsuSameTrainMap(HashMap<String, Integer> sameTrainMap, TrnNoStdStationTimeTable stationTimeTable) {
+        // 성수에 도착하는 열차를 내선/외선, 기점/종점을 이용하여 총 4종류로 구분
+        StationTimeTable inOrgTimeTable = new StationTimeTable();     // 내선기점
+        StationTimeTable outOrgTimeTable = new StationTimeTable();    // 외선기점
+        StationTimeTable inTmnTimeTable = new StationTimeTable();     // 내선종점
+        StationTimeTable outTmnTimeTable = new StationTimeTable();    // 외선종점
+        for (StationTimeTableElement train : stationTimeTable.getList()) {
+            String trnNo = train.getTrnNo();
+            boolean isOdd = trnNo.charAt(trnNo.length() - 1) % 2 == 1;
+
+            if (trnNo.charAt(0) == '1') {    // 지선이면
+                continue;
+            }
+            if (isOdd) {    // 외선이면
+                if (train.getArvTm().equals("null")) {  // 기점이면
+                    outOrgTimeTable.add(train);
+                    continue;
+                }
+                outTmnTimeTable.add(train);
+                continue;
+            }
+            if (train.getArvTm().equals("null")) {  // 기점이면
+                inOrgTimeTable.add(train);
+                continue;
+            }
+            inTmnTimeTable.add(train);
+        }
+
+        int groupNum = initSameTrainMap(sameTrainMap, outTmnTimeTable, outOrgTimeTable, 0);    // 외선
+        initSameTrainMap(sameTrainMap, inTmnTimeTable, inOrgTimeTable, groupNum);  // 내선
+    }
+
+    private void initEungamSameTrainMap(HashMap<String, Integer> sameTrainMap, TrnNoStdStationTimeTable stationTimeTable) {
+        // 응암에 도착하는 열차를 기점/종점을 이용하여 총 2종류로 구분
+        StationTimeTable orgTimeTable = new StationTimeTable();     // 기점
+        StationTimeTable tmnTimeTable = new StationTimeTable();     // 종점
+        for (StationTimeTableElement train : stationTimeTable.getList()) {
+            if (train.getArvTm().equals("null")) {  // 기점이면
+                orgTimeTable.add(train);
+                continue;
+            }
+            if (train.getDptTm().equals("null")) {  // 종점이면
+                tmnTimeTable.add(train);
+            }
+        }
+
+        initSameTrainMap(sameTrainMap, tmnTimeTable, orgTimeTable, 0);
     }
 
     /**
@@ -139,11 +173,14 @@ public class StationTimeTableMap {
         if (trn1.equals(trn2)) {
             return true;
         }
-        if (lnCd.equals("2")) {
-            MinimumStationInfo MSI = MinimumStationInfo.build("S1", "2", "211");
-            MinimumStationInfoWithDateType key = new MinimumStationInfoWithDateType(MSI, dateType);
-            SeongsuTimeTable seongsuTimeTable = (SeongsuTimeTable) map.get(key);
-            HashMap<String, Integer> sameTrainMap = seongsuTimeTable.getSameTrainMap(dateType);
+        if (lnCd.equals("2") || lnCd.equals("6")) {
+            MinimumStationInfoWithDateType key = switch (lnCd) {
+                case "2" -> new MinimumStationInfoWithDateType(SEONGSU, dateType);
+                case "6" -> new MinimumStationInfoWithDateType(EUNGAM, dateType);
+                default -> null;
+            };
+            TrnNoStdStationTimeTable trnNoStdStationTimeTable = (TrnNoStdStationTimeTable) map.get(key);
+            HashMap<String, Integer> sameTrainMap = trnNoStdStationTimeTable.getSameTrainMap(dateType);
 
             return sameTrainMap.get(trn1).equals(sameTrainMap.get(trn2));
         }

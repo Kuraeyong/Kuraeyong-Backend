@@ -8,11 +8,11 @@ import java.util.List;
 import java.util.Set;
 
 @Getter
-public class SeongsuTimeTable extends StationTimeTable {
+public class TrnNoStdStationTimeTable extends StationTimeTable {
     private final HashMap<String, Integer> weekdaySameTrainMap;
     private final HashMap<String, Integer> holidaySameTrainMap;
 
-    public SeongsuTimeTable() {
+    public TrnNoStdStationTimeTable() {
         super();
         weekdaySameTrainMap = new HashMap<>();
         holidaySameTrainMap = new HashMap<>();

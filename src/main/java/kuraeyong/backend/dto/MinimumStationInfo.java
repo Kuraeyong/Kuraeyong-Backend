@@ -45,4 +45,8 @@ public class MinimumStationInfo {
     public boolean isSeongsu() {
         return railOprIsttCd.equals("S1") && lnCd.equals("2") && stinCd.equals("211");
     }
+
+    public boolean isEungam() {
+        return railOprIsttCd.equals("S1") && lnCd.equals("6") && stinCd.equals("2611");
+    }
 }

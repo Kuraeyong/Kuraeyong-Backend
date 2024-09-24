@@ -1,5 +1,6 @@
 package kuraeyong.backend.domain;
 
+import kuraeyong.backend.dto.MinimumStationInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -202,8 +203,13 @@ public class MetroPath implements Comparable<MetroPath> {
         for (int i = 0; i < size() - 1; i++) {
             MetroNodeWithEdge curr = get(i);
             MetroNodeWithEdge next = get(i + 1);
+            MinimumStationInfo nextMSI = MinimumStationInfo.get(next);
 
             if (next.getEdgeType() == EdgeType.TRF_EDGE) {
+                continue;
+            }
+            if (nextMSI.isEungam() && !curr.getBranchInfo().equals("0")) {  // 6호선 순환구간 처리
+                next.setDirection(DirectionType.DOWN);
                 continue;
             }
             if (curr.getUpDownOrder() > next.getUpDownOrder()) {
