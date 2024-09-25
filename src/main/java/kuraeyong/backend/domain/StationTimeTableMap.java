@@ -35,6 +35,7 @@ public class StationTimeTableMap {
             map.get(key).add(train);
         }
 
+
         // TODO. 출발 시간을 기준으로 정렬
         Set<MinimumStationInfoWithDateType> keySet = map.keySet();
         for (MinimumStationInfoWithDateType key : keySet) {

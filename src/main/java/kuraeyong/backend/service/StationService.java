@@ -78,7 +78,13 @@ public class StationService {
     public void saveApiResultToCsv() {
         List<StationInfo> stationInfoList = stationInfoRepository.findAll();
         String format = "json";
-        String dayCd = "7";
+        String dayNm = csvFilePath.split("[_.]")[3];
+        String dayCd = switch (dayNm) {
+            case "saturday" -> "7";
+            case "weekday" -> "8";
+            case "holiday" -> "9";
+            default -> null;
+        };
         int stationCount = 0, lineCount = 0, logCount = 0;
 
         File file, logFile;

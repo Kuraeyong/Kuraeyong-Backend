@@ -56,6 +56,10 @@ public class PathService {
             System.out.println(path.getTrfCnt());
             System.out.println(compressedPath);
             List<MoveInfo> moveInfoList = getMoveInfoList(compressedPath, dateType, hour, min);
+            if (moveInfoList == null) {
+                System.out.println("이동할 수 없는 경로입니다.");
+                continue;
+            }
             for (MoveInfo moveInfo : moveInfoList) {
                 System.out.println(moveInfo);
             }
@@ -110,6 +114,7 @@ public class PathService {
 
         Arrays.fill(dist, Integer.MAX_VALUE);
         dist[orgNo] = 0;
+        dist[320] = -1; // 경춘선 광운대 운행 X
 
         // rootPath를 기반으로 check 초기화
         if (rootPath != null) {
@@ -219,12 +224,16 @@ public class PathService {
                         MetroNode destNode = graphForPathSearch.get(path.get(j + 1).getNodeNo());
                         MetroEdge removedGeneralEdge = graphForPathSearch.removeEdge(orgNode, destNode, EdgeType.GEN_EDGE);
                         MetroEdge removedExpressEdge = graphForPathSearch.removeEdge(orgNode, destNode, EdgeType.EXP_EDGE);
+                        MetroEdge removedTransferEdge = graphForPathSearch.removeEdge(orgNode, destNode, EdgeType.TRF_EDGE);
 
                         if (removedGeneralEdge != null) {
                             removedEdgeList.add(removedGeneralEdge);
                         }
                         if (removedExpressEdge != null) {
                             removedEdgeList.add(removedExpressEdge);
+                        }
+                        if (removedTransferEdge != null) {
+                            removedEdgeList.add(removedTransferEdge);
                         }
                     }
                 }
@@ -373,6 +382,9 @@ public class PathService {
             MetroNodeWithEdge next = compressedPath.get(i + 1);
 
             MoveInfo moveInfo = getMoveInfo(curr, next, dateType, currTime);
+            if (moveInfo == null) {
+                return null;
+            }
             currTime = moveInfo.getArvTm();
             moveInfoList.add(moveInfo);
         }
@@ -409,6 +421,9 @@ public class PathService {
         // 현재역과 다음역의 시간표
         StationTimeTable A_TimeTable = stationTimeTableMap.get(new MinimumStationInfoWithDateType(A_MSI, dateType));
         StationTimeTable B_TimeTable = stationTimeTableMap.get(new MinimumStationInfoWithDateType(B_MSI, dateType));
+        if (A_TimeTable == null || B_TimeTable == null) {
+            return null;
+        }
 
         // 현재 시간 이후에 A역에 오는 열차 리스트 (이후 상시 적용)
         List<StationTimeTableElement> A_TrainList = A_TimeTable.findByDptTmGreaterThanEqual(currTime);

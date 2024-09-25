@@ -7,10 +7,24 @@ import lombok.Getter;
 import java.util.Objects;
 
 @Getter
-@AllArgsConstructor
 public class MinimumStationInfoWithDateType {
-    private MinimumStationInfo minimumStationInfo;
-    private String dateType;
+    private final MinimumStationInfo minimumStationInfo;
+    private final String dateType;
+
+    public MinimumStationInfoWithDateType(MinimumStationInfo minimumStationInfo, String dateType) {
+        this.minimumStationInfo = minimumStationInfo;
+
+        String lnCd = minimumStationInfo.getLnCd();
+        if (!dateType.equals("토")) {
+            this.dateType = dateType;
+            return;
+        }
+        if (lnCd.equals("E1") || lnCd.equals("UI") || lnCd.equals("U1")) {
+            this.dateType = dateType;
+            return;
+        }
+        this.dateType = "휴일";
+    }
 
     @Override
     public boolean equals(Object o) {
