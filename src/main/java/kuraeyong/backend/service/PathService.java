@@ -58,6 +58,7 @@ public class PathService {
             List<MoveInfo> moveInfoList = getMoveInfoList(compressedPath, dateType, hour, min);
             if (moveInfoList == null) {
                 System.out.println("이동할 수 없는 경로입니다.");
+                System.out.println();
                 continue;
             }
             for (MoveInfo moveInfo : moveInfoList) {
@@ -435,11 +436,14 @@ public class PathService {
         StationTimeTableElement B_FastestTrain = null;   // A에서 B로 가장 빠르게 이동할 수 있는 열차 (B역 기준 시간표)
         StationTimeTableElement A_FastestTrain = null;   // A에서 B로 가장 빠르게 이동할 수 있는 열차 (A역 기준 시간표)
         for (StationTimeTableElement A_Train : A_TrainList) {
+            if (A_Train.isTmnStin()) {    // A가 해당 열차의 종점인 경우
+                continue;
+            }
             StationTimeTableElement B_Train = B_TimeTable.getStoppingTrainAfterCurrTime(A_Train.getTrnNo(), A_Train.getDptTm());    // A에서 B로 이동할 수 있는 열차 중 하나 (B역 기준 시간표)
             if (B_Train == null) {  // 해당 열차가 B역에 정차하지 않는다면
                 continue;
             }
-            if (B_FastestTrain == null || B_Train.getArvTm().compareTo(B_FastestTrain.getArvTm()) <= 0) {
+            if (B_FastestTrain == null || B_Train.getArvTm().compareTo(B_FastestTrain.getArvTm()) <= 0) {   // B_FastestTrain 갱신이 필요한 경우
                 B_FastestTrain = B_Train;
                 A_FastestTrain = A_Train;
             }
@@ -447,8 +451,10 @@ public class PathService {
                 break;
             }
         }
+        if (A_FastestTrain == null) {
+            return null;
+        }
 
-        assert A_FastestTrain != null;
         return MoveInfo.builder()
                 .lnCd(A_FastestTrain.getLnCd())
                 .trnNo(A_FastestTrain.getTrnNo())

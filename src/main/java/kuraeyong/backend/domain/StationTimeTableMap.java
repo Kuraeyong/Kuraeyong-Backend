@@ -19,7 +19,7 @@ public class StationTimeTableMap {
 
         // TODO. 열차 정보 초기화
         for (StationTimeTableElement train : stationTimeTableElementRepository.findAll()) {
-            if (train.getDptTm().equals("null") && train.getArvTm().equals("null")) {
+            if (train.isOrgStin() && train.isTmnStin()) {   // 시간 정보가 유효하지 않은 열차 정보라면
                 continue;
             }
             MinimumStationInfo MSI = MinimumStationInfo.build(train.getRailOprIsttCd(), train.getLnCd(), train.getStinCd());
@@ -34,7 +34,6 @@ public class StationTimeTableMap {
             }
             map.get(key).add(train);
         }
-
 
         // TODO. 출발 시간을 기준으로 정렬
         Set<MinimumStationInfoWithDateType> keySet = map.keySet();
@@ -85,14 +84,14 @@ public class StationTimeTableMap {
                 continue;
             }
             if (isOdd) {    // 외선이면
-                if (train.getArvTm().equals("null")) {  // 기점이면
+                if (train.isOrgStin()) {  // 기점이면
                     outOrgTimeTable.add(train);
                     continue;
                 }
                 outTmnTimeTable.add(train);
                 continue;
             }
-            if (train.getArvTm().equals("null")) {  // 기점이면
+            if (train.isOrgStin()) {  // 기점이면
                 inOrgTimeTable.add(train);
                 continue;
             }
@@ -108,11 +107,11 @@ public class StationTimeTableMap {
         StationTimeTable orgTimeTable = new StationTimeTable();     // 기점
         StationTimeTable tmnTimeTable = new StationTimeTable();     // 종점
         for (StationTimeTableElement train : stationTimeTable.getList()) {
-            if (train.getArvTm().equals("null")) {  // 기점이면
+            if (train.isOrgStin()) {    // 기점이면
                 orgTimeTable.add(train);
                 continue;
             }
-            if (train.getDptTm().equals("null")) {  // 종점이면
+            if (train.isTmnStin()) {    // 종점이면
                 tmnTimeTable.add(train);
             }
         }

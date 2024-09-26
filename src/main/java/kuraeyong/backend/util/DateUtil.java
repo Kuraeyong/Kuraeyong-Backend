@@ -1,6 +1,5 @@
 package kuraeyong.backend.util;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -34,12 +33,12 @@ public class DateUtil {
     }
 
     public static int getTimeForCompare(String arvTm, String dptTm) {
-        int time = isNull(dptTm) ? Integer.parseInt(arvTm) : Integer.parseInt(dptTm);
+        int time = isValidTime(dptTm) ? Integer.parseInt(arvTm) : Integer.parseInt(dptTm);
 
         return (time < DATE_CHANGE_TIME) ? time + CORRECTION_VALUE : time;
     }
 
-    private static int getTimeForCompare(String time) {
+    public static int getTimeForCompare(String time) {
         return getTimeForCompare(time, "null");   // 순서 상관 X
     }
 
@@ -57,7 +56,7 @@ public class DateUtil {
         return time1 >= time2;
     }
 
-    private static boolean isNull(String str) {
+    public static boolean isValidTime(String str) {
         return !str.matches("[0-9]{6}");
     }
 }

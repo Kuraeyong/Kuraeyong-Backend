@@ -1,5 +1,6 @@
 package kuraeyong.backend.domain;
 
+import kuraeyong.backend.util.DateUtil;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -24,7 +25,7 @@ public class StationTimeTable {
 
     public int size() {
         return list.size();
-}
+    }
 
     public StationTimeTableElement get(int idx) {
         return list.get(idx);
@@ -34,12 +35,14 @@ public class StationTimeTable {
      * 특정시간(time) 이후에 도착하는 열차 목록 조회
      */
     public List<StationTimeTableElement> findByDptTmGreaterThanEqual(String time) {
+        int timeVal = DateUtil.getTimeForCompare(time);
         for (int i = 0; i < size(); i++) {
             StationTimeTableElement train = get(i);
 
-            // 출발시간이 null이면(종점이면) 도착시간을 기준으로 비교
-            String dptTm = train.getDptTm().equals("null") ? train.getArvTm() : train.getDptTm();
-            if (dptTm.compareTo(time) >= 0) {
+            // 종점이면 출발시간(dptTm)이 null이므로 도착시간(arvTm)을 기준으로 비교
+            String dptTm = train.isTmnStin() ? train.getArvTm() : train.getDptTm();
+            int dptTmVal = DateUtil.getTimeForCompare(dptTm);
+            if (dptTmVal >= timeVal) {
                 return list.subList(i, size());
             }
         }
