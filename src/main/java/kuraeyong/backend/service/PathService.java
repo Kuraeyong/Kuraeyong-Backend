@@ -53,16 +53,14 @@ public class PathService {
             System.out.println(path.getTotalWeight());
             System.out.println(path.getTrfCnt());
             System.out.println(compressedPath);
-            List<MoveInfo> moveInfoList = getMoveInfoList(compressedPath, dateType, hour, min);
+            MoveInfoList moveInfoList = getMoveInfoList(compressedPath, dateType, hour, min);
             if (moveInfoList == null) {
                 System.out.println("이동할 수 없는 경로입니다.");
                 System.out.println();
                 continue;
             }
-            for (MoveInfo moveInfo : moveInfoList) {
-                System.out.println(moveInfo);
-            }
-            System.out.println();
+            setTrfCnt(moveInfoList, dateType);
+            System.out.println(moveInfoList);
         }
         return "successfully searched";
     }
@@ -369,8 +367,8 @@ public class PathService {
      * @param min            사용자의 해당 역 도착 시간 (분)
      * @return 이동 정보 리스트
      */
-    public List<MoveInfo> getMoveInfoList(MetroPath compressedPath, String dateType, int hour, int min) {
-        List<MoveInfo> moveInfoList = new ArrayList<>();
+    public MoveInfoList getMoveInfoList(MetroPath compressedPath, String dateType, int hour, int min) {
+        MoveInfoList moveInfoList = new MoveInfoList();
         String currTime = DateUtil.getCurrTime(hour, min);
 
         moveInfoList.add(MoveInfo.builder()
@@ -464,7 +462,7 @@ public class PathService {
     /**
      * 동일 노선 내에서의 불필요한 환승 제거
      */
-    public void removeUnnecessaryTrain(List<MoveInfo> moveInfoList, MetroPath compressedPath, String dateType) {
+    public void removeUnnecessaryTrain(MoveInfoList moveInfoList, MetroPath compressedPath, String dateType) {
         for (int i = moveInfoList.size() - 2; i >= 1; i--) {
             MoveInfo TO_A = moveInfoList.get(i - 1);
             MoveInfo TO_B = moveInfoList.get(i);
@@ -491,5 +489,29 @@ public class PathService {
             TO_B.setDptTm(A_Train.getDptTm());
             TO_B.setArvTm(B_Train.getArvTm());
         }
+    }
+
+    public void setTrfCnt(MoveInfoList moveInfoList, String dateType) {
+        int trfCnt = 0;
+
+        for (int i = 0; i < moveInfoList.size() - 1; i++) {
+            MoveInfo curr = moveInfoList.get(i);
+            MoveInfo next = moveInfoList.get(i + 1);
+            String currTrnNo = curr.getTrnNo();
+            String nextTrnNo = next.getTrnNo();
+
+            if (currTrnNo == null) {
+                continue;
+            }
+            if (nextTrnNo == null) {
+                trfCnt++;
+                continue;
+            }
+            if (stationTimeTableMap.isSameTrain(currTrnNo, nextTrnNo, curr.getLnCd(), dateType)) {
+                continue;
+            }
+            trfCnt++;
+        }
+        moveInfoList.setTrfCnt(trfCnt);
     }
 }
