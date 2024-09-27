@@ -1,7 +1,5 @@
 package kuraeyong.backend.domain;
 
-import kuraeyong.backend.dto.MinimumStationInfo;
-import kuraeyong.backend.dto.MinimumStationInfoWithDateType;
 import kuraeyong.backend.repository.StationTimeTableElementRepository;
 import kuraeyong.backend.util.DateUtil;
 import org.springframework.stereotype.Component;

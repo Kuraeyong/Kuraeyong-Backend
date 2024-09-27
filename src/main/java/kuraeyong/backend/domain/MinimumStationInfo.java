@@ -1,6 +1,5 @@
-package kuraeyong.backend.dto;
+package kuraeyong.backend.domain;
 
-import kuraeyong.backend.domain.MetroNodeWithEdge;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

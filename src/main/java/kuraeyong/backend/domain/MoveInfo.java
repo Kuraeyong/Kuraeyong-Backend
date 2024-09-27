@@ -1,4 +1,4 @@
-package kuraeyong.backend.dto;
+package kuraeyong.backend.domain;
 
 import lombok.*;
 

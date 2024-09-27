@@ -1,6 +1,5 @@
 package kuraeyong.backend.domain;
 
-import kuraeyong.backend.dto.MinimumStationInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

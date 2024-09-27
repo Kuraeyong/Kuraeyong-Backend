@@ -1,14 +1,10 @@
 package kuraeyong.backend.controller;
 
-import kuraeyong.backend.domain.MetroPath;
-import kuraeyong.backend.dto.MoveInfo;
 import kuraeyong.backend.dto.request.PostPathSearchRequest;
 import kuraeyong.backend.service.PathService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController

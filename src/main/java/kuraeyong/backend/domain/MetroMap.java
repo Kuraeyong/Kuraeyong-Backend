@@ -1,7 +1,6 @@
 package kuraeyong.backend.domain;
 
 import jakarta.annotation.PostConstruct;
-import kuraeyong.backend.dto.MinimumStationInfo;
 import kuraeyong.backend.repository.EdgeInfoRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

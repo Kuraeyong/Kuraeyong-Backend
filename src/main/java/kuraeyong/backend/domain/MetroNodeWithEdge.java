@@ -73,10 +73,6 @@ public class MetroNodeWithEdge implements Comparable<MetroNodeWithEdge> {
     public String toString() {
         String nodeInfo = getLnCd() + ", " + getStinNm() + ", " + weight + ", " + waitingTime + ", " + direction + ", " + branchDirection;
 
-        return getString(nodeInfo);
-    }
-
-    private String getString(String nodeInfo) {
         return switch (edgeType) {
             case EXP_EDGE -> "<<" + nodeInfo + ">>";
             case TRF_EDGE -> "[[" + nodeInfo + "]]";

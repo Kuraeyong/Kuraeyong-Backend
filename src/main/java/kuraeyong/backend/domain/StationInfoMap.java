@@ -1,6 +1,5 @@
 package kuraeyong.backend.domain;
 
-import kuraeyong.backend.dto.MinimumStationInfo;
 import kuraeyong.backend.repository.StationInfoRepository;
 import lombok.Getter;
 import org.springframework.stereotype.Component;

@@ -1,11 +1,9 @@
-
-
 package kuraeyong.backend.service;
 
 import kuraeyong.backend.domain.*;
-import kuraeyong.backend.dto.MinimumStationInfo;
-import kuraeyong.backend.dto.MinimumStationInfoWithDateType;
-import kuraeyong.backend.dto.MoveInfo;
+import kuraeyong.backend.domain.MinimumStationInfo;
+import kuraeyong.backend.domain.MinimumStationInfoWithDateType;
+import kuraeyong.backend.domain.MoveInfo;
 import kuraeyong.backend.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
