@@ -46,22 +46,20 @@ public class PathService {
         addDirectPath(shortestPathList, orgNo, destNo);
 
         // TODO 2. 간이 경로와 시간표 API를 이용해 실소요시간을 포함한 이동 정보 조회
+        PathSearch pathSearch = new PathSearch();
         for (MetroPath path : shortestPathList) {
             MetroPath compressedPath = path.getCompressPath();
-
-            System.out.println(path);
-            System.out.println(path.getTotalWeight());
-            System.out.println(path.getTrfCnt());
-            System.out.println(compressedPath);
             MoveInfoList moveInfoList = getMoveInfoList(compressedPath, dateType, hour, min);
             if (moveInfoList == null) {
-                System.out.println("이동할 수 없는 경로입니다.");
-                System.out.println();
                 continue;
             }
-            setTrfCnt(moveInfoList, dateType);
-            System.out.println(moveInfoList);
+            pathSearch.add(new PathSearchElement(compressedPath, moveInfoList));
         }
+
+        // TODO 3. 경로 탐색 결과 출력
+        pathSearch.sort();
+        System.out.println(pathSearch);
+
         return "successfully searched";
     }
 
@@ -388,6 +386,7 @@ public class PathService {
             moveInfoList.add(moveInfo);
         }
         removeUnnecessaryTrain(moveInfoList, compressedPath, dateType);
+        setTrfInfo(moveInfoList, dateType);
 
         return moveInfoList;
     }
@@ -493,8 +492,9 @@ public class PathService {
         }
     }
 
-    public void setTrfCnt(MoveInfoList moveInfoList, String dateType) {
+    public void setTrfInfo(MoveInfoList moveInfoList, String dateType) {
         int trfCnt = 0;
+        int totalTrfTime = 0;
 
         for (int i = 0; i < moveInfoList.size() - 1; i++) {
             MoveInfo curr = moveInfoList.get(i);
@@ -507,6 +507,7 @@ public class PathService {
             }
             if (nextTrnNo == null) {
                 trfCnt++;
+                totalTrfTime += DateUtil.getMinDiff(next.getDptTm(), next.getArvTm());
                 continue;
             }
             if (stationTimeTableMap.isSameTrain(currTrnNo, nextTrnNo, curr.getLnCd(), dateType)) {
@@ -515,5 +516,6 @@ public class PathService {
             trfCnt++;
         }
         moveInfoList.setTrfCnt(trfCnt);
+        moveInfoList.setTotalTrfTime(totalTrfTime);
     }
 }

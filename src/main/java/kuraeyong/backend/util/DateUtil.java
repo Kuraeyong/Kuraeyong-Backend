@@ -49,6 +49,21 @@ public class DateUtil {
         return hour * 60 + min;
     }
 
+    /**
+     * 입력 순서에 상관없이, 두 시간의 차를 반환
+     */
+    public static int getMinDiff(String time1, String time2) {
+        if (time1.compareTo(time2) > 0) {
+            String temp = time1;
+            time1 = time2;
+            time2 = temp;
+        }
+        int timeVal1 = timeToMinute(getTimeForCompare(time1));
+        int timeVal2 = timeToMinute(getTimeForCompare(time2));
+
+        return timeVal2 - timeVal1;
+    }
+
     public static boolean isWithinNMinutes(String earlierTime, String laterTime, int n) {
         int time1 = getTimeForCompare(plusMinutes(earlierTime, n));
         int time2 = getTimeForCompare(laterTime);
