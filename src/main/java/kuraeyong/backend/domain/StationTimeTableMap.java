@@ -11,6 +11,7 @@ public class StationTimeTableMap {
     private final HashMap<MinimumStationInfoWithDateType, StationTimeTable> map;
     private final static MinimumStationInfo SEONGSU = MinimumStationInfo.build("S1", "2", "211");
     private final static MinimumStationInfo EUNGAM = MinimumStationInfo.build("S1", "6", "2611");
+    public final static MinimumStationInfo K2_KWANGWOON = MinimumStationInfo.build("KR", "K2", "119");
 
     public StationTimeTableMap(StationTimeTableElementRepository stationTimeTableElementRepository) {
         map = new HashMap<>();

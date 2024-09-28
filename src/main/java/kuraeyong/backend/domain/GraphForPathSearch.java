@@ -13,8 +13,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class GraphForPathSearch {
 
-    //    private final int TRF_STIN_CNT = 269;
-    public final int TRF_OR_EXP_STIN_CNT = 378;
     private List<MetroNode> graphForPathSearch;
     private final MetroMap metroMap;
 
@@ -61,7 +59,8 @@ public class GraphForPathSearch {
 
             // 새로운 노드에 간선 추가
             for (EdgeInfo edgeInfo : edgeInfoList) {
-                MetroNode trfNode = metroMap.getNode(edgeInfo.getTrfRailOprIsttCd(), edgeInfo.getTrfLnCd(), edgeInfo.getTrfStinCd());
+                MinimumStationInfo trfNodeMSI = MinimumStationInfo.build(edgeInfo.getTrfRailOprIsttCd(), edgeInfo.getTrfLnCd(), edgeInfo.getTrfStinCd());
+                MetroNode trfNode = metroMap.getNode(trfNodeMSI);
                 MetroEdge edge = MetroEdge.builder()
                         .trfRailOprIsttCd(edgeInfo.getTrfRailOprIsttCd())
                         .trflnCd(edgeInfo.getTrfLnCd())
@@ -77,7 +76,7 @@ public class GraphForPathSearch {
             graphForPathSearch.add(node);
             return node.getNodeNo();
         }
-        return metroMap.getNode(railOprIsttCd, lnCd, stinCd).getNodeNo();
+        return metroMap.getNode(key).getNodeNo();
     }
 
     /**
@@ -99,7 +98,7 @@ public class GraphForPathSearch {
      */
     public void updateEdgeList(int nodeNo) {
         // 기존에 있는 역(환승역이거나 급행 정차역)이었다면 간선 리스트를 갱신하지 않음
-        if (nodeNo < TRF_OR_EXP_STIN_CNT) {
+        if (nodeNo < metroMap.getTrfOrExpStinCnt()) {
             return;
         }
         MetroNode node = graphForPathSearch.get(nodeNo);
@@ -152,7 +151,15 @@ public class GraphForPathSearch {
         return graphForPathSearch.size();
     }
 
+    public int getTrfOrExpStinCnt() {
+        return metroMap.getTrfOrExpStinCnt();
+    }
+
     public MetroNode get(int nodeNo) {
         return graphForPathSearch.get(nodeNo);
+    }
+
+    public MetroNode getNodeFromMetroMap(MinimumStationInfo MSI) {
+        return metroMap.getNode(MSI);
     }
 }

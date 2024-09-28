@@ -77,7 +77,7 @@ public class PathService {
         if (!org.getLnCd().equals(dest.getLnCd())) {    // 노선 환승이 필요한 경우
             return;
         }
-        if (orgNo < graphForPathSearch.TRF_OR_EXP_STIN_CNT || destNo < graphForPathSearch.TRF_OR_EXP_STIN_CNT) {    // 하나라도 일반역이 아닌 경우
+        if (orgNo < graphForPathSearch.getTrfOrExpStinCnt() || destNo < graphForPathSearch.getTrfOrExpStinCnt()) {    // 하나라도 일반역이 아닌 경우
             return;
         }
 
@@ -111,7 +111,9 @@ public class PathService {
 
         Arrays.fill(dist, Integer.MAX_VALUE);
         dist[orgNo] = 0;
-        dist[320] = -1; // 경춘선 광운대 운행 X
+
+        // 경춘선 광운대 운행 X
+        dist[graphForPathSearch.getNodeFromMetroMap(StationTimeTableMap.K2_KWANGWOON).getNodeNo()] = -1;
 
         // rootPath를 기반으로 check 초기화
         if (rootPath != null) {

@@ -73,7 +73,8 @@ public class MetroMap {
 
         // TODO 2. 급행 간선 정보 조회
         for (EdgeInfo edgeInfo : edgeInfoRepository.findByEdgeTypeEquals(1)) {
-            node = getNode(edgeInfo.getRailOprIsttCd(), edgeInfo.getLnCd(), edgeInfo.getStinCd());
+            MinimumStationInfo MSI = MinimumStationInfo.build(edgeInfo.getRailOprIsttCd(), edgeInfo.getLnCd(), edgeInfo.getStinCd());
+            node = getNode(MSI);
             MetroEdge edge = MetroEdge.builder()
                     .trfRailOprIsttCd(edgeInfo.getTrfRailOprIsttCd())
                     .trflnCd(edgeInfo.getTrfLnCd())
@@ -91,7 +92,8 @@ public class MetroMap {
     private void initTrfNodeNo() {
         for (MetroNode node : graph) {
             for (MetroEdge edge : node.getEdgeList()) {
-                MetroNode trfNode = getNode(edge.getTrfRailOprIsttCd(), edge.getTrflnCd(), edge.getTrfStinCd());
+                MinimumStationInfo trfNodeMSI = MinimumStationInfo.build(edge.getTrfRailOprIsttCd(), edge.getTrflnCd(), edge.getTrfStinCd());
+                MetroNode trfNode = getNode(trfNodeMSI);
                 edge.setTrfNodeNo(trfNode.getNodeNo());
             }
         }
@@ -101,7 +103,11 @@ public class MetroMap {
         return graph.get(nodeNo);
     }
 
-    public MetroNode getNode(String railOprIsttCd, String lnCd, String stinCd) {
+    public MetroNode getNode(MinimumStationInfo MSI) {
+        String railOprIsttCd = MSI.getRailOprIsttCd();
+        String lnCd = MSI.getLnCd();
+        String stinCd = MSI.getStinCd();
+
         for (int idx = getLineStartIdx(lnCd); idx < graph.size(); idx++) {
             MetroNode node = getNode(idx);
             if (railOprIsttCd.equals(node.getRailOprIsttCd()) && stinCd.equals(node.getStinCd())) {
@@ -109,6 +115,10 @@ public class MetroMap {
             }
         }
         return null;
+    }
+
+    public int getTrfOrExpStinCnt() {
+        return graph.size();
     }
 
     private int getLineStartIdx(String lnCd) {  // 해당 라인 코드가 없으면 null
