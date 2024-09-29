@@ -15,6 +15,10 @@ public class PathSearch {
         return list.size();
     }
 
+    public boolean isEmpty() {
+        return size() == 0;
+    }
+
     public PathSearchElement get(int idx) {
         return list.get(idx);
     }

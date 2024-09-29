@@ -66,6 +66,9 @@ public class PathService {
         }
 
         // TODO 3. 경로 탐색 결과 출력
+        if (pathSearch.isEmpty()) {
+            return "현재 운행중인 열차가 없습니다.";
+        }
         pathSearch.sort();
         System.out.print(pathSearch);
         return "successfully searched";

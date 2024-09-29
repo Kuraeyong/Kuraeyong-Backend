@@ -29,7 +29,7 @@ public class PathSearchElement implements Comparable<PathSearchElement> {
         StringBuilder sb = new StringBuilder();
 
         // TODO 1. compressedPath
-        sb.append(compressedPath).append('\n');
+//        sb.append(compressedPath).append('\n');
 
         // TODO 2. moveInfoList
         sb.append("총 소요시간(대기시간 포함): ").append(getTotalTime()).append("분\n");
