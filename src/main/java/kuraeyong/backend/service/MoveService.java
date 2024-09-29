@@ -148,9 +148,13 @@ public class MoveService {
         }
     }
 
+    /**
+     * 해당 이동정보의 환승 관련 정보 설정
+     */
     public void setTrfInfo(MoveInfoList moveInfoList, String dateType) {
         int trfCnt = 0;
         int totalTrfTime = 0;
+        int trnGroupNo = 0;
 
         for (int i = 0; i < moveInfoList.size() - 1; i++) {
             MoveInfo curr = moveInfoList.get(i);
@@ -159,18 +163,23 @@ public class MoveService {
             String nextTrnNo = next.getTrnNo();
 
             if (currTrnNo == null) {
+                curr.setTrnGroupNo(-1);
                 continue;
             }
             if (nextTrnNo == null) {
                 trfCnt++;
                 totalTrfTime += DateUtil.getMinDiff(next.getDptTm(), next.getArvTm());
+                curr.setTrnGroupNo(trnGroupNo++);
                 continue;
             }
             if (stationTimeTableMap.isSameTrain(currTrnNo, nextTrnNo, curr.getLnCd(), dateType)) {
+                curr.setTrnGroupNo(trnGroupNo);
                 continue;
             }
+            curr.setTrnGroupNo(trnGroupNo++);
             trfCnt++;
         }
+        moveInfoList.get(moveInfoList.size() - 1).setTrnGroupNo(trnGroupNo);
         moveInfoList.setTrfCnt(trfCnt);
         moveInfoList.setTotalTrfTime(totalTrfTime);
     }

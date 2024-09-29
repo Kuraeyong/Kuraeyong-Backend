@@ -14,6 +14,8 @@ public class MoveInfo {
     private String dptTm;   // 현재역 출발 시간
     @Setter
     private String arvTm;   // 다음역 도착 시간
+    @Setter
+    private int trnGroupNo;
 
     @Override
     public String toString() {
@@ -22,6 +24,7 @@ public class MoveInfo {
                 ", trnNo='" + trnNo + '\'' +
                 ", dptTm='" + dptTm + '\'' +
                 ", arvTm='" + arvTm + '\'' +
+                ", trnGroupNo=" + trnGroupNo +
                 '}';
     }
 }

@@ -10,38 +10,35 @@ import java.util.List;
 @Getter
 @Setter
 public class MoveInfoList {
-    @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
-    private final List<MoveInfo> list;
+    private final List<MoveInfo> moveInfoList;
     private int trfCnt;
     private int totalTrfTime;
 
     public MoveInfoList() {
-        list = new ArrayList<>();
+        moveInfoList = new ArrayList<>();
     }
 
     public void add(MoveInfo moveInfo) {
-        list.add(moveInfo);
+        moveInfoList.add(moveInfo);
     }
 
     public int size() {
-        return list.size();
+        return moveInfoList.size();
     }
 
     public MoveInfo get(int idx) {
-        return list.get(idx);
+        return moveInfoList.get(idx);
     }
 
-    public String getFinalArvTm() {
-        return get(size() - 1).getArvTm();
+    public String getArvTm(int idx) {
+        return get(idx).getArvTm();
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("trfCnt: ").append(trfCnt).append('\n');
-        sb.append("totalTrfTime: ").append(totalTrfTime).append('\n');
-        for (MoveInfo moveInfo : list) {
+        for (MoveInfo moveInfo : moveInfoList) {
             sb.append(moveInfo).append('\n');
         }
         return sb.toString();

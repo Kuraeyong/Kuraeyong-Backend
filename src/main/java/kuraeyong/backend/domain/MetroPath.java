@@ -38,22 +38,6 @@ public class MetroPath implements Comparable<MetroPath> {
         return Math.round(sum * 10) / 10.0;
     }
 
-    public int getTrfCnt() {
-        int cnt = 0;
-        EdgeType prevEdgeType = get(1).getEdgeType();
-
-        for (int i = 2; i < path.size(); i++) {
-            MetroNodeWithEdge node = path.get(i);
-            EdgeType currEdgeType = node.getEdgeType();
-            if (EdgeType.checkLineTrf(prevEdgeType, currEdgeType) || EdgeType.checkGenExpTrf(prevEdgeType, currEdgeType)) {
-                cnt++;
-            }
-            prevEdgeType = currEdgeType;
-        }
-
-        return cnt;
-    }
-
     public int size() {
         return path.size();
     }

@@ -1,10 +1,6 @@
 package kuraeyong.backend.service;
 
 import kuraeyong.backend.domain.*;
-import kuraeyong.backend.domain.MinimumStationInfo;
-import kuraeyong.backend.domain.MinimumStationInfoWithDateType;
-import kuraeyong.backend.domain.MoveInfo;
-import kuraeyong.backend.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -57,8 +53,7 @@ public class PathService {
 
         // TODO 3. 경로 탐색 결과 출력
         pathSearch.sort();
-        System.out.println(pathSearch);
-
+        System.out.print(pathSearch);
         return "successfully searched";
     }
 
