@@ -249,19 +249,19 @@ public class PathService {
                     totalPath.concat(spurPath);
 //                    totalPath.removeUnnecessaryPath();
 
-                    System.out.printf("[%d, %d]\n", i, j);
-                    for (int t = 0; t < shortestPathList.size(); t++) {
-                        System.out.printf("shortestPath[%d]: %s\n", t, shortestPathList.get(t));
-                    }
-                    for (int t = 0; t < removedEdgeList.size(); t++) {
-                        System.out.printf("removedEdgeList[%d]: %s\n", t, removedEdgeList.get(t));
-                    }
-                    System.out.printf("rootPath: %s\n", rootPath);
-                    System.out.printf("spurPath: %s\n", spurPath);
-                    System.out.printf("spurNode: %s\n", spurPath.get(0).getNode());
-                    System.out.printf("totalPath: %s\n", totalPath);
-                    System.out.printf("totalPath.getPathWeight(): %.1f\n", totalPath.getTotalWeight());
-                    System.out.println();
+//                    System.out.printf("[%d, %d]\n", i, j);
+//                    for (int t = 0; t < shortestPathList.size(); t++) {
+//                        System.out.printf("shortestPath[%d]: %s\n", t, shortestPathList.get(t));
+//                    }
+//                    for (int t = 0; t < removedEdgeList.size(); t++) {
+//                        System.out.printf("removedEdgeList[%d]: %s\n", t, removedEdgeList.get(t));
+//                    }
+//                    System.out.printf("rootPath: %s\n", rootPath);
+//                    System.out.printf("spurPath: %s\n", spurPath);
+//                    System.out.printf("spurNode: %s\n", spurPath.get(0).getNode());
+//                    System.out.printf("totalPath: %s\n", totalPath);
+//                    System.out.printf("totalPath.getPathWeight(): %.1f\n", totalPath.getTotalWeight());
+//                    System.out.println();
 
                     if (!pathSet.contains(totalPath)) {
                         candidates.add(totalPath);
