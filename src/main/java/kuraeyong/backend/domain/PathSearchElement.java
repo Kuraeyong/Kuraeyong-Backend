@@ -90,6 +90,7 @@ public class PathSearchElement implements Comparable<PathSearchElement> {
             case 13, 14 -> 2;
             default -> 1;
         };
+        tapCnt = stinNm.matches(".*[0-9].*")? tapCnt + 1 : tapCnt;
 
         StringBuilder sb = new StringBuilder(stinNm);
         while (tapCnt-- > 0) {
