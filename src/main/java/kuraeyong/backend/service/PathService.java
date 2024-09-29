@@ -19,10 +19,24 @@ public class PathService {
     private final static int YEN_CANDIDATE_CNT = 10;
 
     public String searchPath(String orgStinNm, String destStinNm, String dateType, int hour, int min) {
-        // TODO 1. 시간표 API를 조회할 간이 경로 조회
-        graphForPathSearch.init();
+        // TODO 0. 유효성 검증
+        if (orgStinNm.equals(destStinNm)) {
+            return "출발역과 도착역의 이름이 동일합니다.";
+        }
         MinimumStationInfo orgMSI = stationService.getStationByName(orgStinNm);
         MinimumStationInfo destMSI = stationService.getStationByName(destStinNm);
+        if (orgMSI == null || destMSI == null) {
+            return "역명이 유효하지 않습니다.";
+        }
+        if (!dateType.equals("평일") && !dateType.equals("토") && !dateType.equals("휴일")) {
+            return "요일명이 유효하지 않습니다.";
+        }
+        if (!((hour >= 0 && hour < 24) && (min >= 0 && min < 60))) {
+            return "시간 정보가 유효하지 않습니다.";
+        }
+
+        // TODO 1. 시간표 API를 조회할 간이 경로 조회
+        graphForPathSearch.init();
         int orgNo = graphForPathSearch.addNode(orgMSI);
         int destNo = graphForPathSearch.addNode(destMSI);
         graphForPathSearch.updateEdgeList(orgNo);

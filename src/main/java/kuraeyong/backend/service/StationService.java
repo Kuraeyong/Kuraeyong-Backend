@@ -211,7 +211,7 @@ public class StationService {
      */
     public MinimumStationInfo getStationByName(String stinNm) {
         List<StationInfo> stationInfoList = stationInfoRepository.findByStinNm(stinNm);
-        if (stationInfoList == null) {
+        if (stationInfoList.isEmpty()) {
             return null;
         }
 
