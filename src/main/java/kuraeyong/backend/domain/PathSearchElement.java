@@ -32,9 +32,9 @@ public class PathSearchElement implements Comparable<PathSearchElement> {
         sb.append(compressedPath).append('\n');
 
         // TODO 2. moveInfoList
-        sb.append("totalTime: ").append(getTotalTime()).append("분\n");
-        sb.append("trfCnt: ").append(getTrfCnt()).append("회\n");
-        sb.append("totalTrfTime: ").append(getTotalTrfTime()).append("분\n");
+        sb.append("총 소요시간(대기시간 포함): ").append(getTotalTime()).append("분\n");
+        sb.append("환승 횟수: ").append(getTrfCnt()).append("회\n");
+        sb.append("총 환승시간: ").append(getTotalTrfTime()).append("분\n");
         sb.append("노선\t\t").append(equalizeStinNmLen("출발역")).append(equalizeStinNmLen("도착역")).append("시간\n");
         sb.append("-".repeat(84)).append('\n');
 
