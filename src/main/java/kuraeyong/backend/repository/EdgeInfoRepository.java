@@ -1,6 +1,6 @@
 package kuraeyong.backend.repository;
 
-import kuraeyong.backend.domain.EdgeInfo;
+import kuraeyong.backend.domain.graph.EdgeInfo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 

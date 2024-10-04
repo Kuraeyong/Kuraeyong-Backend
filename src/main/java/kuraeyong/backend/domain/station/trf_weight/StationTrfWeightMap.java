@@ -1,5 +1,8 @@
-package kuraeyong.backend.domain;
+package kuraeyong.backend.domain.station.trf_weight;
 
+import kuraeyong.backend.domain.constant.BranchDirectionType;
+import kuraeyong.backend.domain.constant.DirectionType;
+import kuraeyong.backend.domain.station.info.MinimumStationInfo;
 import kuraeyong.backend.repository.StationTrfWeightRepository;
 import lombok.Getter;
 import org.springframework.stereotype.Component;

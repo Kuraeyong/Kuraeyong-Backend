@@ -1,6 +1,16 @@
 package kuraeyong.backend.service;
 
-import kuraeyong.backend.domain.*;
+import kuraeyong.backend.domain.constant.EdgeType;
+import kuraeyong.backend.domain.path.MetroNodeWithEdge;
+import kuraeyong.backend.domain.path.MetroPath;
+import kuraeyong.backend.domain.path.MoveInfo;
+import kuraeyong.backend.domain.path.MoveInfoList;
+import kuraeyong.backend.domain.station.info.MinimumStationInfo;
+import kuraeyong.backend.domain.station.info.MinimumStationInfoWithDateType;
+import kuraeyong.backend.domain.station.time_table.StationTimeTable;
+import kuraeyong.backend.domain.station.time_table.StationTimeTableElement;
+import kuraeyong.backend.domain.station.time_table.StationTimeTableMap;
+import kuraeyong.backend.domain.station.trf_weight.StationTrfWeightMap;
 import kuraeyong.backend.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +44,7 @@ public class MoveService {
             MetroNodeWithEdge curr = compressedPath.get(i);
             MetroNodeWithEdge next = compressedPath.get(i + 1);
 
-            MoveInfo moveInfo = getMoveInfo(curr, next, dateType, currTime);
+            MoveInfo moveInfo = createMoveInfo(curr, next, dateType, currTime);
             if (moveInfo == null) {
                 return null;
             }
@@ -54,11 +64,11 @@ public class MoveService {
      * @param currTime 현재 시간
      * @return 이동 정보
      */
-    public MoveInfo getMoveInfo(MetroNodeWithEdge curr, MetroNodeWithEdge next, String dateType, String currTime) {
+    public MoveInfo createMoveInfo(MetroNodeWithEdge curr, MetroNodeWithEdge next, String dateType, String currTime) {
         if (next.getEdgeType() == EdgeType.TRF_EDGE) {    // 환승역인 경우
             MinimumStationInfo currMSI = MinimumStationInfo.get(curr);
             MinimumStationInfo nextMSI = MinimumStationInfo.get(next);
-            int weight = stationTrfWeightMap.getStationTrfWeight(currMSI, nextMSI, next.getBranchDirection(), next.getDirection());
+                int weight = stationTrfWeightMap.getStationTrfWeight(currMSI, nextMSI, next.getBranchDirection(), next.getDirection());
 
             return MoveInfo.builder()
                     .lnCd(null)

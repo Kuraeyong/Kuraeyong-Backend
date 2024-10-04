@@ -1,6 +1,13 @@
 package kuraeyong.backend.service;
 
-import kuraeyong.backend.domain.*;
+import kuraeyong.backend.domain.constant.EdgeType;
+import kuraeyong.backend.domain.graph.GraphForPathSearch;
+import kuraeyong.backend.domain.graph.MetroEdge;
+import kuraeyong.backend.domain.graph.MetroNode;
+import kuraeyong.backend.domain.path.*;
+import kuraeyong.backend.domain.station.info.MinimumStationInfo;
+import kuraeyong.backend.domain.station.info.MinimumStationInfoWithDateType;
+import kuraeyong.backend.domain.station.time_table.StationTimeTableMap;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -55,22 +62,22 @@ public class PathService {
         addDirectPath(shortestPathList, orgNo, destNo);
 
         // TODO 2. 간이 경로와 시간표 API를 이용해 실소요시간을 포함한 이동 정보 조회
-        PathSearch pathSearch = new PathSearch();
+        PathResultList pathResultList = new PathResultList();
         for (MetroPath path : shortestPathList) {
             MetroPath compressedPath = path.getCompressPath();
             MoveInfoList moveInfoList = moveService.createMoveInfoList(compressedPath, dateType, hour, min);
             if (moveInfoList == null) {
                 continue;
             }
-            pathSearch.add(new PathSearchElement(compressedPath, moveInfoList));
+            pathResultList.add(new PathResult(compressedPath, moveInfoList));
         }
 
         // TODO 3. 경로 탐색 결과 출력
-        if (pathSearch.isEmpty()) {
+        if (pathResultList.isEmpty()) {
             return "현재 운행중인 열차가 없습니다.";
         }
-        pathSearch.sort();
-        System.out.print(pathSearch);
+        pathResultList.sort();
+        System.out.print(pathResultList);
         return "successfully searched";
     }
 

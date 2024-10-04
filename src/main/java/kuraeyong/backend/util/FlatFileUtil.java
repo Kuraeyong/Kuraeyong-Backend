@@ -1,8 +1,8 @@
 package kuraeyong.backend.util;
 
-import kuraeyong.backend.domain.EdgeInfo;
-import kuraeyong.backend.domain.StationInfo;
-import kuraeyong.backend.domain.StationTrfWeight;
+import kuraeyong.backend.domain.graph.EdgeInfo;
+import kuraeyong.backend.domain.station.info.StationInfo;
+import kuraeyong.backend.domain.station.trf_weight.StationTrfWeight;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;

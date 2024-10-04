@@ -1,6 +1,6 @@
 package kuraeyong.backend.dto;
 
-import kuraeyong.backend.domain.StationTimeTableElement;
+import kuraeyong.backend.domain.station.time_table.StationTimeTableElement;
 import lombok.*;
 
 @Getter

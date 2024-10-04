@@ -1,4 +1,4 @@
-package kuraeyong.backend.domain;
+package kuraeyong.backend.domain.station.info;
 
 import jakarta.persistence.*;
 import lombok.*;

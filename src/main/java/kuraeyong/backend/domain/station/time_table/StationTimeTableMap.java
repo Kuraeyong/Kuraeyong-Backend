@@ -1,5 +1,7 @@
-package kuraeyong.backend.domain;
+package kuraeyong.backend.domain.station.time_table;
 
+import kuraeyong.backend.domain.station.info.MinimumStationInfo;
+import kuraeyong.backend.domain.station.info.MinimumStationInfoWithDateType;
 import kuraeyong.backend.repository.StationTimeTableElementRepository;
 import kuraeyong.backend.util.DateUtil;
 import org.springframework.stereotype.Component;

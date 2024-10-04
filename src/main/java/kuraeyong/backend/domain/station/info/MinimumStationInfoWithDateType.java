@@ -1,5 +1,6 @@
-package kuraeyong.backend.domain;
+package kuraeyong.backend.domain.station.info;
 
+import kuraeyong.backend.domain.path.MetroNodeWithEdge;
 import lombok.Getter;
 
 import java.util.Objects;

@@ -1,5 +1,6 @@
-package kuraeyong.backend.domain;
+package kuraeyong.backend.domain.graph;
 
+import kuraeyong.backend.domain.constant.EdgeType;
 import lombok.*;
 
 @Builder

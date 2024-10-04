@@ -1,6 +1,8 @@
-package kuraeyong.backend.domain;
+package kuraeyong.backend.domain.graph;
 
 import jakarta.annotation.PostConstruct;
+import kuraeyong.backend.domain.constant.EdgeType;
+import kuraeyong.backend.domain.station.info.MinimumStationInfo;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

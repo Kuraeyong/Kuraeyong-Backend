@@ -1,4 +1,4 @@
-package kuraeyong.backend.domain;
+package kuraeyong.backend.domain.constant;
 
 public enum BranchDirectionType {
     MAIN_TO_SUB("01"),    // 본선 -> 지선

@@ -1,4 +1,4 @@
-package kuraeyong.backend.domain;
+package kuraeyong.backend.domain.constant;
 
 public enum DirectionType {
     UP(0),    // 상행

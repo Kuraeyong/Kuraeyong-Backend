@@ -1,10 +1,10 @@
-package kuraeyong.backend.domain;
+package kuraeyong.backend.domain.path;
 
 import kuraeyong.backend.util.DateUtil;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
-public class PathSearchElement implements Comparable<PathSearchElement> {
+public class PathResult implements Comparable<PathResult> {
     private final MetroPath compressedPath;
     private final MoveInfoList moveInfoList;
 
@@ -100,7 +100,7 @@ public class PathSearchElement implements Comparable<PathSearchElement> {
     }
 
     @Override
-    public int compareTo(PathSearchElement o) {
+    public int compareTo(PathResult o) {
         if (!getFinalArvTm().equals(o.getFinalArvTm())) {    // 도착시간이 다르면
             return getFinalArvTm().compareTo(o.getFinalArvTm());
         }

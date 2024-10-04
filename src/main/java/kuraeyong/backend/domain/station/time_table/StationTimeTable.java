@@ -1,4 +1,4 @@
-package kuraeyong.backend.domain;
+package kuraeyong.backend.domain.station.time_table;
 
 import kuraeyong.backend.util.DateUtil;
 import lombok.Getter;

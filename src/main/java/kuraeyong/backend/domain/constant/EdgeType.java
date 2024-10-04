@@ -1,4 +1,4 @@
-package kuraeyong.backend.domain;
+package kuraeyong.backend.domain.constant;
 
 public enum EdgeType {
     NONE(-1),   // 간선 종류가 중요하지 않은 경우

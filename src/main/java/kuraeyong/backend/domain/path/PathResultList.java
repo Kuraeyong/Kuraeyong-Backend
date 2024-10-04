@@ -1,13 +1,13 @@
-package kuraeyong.backend.domain;
+package kuraeyong.backend.domain.path;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class PathSearch {
-    private final List<PathSearchElement> list;
+public class PathResultList {
+    private final List<PathResult> list;
 
-    public PathSearch() {
+    public PathResultList() {
         list = new ArrayList<>();
     }
 
@@ -19,7 +19,7 @@ public class PathSearch {
         return size() == 0;
     }
 
-    public PathSearchElement get(int idx) {
+    public PathResult get(int idx) {
         return list.get(idx);
     }
 
@@ -27,15 +27,15 @@ public class PathSearch {
         Collections.sort(list);
     }
 
-    public void add(PathSearchElement pathSearchElement) {
-        list.add(pathSearchElement);
+    public void add(PathResult pathResult) {
+        list.add(pathResult);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (PathSearchElement pathSearchElement : list) {
-            sb.append(pathSearchElement).append('\n');
+        for (PathResult pathResult : list) {
+            sb.append(pathResult).append('\n');
         }
         return sb.toString();
     }

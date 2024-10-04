@@ -1,5 +1,9 @@
-package kuraeyong.backend.domain;
+package kuraeyong.backend.domain.path;
 
+import kuraeyong.backend.domain.station.info.MinimumStationInfo;
+import kuraeyong.backend.domain.constant.BranchDirectionType;
+import kuraeyong.backend.domain.constant.DirectionType;
+import kuraeyong.backend.domain.constant.EdgeType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

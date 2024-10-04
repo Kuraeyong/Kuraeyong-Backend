@@ -1,8 +1,8 @@
 package kuraeyong.backend.service;
 
-import kuraeyong.backend.domain.StationInfo;
-import kuraeyong.backend.domain.StationTrfWeight;
-import kuraeyong.backend.domain.MinimumStationInfo;
+import kuraeyong.backend.domain.station.info.StationInfo;
+import kuraeyong.backend.domain.station.trf_weight.StationTrfWeight;
+import kuraeyong.backend.domain.station.info.MinimumStationInfo;
 import kuraeyong.backend.repository.StationInfoRepository;
 import kuraeyong.backend.repository.StationTrfWeightRepository;
 import kuraeyong.backend.util.FlatFileUtil;

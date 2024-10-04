@@ -1,6 +1,6 @@
 package kuraeyong.backend.service;
 
-import kuraeyong.backend.domain.EdgeInfo;
+import kuraeyong.backend.domain.graph.EdgeInfo;
 import kuraeyong.backend.repository.EdgeInfoRepository;
 import kuraeyong.backend.util.FlatFileUtil;
 import lombok.RequiredArgsConstructor;

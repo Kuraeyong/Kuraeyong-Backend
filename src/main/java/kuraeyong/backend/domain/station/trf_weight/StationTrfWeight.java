@@ -1,4 +1,4 @@
-package kuraeyong.backend.domain;
+package kuraeyong.backend.domain.station.trf_weight;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

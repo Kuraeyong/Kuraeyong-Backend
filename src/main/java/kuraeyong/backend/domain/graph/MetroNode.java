@@ -1,4 +1,4 @@
-package kuraeyong.backend.domain;
+package kuraeyong.backend.domain.graph;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

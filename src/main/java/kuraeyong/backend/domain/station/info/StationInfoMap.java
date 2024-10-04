@@ -1,4 +1,4 @@
-package kuraeyong.backend.domain;
+package kuraeyong.backend.domain.station.info;
 
 import kuraeyong.backend.repository.StationInfoRepository;
 import lombok.Getter;

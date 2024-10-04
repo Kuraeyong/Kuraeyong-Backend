@@ -1,6 +1,9 @@
-package kuraeyong.backend.domain;
+package kuraeyong.backend.domain.graph;
 
 import jakarta.annotation.PostConstruct;
+import kuraeyong.backend.domain.constant.EdgeType;
+import kuraeyong.backend.domain.station.info.MinimumStationInfo;
+import kuraeyong.backend.domain.station.info.StationInfoMap;
 import kuraeyong.backend.repository.EdgeInfoRepository;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

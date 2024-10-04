@@ -1,5 +1,6 @@
-package kuraeyong.backend.domain;
+package kuraeyong.backend.domain.station.info;
 
+import kuraeyong.backend.domain.path.MetroNodeWithEdge;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

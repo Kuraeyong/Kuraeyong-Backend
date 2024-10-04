@@ -1,4 +1,4 @@
-package kuraeyong.backend.domain;
+package kuraeyong.backend.domain.station.time_table;
 
 import jakarta.persistence.*;
 import kuraeyong.backend.util.DateUtil;

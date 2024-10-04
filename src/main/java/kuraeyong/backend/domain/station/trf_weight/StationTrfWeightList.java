@@ -1,9 +1,8 @@
-package kuraeyong.backend.domain;
+package kuraeyong.backend.domain.station.trf_weight;
 
 import lombok.Getter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 @Getter
