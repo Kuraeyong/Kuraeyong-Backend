@@ -1,8 +1,13 @@
 package kuraeyong.backend.service;
 
+import kuraeyong.backend.domain.constant.FileType;
+import kuraeyong.backend.domain.graph.EdgeInfo;
+import kuraeyong.backend.domain.station.convenience.StationConvenience;
+import kuraeyong.backend.domain.station.info.MinimumStationInfo;
 import kuraeyong.backend.domain.station.info.StationInfo;
 import kuraeyong.backend.domain.station.trf_weight.StationTrfWeight;
-import kuraeyong.backend.domain.station.info.MinimumStationInfo;
+import kuraeyong.backend.repository.EdgeInfoRepository;
+import kuraeyong.backend.repository.StationConvenienceRepository;
 import kuraeyong.backend.repository.StationInfoRepository;
 import kuraeyong.backend.repository.StationTrfWeightRepository;
 import kuraeyong.backend.util.FlatFileUtil;
@@ -28,6 +33,8 @@ public class StationService {
 
     private final StationInfoRepository stationInfoRepository;
     private final StationTrfWeightRepository stationTrfWeightRepository;
+    private final StationConvenienceRepository stationConvenienceRepository;
+    private final EdgeInfoRepository edgeInfoRepository;
     private final static String BASE_URL = "src/main/resources/xlsx/";
     private static String csvFilePath, logFilePath;
 
@@ -41,35 +48,53 @@ public class StationService {
         logFilePath = path;
     }
 
-    /**
-     *  StationInfo DB 생성 및 초기화
-     */
-    public String createStationInfoDB() {
-        String filePath = BASE_URL + "station_info.xlsx";
+    public String initDB(FileType fileType) {
+        String filePath = BASE_URL + fileType.getFileName();
         List<List<String>> rowList = FlatFileUtil.getDataListFromExcel(filePath);
-        List<StationInfo> stationInfoList = FlatFileUtil.toStationInfoList(rowList);
+        boolean isFinished;
 
-        stationInfoRepository.deleteAll();
-        List<StationInfo> saveResult = stationInfoRepository.saveAll(stationInfoList);
-
-        if (saveResult.size() == stationInfoList.size()) {
+        if (fileType == FileType.STATION_INFO) {
+            isFinished = initStationInfoDB(rowList);
+        } else if (fileType == FileType.STATION_TRF_WEIGHT) {
+            isFinished = initStationTrfWeightDB(rowList);
+        } else if (fileType == FileType.STATION_CONVENIENCE) {
+            isFinished = initStationConvenienceDB(rowList);
+        } else {
+            isFinished = initEdgeInfoDB(rowList);
+        }
+        
+        if (isFinished) {
             return "SUCCESS";
         }
         return "FAILED";
     }
+    
+    private boolean initStationInfoDB(List<List<String>> rowList) {
+        List<StationInfo> stationInfoList = FlatFileUtil.toStationInfoList(rowList);
+        
+        stationInfoRepository.deleteAll();
+        return stationInfoList.size() == stationInfoRepository.saveAll(stationInfoList).size();
+    }
 
-    public String createStationTrfWeightDB() {
-        String filePath = BASE_URL + "station_trf_weight.xlsx";
-        List<List<String>> rowList = FlatFileUtil.getDataListFromExcel(filePath);
+    private boolean initStationTrfWeightDB(List<List<String>> rowList) {
         List<StationTrfWeight> stationTrfWeightList = FlatFileUtil.toStationTrfWeightList(rowList);
 
         stationTrfWeightRepository.deleteAll();
-        List<StationTrfWeight> saveResult = stationTrfWeightRepository.saveAll(stationTrfWeightList);
+        return stationTrfWeightList.size() == stationTrfWeightRepository.saveAll(stationTrfWeightList).size();
+    }
 
-        if (saveResult.size() == stationTrfWeightList.size()) {
-            return "SUCCESS";
-        }
-        return "FAILED";
+    private boolean initStationConvenienceDB(List<List<String>> rowList) {
+        List<StationConvenience> stationConvenienceList = FlatFileUtil.toStationConvenienceList(rowList);
+
+        stationConvenienceRepository.deleteAll();
+        return stationConvenienceList.size() == stationConvenienceRepository.saveAll(stationConvenienceList).size();
+    }
+
+    private boolean initEdgeInfoDB(List<List<String>> rowList) {
+        List<EdgeInfo> edgeInfoList = FlatFileUtil.toEdgeInfoList(rowList);
+
+        edgeInfoRepository.deleteAll();
+        return edgeInfoList.size() == edgeInfoRepository.saveAll(edgeInfoList).size();
     }
 
     /**

@@ -1,6 +1,7 @@
 package kuraeyong.backend.util;
 
 import kuraeyong.backend.domain.graph.EdgeInfo;
+import kuraeyong.backend.domain.station.convenience.StationConvenience;
 import kuraeyong.backend.domain.station.info.StationInfo;
 import kuraeyong.backend.domain.station.trf_weight.StationTrfWeight;
 import org.apache.poi.xssf.usermodel.XSSFCell;
@@ -54,6 +55,30 @@ public class FlatFileUtil {
         }
 
         return stationTrfWeightList;
+    }
+
+    public static List<StationConvenience> toStationConvenienceList(List<List<String>> rowList) {
+        List<StationConvenience> stationConvenienceList = new ArrayList<>();
+
+        for (List<String> row : rowList) {
+            stationConvenienceList.add(StationConvenience.builder()
+                    .railOprIsttCd(row.get(0))
+                    .lnCd(row.get(1))
+                    .stinCd(row.get(2))
+                    .stinNm(row.get(3))
+                    .elevator(Integer.parseInt(row.get(4).split("\\.")[0]))
+                    .disabledToilet(Integer.parseInt(row.get(5).split("\\.")[0]))
+                    .lactationRoom(Integer.parseInt(row.get(6).split("\\.")[0]))
+                    .wheelchairCharger(Integer.parseInt(row.get(7).split("\\.")[0]))
+                    .wheelchiarLift(Integer.parseInt(row.get(8).split("\\.")[0]))
+                    .mobileSafetyBoard(Integer.parseInt(row.get(9).split("\\.")[0]))
+                    .infoCenter(Integer.parseInt(row.get(10).split("\\.")[0]))
+                    .lostAndFoundCenter(Integer.parseInt(row.get(11).split("\\.")[0]))
+                    .autoDisp(Integer.parseInt(row.get(12).split("\\.")[0]))
+                    .build());
+        }
+
+        return stationConvenienceList;
     }
 
     public static List<EdgeInfo> toEdgeInfoList(List<List<String>> rowList) {
