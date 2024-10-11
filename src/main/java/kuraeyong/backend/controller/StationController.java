@@ -26,6 +26,11 @@ public class StationController {
         return stationService.initDB(FileType.STATION_TRF_WEIGHT);
     }
 
+    @GetMapping("/init/station-congestion")
+    public String initStationCongestionDB() {
+        return stationService.initDB(FileType.STATION_CONGESTION);
+    }
+
     @GetMapping("/init/station-convenience")
     public String initStationConvenienceDB() {
         return stationService.initDB(FileType.STATION_CONVENIENCE);
@@ -36,15 +41,13 @@ public class StationController {
         return stationService.initDB(FileType.EDGE_INFO);
     }
 
-    @GetMapping("/save-to-csv")
-    public String saveApiResultToCsv() {
-        stationService.saveApiResultToCsv();
-        return "hi";
+    @GetMapping("/save/station-time-table-result")
+    public String saveStationTimeTableAPIResultToCsv() {
+        return stationService.saveStationTimeTableAPIResultToCsv();
     }
 
     @GetMapping("/load-csv")
     public String loadCsv() {
-        stationService.loadCsv();
-        return "hi";
+        return stationService.loadCsv();
     }
 }

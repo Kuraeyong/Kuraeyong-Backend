@@ -2,14 +2,12 @@ package kuraeyong.backend.service;
 
 import kuraeyong.backend.domain.constant.FileType;
 import kuraeyong.backend.domain.graph.EdgeInfo;
+import kuraeyong.backend.domain.station.congestion.StationCongestion;
 import kuraeyong.backend.domain.station.convenience.StationConvenience;
 import kuraeyong.backend.domain.station.info.MinimumStationInfo;
 import kuraeyong.backend.domain.station.info.StationInfo;
 import kuraeyong.backend.domain.station.trf_weight.StationTrfWeight;
-import kuraeyong.backend.repository.EdgeInfoRepository;
-import kuraeyong.backend.repository.StationConvenienceRepository;
-import kuraeyong.backend.repository.StationInfoRepository;
-import kuraeyong.backend.repository.StationTrfWeightRepository;
+import kuraeyong.backend.repository.*;
 import kuraeyong.backend.util.FlatFileUtil;
 import kuraeyong.backend.util.OpenApiUtil;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +31,7 @@ public class StationService {
 
     private final StationInfoRepository stationInfoRepository;
     private final StationTrfWeightRepository stationTrfWeightRepository;
+    private final StationCongestionRepository stationCongestionRepository;
     private final StationConvenienceRepository stationConvenienceRepository;
     private final EdgeInfoRepository edgeInfoRepository;
     private final static String BASE_URL = "src/main/resources/xlsx/";
@@ -57,6 +56,8 @@ public class StationService {
             isFinished = initStationInfoDB(rowList);
         } else if (fileType == FileType.STATION_TRF_WEIGHT) {
             isFinished = initStationTrfWeightDB(rowList);
+        } else if (fileType == FileType.STATION_CONGESTION) {
+            isFinished = initStationCongestionDB(rowList);
         } else if (fileType == FileType.STATION_CONVENIENCE) {
             isFinished = initStationConvenienceDB(rowList);
         } else {
@@ -83,6 +84,13 @@ public class StationService {
         return stationTrfWeightList.size() == stationTrfWeightRepository.saveAll(stationTrfWeightList).size();
     }
 
+    private boolean initStationCongestionDB(List<List<String>> rowList) {
+        List<StationCongestion> stationCongestionList = FlatFileUtil.toStationCongestionList(rowList);
+
+        stationCongestionRepository.deleteAll();
+        return stationCongestionList.size() == stationCongestionRepository.saveAll(stationCongestionList).size();
+    }
+
     private boolean initStationConvenienceDB(List<List<String>> rowList) {
         List<StationConvenience> stationConvenienceList = FlatFileUtil.toStationConvenienceList(rowList);
 
@@ -100,8 +108,8 @@ public class StationService {
     /**
      * 역사 시간표와 관련한 API 응답 결과를 station_time_table_[csvFilePath]에 저장
      */
-    public void saveApiResultToCsv() {
-        List<StationInfo> stationInfoList = stationInfoRepository.findAll();
+    public String saveStationTimeTableAPIResultToCsv() {
+        // TODO. 쿼리스트링 정적 요소 사전 초기화
         String format = "json";
         String dayNm = csvFilePath.split("[_.]")[3];
         String dayCd = switch (dayNm) {
@@ -110,11 +118,11 @@ public class StationService {
             case "holiday" -> "9";
             default -> null;
         };
-        int stationCount = 0, lineCount = 0, logCount = 0;
 
         File file, logFile;
         BufferedWriter bw, logBw;
         String NEWLINE = System.lineSeparator();    // 개행
+        int stationCount = 0, lineCount = 0, logCount = 0;
 
         try {
             file = new File(csvFilePath);
@@ -142,7 +150,7 @@ public class StationService {
                     "DAY_CD");
             logBw.write(NEWLINE);
 
-            for (StationInfo stationInfo : stationInfoList) {
+            for (StationInfo stationInfo : stationInfoRepository.findAll()) {
                 System.out.println("CurrentStationCount: " + ++stationCount);
                 String railOprIsttCd = stationInfo.getRailOprIsttCd();
                 String lnCd = stationInfo.getLnCd();
@@ -153,6 +161,8 @@ public class StationService {
                         "&stinCd=" + stinCd +
                         "&dayCd=" + dayCd;
                 JSONArray parseBody = getParseBody(queryString);
+
+                // TODO. 결과가 없는 경우, 로그 기록
                 if (parseBody == null) {
                     logBw.write(++logCount + "," +
                             railOprIsttCd + "," +
@@ -191,12 +201,13 @@ public class StationService {
             throw new RuntimeException(e);
         }
         // FIXME: 반환값 수정 필요
+        return "SUCCESS";
     }
 
     /**
-     * CSV 파일이 정상적으로 로드되는지 테스트
+     * CSV 파일 콘솔에 로드
      */
-    public void loadCsv() {
+    public String loadCsv() {
         File file;
         BufferedReader br;
 
@@ -211,6 +222,7 @@ public class StationService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+        return "SUCCESS";
     }
 
     /**
