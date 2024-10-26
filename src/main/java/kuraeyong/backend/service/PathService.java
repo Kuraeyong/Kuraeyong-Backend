@@ -1,10 +1,15 @@
 package kuraeyong.backend.service;
 
+import kuraeyong.backend.domain.constant.DomainType;
 import kuraeyong.backend.domain.constant.EdgeType;
 import kuraeyong.backend.domain.graph.GraphForPathSearch;
 import kuraeyong.backend.domain.graph.MetroEdge;
 import kuraeyong.backend.domain.graph.MetroNode;
-import kuraeyong.backend.domain.path.*;
+import kuraeyong.backend.domain.path.MetroNodeWithEdge;
+import kuraeyong.backend.domain.path.MetroPath;
+import kuraeyong.backend.domain.path.MoveInfoList;
+import kuraeyong.backend.domain.path.PathResult;
+import kuraeyong.backend.domain.path.PathResultList;
 import kuraeyong.backend.domain.station.info.MinimumStationInfo;
 import kuraeyong.backend.domain.station.info.MinimumStationInfoWithDateType;
 import kuraeyong.backend.domain.station.time_table.StationTimeTableMap;
@@ -12,7 +17,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Set;
+import java.util.Stack;
 
 @Slf4j
 @Service
@@ -176,7 +189,7 @@ public class PathService {
                     EdgeType currEdgeType = edge.getEdgeType();  // 0
                     if (EdgeType.checkLineTrf(prevEdgeType, currEdgeType) || EdgeType.checkGenExpTrf(prevEdgeType, currEdgeType)) {
                         MinimumStationInfo minimumStationInfo = MinimumStationInfo.build(now.getRailOprIsttCd(), now.getLnCd(), now.getStinCd());
-                        MinimumStationInfoWithDateType key = new MinimumStationInfoWithDateType(minimumStationInfo, dateType);
+                        MinimumStationInfoWithDateType key = new MinimumStationInfoWithDateType(minimumStationInfo, dateType, DomainType.STATION_TIME_TABLE);
                         waitingTime = stationTimeTableMap.getAvgWaitingTime(key);
                     }
                 }

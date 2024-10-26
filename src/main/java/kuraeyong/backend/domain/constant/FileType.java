@@ -1,5 +1,8 @@
 package kuraeyong.backend.domain.constant;
 
+import lombok.Getter;
+
+@Getter
 public enum FileType {
     STATION_INFO("station_info.xlsx"),
     STATION_TRF_WEIGHT("station_trf_weight.xlsx"),
@@ -7,13 +10,9 @@ public enum FileType {
     STATION_CONVENIENCE("station_convenience.xlsx"),
     EDGE_INFO("edge_info.xlsx");
 
-    private final String fileType;
+    private final String fileName;
 
-    private FileType(String fileType) {
-        this.fileType = fileType;
-    }
-
-    public String getFileName() {
-        return fileType;
+    FileType(String fileName) {
+        this.fileName = fileName;
     }
 }

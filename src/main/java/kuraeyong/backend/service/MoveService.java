@@ -1,5 +1,6 @@
 package kuraeyong.backend.service;
 
+import kuraeyong.backend.domain.constant.DomainType;
 import kuraeyong.backend.domain.constant.EdgeType;
 import kuraeyong.backend.domain.path.MetroNodeWithEdge;
 import kuraeyong.backend.domain.path.MetroPath;
@@ -83,8 +84,8 @@ public class MoveService {
         MinimumStationInfo B_MSI = MinimumStationInfo.get(next);
 
         // 현재역과 다음역의 시간표
-        StationTimeTable A_TimeTable = stationTimeTableMap.get(new MinimumStationInfoWithDateType(A_MSI, dateType));
-        StationTimeTable B_TimeTable = stationTimeTableMap.get(new MinimumStationInfoWithDateType(B_MSI, dateType));
+        StationTimeTable A_TimeTable = stationTimeTableMap.get(new MinimumStationInfoWithDateType(A_MSI, dateType, DomainType.STATION_TIME_TABLE));
+        StationTimeTable B_TimeTable = stationTimeTableMap.get(new MinimumStationInfoWithDateType(B_MSI, dateType, DomainType.STATION_TIME_TABLE));
         if (A_TimeTable == null || B_TimeTable == null) {
             return null;
         }
@@ -143,12 +144,12 @@ public class MoveService {
             if (stationTimeTableMap.isSameTrain(TO_B.getTrnNo(), TO_C.getTrnNo(), TO_B.getLnCd(), dateType)) {
                 continue;
             }
-            MinimumStationInfoWithDateType A_Key = MinimumStationInfoWithDateType.get(compressedPath.get(i - 1), dateType);
+            MinimumStationInfoWithDateType A_Key = MinimumStationInfoWithDateType.get(compressedPath.get(i - 1), dateType, DomainType.STATION_TIME_TABLE);
             StationTimeTableElement A_Train = stationTimeTableMap.getStoppingTrainAfterCurrTime(A_Key, TO_C.getTrnNo(), TO_A.getArvTm());
             if (A_Train == null) {
                 continue;
             }
-            MinimumStationInfoWithDateType B_Key = MinimumStationInfoWithDateType.get(compressedPath.get(i), dateType);
+            MinimumStationInfoWithDateType B_Key = MinimumStationInfoWithDateType.get(compressedPath.get(i), dateType, DomainType.STATION_TIME_TABLE);
             StationTimeTableElement B_Train = stationTimeTableMap.getStoppingTrainAfterCurrTime(B_Key, TO_C.getTrnNo(), TO_B.getArvTm());
 
             // TODO. 불필요한 환승 제거

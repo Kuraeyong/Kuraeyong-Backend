@@ -1,5 +1,6 @@
 package kuraeyong.backend.domain.station.info;
 
+import kuraeyong.backend.domain.constant.DomainType;
 import kuraeyong.backend.domain.path.MetroNodeWithEdge;
 import lombok.Getter;
 
@@ -10,19 +11,24 @@ public class MinimumStationInfoWithDateType {
     private final MinimumStationInfo minimumStationInfo;
     private final String dateType;
 
-    public MinimumStationInfoWithDateType(MinimumStationInfo minimumStationInfo, String dateType) {
+    public MinimumStationInfoWithDateType(MinimumStationInfo minimumStationInfo, String dateType, DomainType domainType) {
         this.minimumStationInfo = minimumStationInfo;
 
-        String lnCd = minimumStationInfo.getLnCd();
-        if (!dateType.equals("토")) {
-            this.dateType = dateType;
+        if (domainType == DomainType.STATION_TIME_TABLE) {
+            String lnCd = minimumStationInfo.getLnCd();
+
+            if (!dateType.equals("토")) {
+                this.dateType = dateType;
+                return;
+            }
+            if (lnCd.equals("E1") || lnCd.equals("UI") || lnCd.equals("U1")) {
+                this.dateType = dateType;
+                return;
+            }
+            this.dateType = "휴일";
             return;
         }
-        if (lnCd.equals("E1") || lnCd.equals("UI") || lnCd.equals("U1")) {
-            this.dateType = dateType;
-            return;
-        }
-        this.dateType = "휴일";
+        this.dateType = dateType;
     }
 
     @Override
@@ -38,7 +44,7 @@ public class MinimumStationInfoWithDateType {
         return Objects.hash(minimumStationInfo, dateType);
     }
 
-    public static MinimumStationInfoWithDateType get(MetroNodeWithEdge node, String dateType) {
-        return new MinimumStationInfoWithDateType(MinimumStationInfo.get(node), dateType);
+    public static MinimumStationInfoWithDateType get(MetroNodeWithEdge node, String dateType, DomainType domainType) {
+        return new MinimumStationInfoWithDateType(MinimumStationInfo.get(node), dateType, domainType);
     }
 }

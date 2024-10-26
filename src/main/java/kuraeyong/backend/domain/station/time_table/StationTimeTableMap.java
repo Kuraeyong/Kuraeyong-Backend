@@ -1,12 +1,17 @@
 package kuraeyong.backend.domain.station.time_table;
 
+import kuraeyong.backend.domain.constant.DomainType;
 import kuraeyong.backend.domain.station.info.MinimumStationInfo;
 import kuraeyong.backend.domain.station.info.MinimumStationInfoWithDateType;
 import kuraeyong.backend.repository.StationTimeTableElementRepository;
 import kuraeyong.backend.util.DateUtil;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 @Component
 public class StationTimeTableMap {
@@ -24,7 +29,7 @@ public class StationTimeTableMap {
                 continue;
             }
             MinimumStationInfo MSI = MinimumStationInfo.build(train.getRailOprIsttCd(), train.getLnCd(), train.getStinCd());
-            MinimumStationInfoWithDateType key = new MinimumStationInfoWithDateType(MSI, train.getDayNm());
+            MinimumStationInfoWithDateType key = new MinimumStationInfoWithDateType(MSI, train.getDayNm(), DomainType.STATION_TIME_TABLE);
 
             if (!map.containsKey(key)) {
                 if (MSI.isSeongsu() || MSI.isEungam()) {
@@ -51,7 +56,7 @@ public class StationTimeTableMap {
         List<String> dayNmList = new ArrayList<>(Arrays.asList("평일", "휴일"));
 
         for (String dayNm : dayNmList) {
-            MinimumStationInfoWithDateType key = new MinimumStationInfoWithDateType(MSI, dayNm);
+            MinimumStationInfoWithDateType key = new MinimumStationInfoWithDateType(MSI, dayNm, DomainType.STATION_TIME_TABLE);
             TrnNoStdStationTimeTable trnNoStdStationTimeTable = (TrnNoStdStationTimeTable) map.get(key);
             HashMap<String, Integer> sameTrainMap = switch (dayNm) {
                 case "평일" -> trnNoStdStationTimeTable.getWeekdaySameTrainMap();
@@ -176,8 +181,8 @@ public class StationTimeTableMap {
         }
         if (lnCd.equals("2") || lnCd.equals("6")) {
             MinimumStationInfoWithDateType key = switch (lnCd) {
-                case "2" -> new MinimumStationInfoWithDateType(SEONGSU, dateType);
-                case "6" -> new MinimumStationInfoWithDateType(EUNGAM, dateType);
+                case "2" -> new MinimumStationInfoWithDateType(SEONGSU, dateType, DomainType.STATION_TIME_TABLE);
+                case "6" -> new MinimumStationInfoWithDateType(EUNGAM, dateType, DomainType.STATION_TIME_TABLE);
                 default -> null;
             };
             TrnNoStdStationTimeTable trnNoStdStationTimeTable = (TrnNoStdStationTimeTable) map.get(key);
