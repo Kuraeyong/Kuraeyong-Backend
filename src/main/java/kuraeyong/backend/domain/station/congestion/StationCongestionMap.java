@@ -1,6 +1,7 @@
 package kuraeyong.backend.domain.station.congestion;
 
 import kuraeyong.backend.domain.constant.DomainType;
+import kuraeyong.backend.domain.constant.EdgeType;
 import kuraeyong.backend.domain.path.MetroNodeWithEdge;
 import kuraeyong.backend.domain.path.PathResult;
 import kuraeyong.backend.domain.path.PathResultList;
@@ -11,6 +12,7 @@ import kuraeyong.backend.util.DateUtil;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 @Component
@@ -37,38 +39,65 @@ public class StationCongestionMap {
         }
     }
 
-    public void calculateCongestionOfPaths(PathResultList pathResultList, String dateType) {
+    public void setCongestionScoreOfPaths(PathResultList pathResultList, String dateType, int congestionThreshold) {
         for (PathResult pathResult : pathResultList.getList()) {
-            calculateCongestionOfPath(pathResult, dateType);
+            setCongestionScoreOfPath(pathResult, dateType, congestionThreshold);
         }
     }
 
-    private void calculateCongestionOfPath(PathResult pathResult, String dateType) {
-        double sum = 0;
-        double maxCongestion = -1;
-        int cnt = 0;
-        final int INVALID_CONGESTION = 10000;
-        for (MetroNodeWithEdge node : pathResult.getMetroNodeWithEdgeList()) {
-            MinimumStationInfo MSI = MinimumStationInfo.get(node);
+    private void setCongestionScoreOfPath(PathResult pathResult, String dateType, int congestionThreshold) {
+        final int CONGESTION_PENALTY = 10000;
+        int congestionScore = 0;
+
+        List<MetroNodeWithEdge> path = pathResult.getMetroNodeWithEdgeList();
+        for (int i = 0; i < path.size(); i++) {
+            // 해당 요일 종류에 혼잡도 정보를 제공하는 역인지 검사
+            MetroNodeWithEdge curr = path.get(i);
+            MinimumStationInfo MSI = MinimumStationInfo.get(curr);
             MinimumStationInfoWithDateType key = new MinimumStationInfoWithDateType(MSI, dateType, DomainType.STATION_CONGESTION);
             StationCongestionList stationCongestionList = map.get(key);
             if (stationCongestionList == null) {
-                pathResult.setAverageCongestion(INVALID_CONGESTION);
-                pathResult.setMaxCongestion(INVALID_CONGESTION);
+                pathResult.setCongestionScore(Integer.MAX_VALUE);
                 return;
             }
-            String time = DateUtil.passingTimeToCongestionTime(node.getPassingTime());
-            double congestion = stationCongestionList.get(node.getDirection()).getTime(time);
+
+            // 해당 시간대에 혼잡도 정보를 제공하는지 검사
+            String time = DateUtil.passingTimeToCongestionTime(curr.getPassingTime());
+            double congestion = stationCongestionList.get(curr.getDirection()).getTime(time);
             if (congestion == -1) {
-                pathResult.setAverageCongestion(INVALID_CONGESTION);
-                pathResult.setMaxCongestion(INVALID_CONGESTION);
+                pathResult.setCongestionScore(Integer.MAX_VALUE);
                 return;
             }
-            maxCongestion = Math.max(congestion, maxCongestion);
-            sum += congestion;
-            cnt++;
+
+            // 혼잡도 점수 계산
+            if (congestion <= congestionThreshold) {
+                continue;
+            }
+            MetroNodeWithEdge next = i == path.size() - 1 ? null : path.get(i + 1);
+            if (isPenaltyStation(curr, next, i)) {
+                congestionScore += CONGESTION_PENALTY;
+                continue;
+            }
+            congestionScore++;
         }
-        pathResult.setAverageCongestion((int) sum / cnt);
-        pathResult.setMaxCongestion((int) maxCongestion);
+        pathResult.setCongestionScore(congestionScore);
+    }
+
+    /**
+     * 혼잡도 점수에 페널티를 부과해야 하는 역인지 검사
+     *
+     * @param curr 현재역
+     * @param next 다음역
+     * @param idx  현재역의 인덱스
+     * @return 페널티 부과 역 여부
+     */
+    private boolean isPenaltyStation(MetroNodeWithEdge curr, MetroNodeWithEdge next, int idx) {
+        if (idx == 0) { // 출발역
+            return true;
+        }
+        if (next == null) { // 도착역
+            return true;
+        }
+        return (curr.getEdgeType() == EdgeType.TRF_EDGE) || (next.getEdgeType() == EdgeType.TRF_EDGE);  // 환승역
     }
 }

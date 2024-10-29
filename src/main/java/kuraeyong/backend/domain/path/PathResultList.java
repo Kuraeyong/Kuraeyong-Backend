@@ -5,7 +5,6 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 @Getter
@@ -40,10 +39,10 @@ public class PathResultList {
 
     private void sortByCongestion() {
         list.sort((o1, o2) -> {
-            if (o1.getAverageCongestion() == o2.getAverageCongestion()) {
-                return o1.getMaxCongestion() - o2.getMaxCongestion();
+            if (o1.getCongestionScore() == o2.getCongestionScore()) {
+                return o1.compareTo(o2);
             }
-            return o1.getAverageCongestion() - o2.getAverageCongestion();
+            return o1.getCongestionScore() - o2.getCongestionScore();
         });
     }
 

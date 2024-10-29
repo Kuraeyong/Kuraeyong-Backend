@@ -12,10 +12,7 @@ public class PathResult implements Comparable<PathResult> {
     private final MoveInfoList moveInfoList;
     @Getter
     @Setter
-    private int averageCongestion;
-    @Getter
-    @Setter
-    private int maxCongestion;
+    private int congestionScore;
 
     public PathResult(MetroPath path, MoveInfoList moveInfoList) {
         this.path = path;
@@ -43,6 +40,10 @@ public class PathResult implements Comparable<PathResult> {
         return moveInfoList.getTotalTrfTime();
     }
 
+    public int getPathSize() {
+        return path.size();
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -55,8 +56,7 @@ public class PathResult implements Comparable<PathResult> {
         sb.append("총 소요시간(대기시간 포함): ").append(getTotalTime()).append("분\n");
         sb.append("환승 횟수: ").append(getTrfCnt()).append("회\n");
         sb.append("총 환승시간: ").append(getTotalTrfTime()).append("분\n");
-        sb.append("평균 혼잡도: ").append(averageCongestion).append("\n");
-        sb.append("최대 혼잡도: ").append(maxCongestion).append("\n");
+        sb.append("혼잡도 점수: ").append(congestionScore).append("\n");
         sb.append("노선\t\t").append(equalizeStinNmLen("출발역")).append(equalizeStinNmLen("도착역")).append("시간\n");
         sb.append("-".repeat(84)).append('\n');
 
