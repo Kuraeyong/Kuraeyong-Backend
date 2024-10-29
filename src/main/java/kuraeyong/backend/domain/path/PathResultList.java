@@ -40,6 +40,15 @@ public class PathResultList {
         });
     }
 
+    public void sortByTrfCnt() {
+        list.sort((o1, o2) -> {
+            if (o1.getTrfCnt() == o2.getTrfCnt()) {
+                return o1.getTotalTrfTime() - o2.getTotalTrfTime();
+            }
+            return o1.getTrfCnt() - o2.getTrfCnt();
+        });
+    }
+
     public void add(PathResult pathResult) {
         list.add(pathResult);
     }
