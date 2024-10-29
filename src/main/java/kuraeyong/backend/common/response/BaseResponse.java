@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import kuraeyong.backend.common.response.status.ResponseStatus;
 import lombok.Getter;
 
-import static kuraeyong.backend.common.response.status.BaseExceptionResponseStatus.SUCCESS;
+import static kuraeyong.backend.common.response.status.ResponseStatusType.SUCCESS;
 
 @Getter
 @JsonPropertyOrder({"code", "status", "message", "result"})

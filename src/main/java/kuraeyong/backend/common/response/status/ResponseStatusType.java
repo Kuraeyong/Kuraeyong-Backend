@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @RequiredArgsConstructor
-public enum BaseExceptionResponseStatus implements ResponseStatus {
+public enum ResponseStatusType implements ResponseStatus {
     SUCCESS(1000, HttpStatus.OK.value(), "요청에 성공하였습니다.");
 
     private final int code;
