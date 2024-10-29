@@ -1,9 +1,9 @@
 package kuraeyong.backend.domain.path;
 
-import kuraeyong.backend.domain.station.info.MinimumStationInfo;
 import kuraeyong.backend.domain.constant.BranchDirectionType;
 import kuraeyong.backend.domain.constant.DirectionType;
 import kuraeyong.backend.domain.constant.EdgeType;
+import kuraeyong.backend.domain.station.info.MinimumStationInfo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -185,7 +185,7 @@ public class MetroPath implements Comparable<MetroPath> {
         return curr.isJctStin() && prev.getLnCd().equals(next.getLnCd());
     }
 
-    private void setDirection() {
+    public void setDirection() {
         // TODO. 일반, 급행 간선의 방향 설정 (상, 하)
         for (int i = 0; i < size() - 1; i++) {
             MetroNodeWithEdge curr = get(i);
@@ -205,6 +205,7 @@ public class MetroPath implements Comparable<MetroPath> {
             }
             next.setDirection(DirectionType.DOWN);
         }
+        get(0).setDirection(get(1).getDirection());
 
         // TODO. 환승 간선의 방향 설정 (상상, 상하, 하상, 하하)
         for (int i = 1; i < size() - 1; i++) {

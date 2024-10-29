@@ -4,7 +4,11 @@ import kuraeyong.backend.domain.constant.BranchDirectionType;
 import kuraeyong.backend.domain.constant.DirectionType;
 import kuraeyong.backend.domain.constant.EdgeType;
 import kuraeyong.backend.domain.graph.MetroNode;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Builder
 @Getter
@@ -21,6 +25,8 @@ public class MetroNodeWithEdge implements Comparable<MetroNodeWithEdge> {
     @Setter
     private DirectionType direction;   // UP, DOWN
     private BranchDirectionType branchDirection;    // MAIN_TO_SUB, SUB_TO_MAIN
+    @Setter
+    private String passingTime; // for congestion
 
     public MetroNodeWithEdge(MetroNodeWithEdge node) {
         this.node = new MetroNode(node.node);
@@ -29,6 +35,7 @@ public class MetroNodeWithEdge implements Comparable<MetroNodeWithEdge> {
         this.waitingTime = node.waitingTime;
         this.direction = node.direction;
         this.branchDirection = node.branchDirection;
+        this.passingTime = node.passingTime;
     }
 
     public int getNodeNo() {
@@ -75,7 +82,7 @@ public class MetroNodeWithEdge implements Comparable<MetroNodeWithEdge> {
 
     @Override
     public String toString() {
-        String nodeInfo = getLnCd() + ", " + getStinNm() + ", " + weight + ", " + waitingTime + ", " + direction + ", " + branchDirection;
+        String nodeInfo = getLnCd() + ", " + getStinNm() + ", " + weight + ", " + waitingTime + ", " + direction + ", " + branchDirection + ", " + passingTime;
 
         return switch (edgeType) {
             case EXP_EDGE -> "<<" + nodeInfo + ">>";

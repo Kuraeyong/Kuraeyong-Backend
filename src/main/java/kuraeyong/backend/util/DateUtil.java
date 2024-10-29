@@ -64,6 +64,20 @@ public class DateUtil {
         return timeVal2 - timeVal1;
     }
 
+    public static String passingTimeToCongestionTime(String passingTime) {
+        String hour = passingTime.substring(0, 2);
+        String min = Integer.parseInt(passingTime.substring(2, 4)) <= 30 ? "00" : "30";
+        String time = hour + min;
+
+        if (time.equals("0100")) {
+            return "time_0030";
+        }
+        if (time.equals("0500")) {
+            return "time_0530";
+        }
+        return "time_" + time;
+    }
+
     public static boolean isWithinNMinutes(String earlierTime, String laterTime, int n) {
         int time1 = getTimeForCompare(plusMinutes(earlierTime, n));
         int time2 = getTimeForCompare(laterTime);

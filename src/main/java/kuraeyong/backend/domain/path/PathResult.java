@@ -1,12 +1,31 @@
 package kuraeyong.backend.domain.path;
 
 import kuraeyong.backend.util.DateUtil;
-import lombok.AllArgsConstructor;
+import lombok.Setter;
 
-@AllArgsConstructor
+import java.util.List;
+
 public class PathResult implements Comparable<PathResult> {
+    private final MetroPath path;
     private final MetroPath compressedPath;
     private final MoveInfoList moveInfoList;
+    @Setter
+    private int averageCongestion;
+    @Setter
+    private int maxCongestion;
+    @Setter
+    private boolean isValidCongestion;
+
+    public PathResult(MetroPath path, MoveInfoList moveInfoList) {
+        this.path = path;
+        this.compressedPath = path.getCompressPath();
+        this.moveInfoList = moveInfoList;
+        this.isValidCongestion = true;
+    }
+
+    public List<MetroNodeWithEdge> getMetroNodeWithEdgeList() {
+        return path.getPath();
+    }
 
     public String getFinalArvTm() {
         return moveInfoList.getArvTm(moveInfoList.size() - 1);
@@ -29,12 +48,16 @@ public class PathResult implements Comparable<PathResult> {
         StringBuilder sb = new StringBuilder();
 
         // TODO 1. compressedPath
-//        sb.append(compressedPath).append('\n');
+        sb.append(path).append('\n');
+        sb.append(compressedPath).append('\n');
 
         // TODO 2. moveInfoList
         sb.append("총 소요시간(대기시간 포함): ").append(getTotalTime()).append("분\n");
         sb.append("환승 횟수: ").append(getTrfCnt()).append("회\n");
         sb.append("총 환승시간: ").append(getTotalTrfTime()).append("분\n");
+        sb.append("평균 혼잡도: ").append(averageCongestion).append("\n");
+        sb.append("최대 혼잡도: ").append(maxCongestion).append("\n");
+        sb.append("전 구간 혼잡도 제공 유무: ").append(isValidCongestion).append("\n");
         sb.append("노선\t\t").append(equalizeStinNmLen("출발역")).append(equalizeStinNmLen("도착역")).append("시간\n");
         sb.append("-".repeat(84)).append('\n');
 
@@ -90,7 +113,7 @@ public class PathResult implements Comparable<PathResult> {
             case 13, 14 -> 2;
             default -> 1;
         };
-        tapCnt = stinNm.matches(".*[0-9].*")? tapCnt + 1 : tapCnt;
+        tapCnt = stinNm.matches(".*[0-9].*") ? tapCnt + 1 : tapCnt;
 
         StringBuilder sb = new StringBuilder(stinNm);
         while (tapCnt-- > 0) {

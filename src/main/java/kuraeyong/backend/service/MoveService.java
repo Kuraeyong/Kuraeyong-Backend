@@ -52,6 +52,8 @@ public class MoveService {
             currTime = moveInfo.getArvTm();
             moveInfoList.add(moveInfo);
         }
+        compressedPath.get(compressedPath.size() - 1)
+                .setPassingTime(moveInfoList.get(moveInfoList.size() - 1).getArvTm());  // 도착역에 최종 도착 시간을 기재
         removeUnnecessaryTrain(moveInfoList, compressedPath, dateType);
         setTrfInfo(moveInfoList, dateType);
 
@@ -65,11 +67,11 @@ public class MoveService {
      * @param currTime 현재 시간
      * @return 이동 정보
      */
-    public MoveInfo createMoveInfo(MetroNodeWithEdge curr, MetroNodeWithEdge next, String dateType, String currTime) {
+    private MoveInfo createMoveInfo(MetroNodeWithEdge curr, MetroNodeWithEdge next, String dateType, String currTime) {
         if (next.getEdgeType() == EdgeType.TRF_EDGE) {    // 환승역인 경우
             MinimumStationInfo currMSI = MinimumStationInfo.get(curr);
             MinimumStationInfo nextMSI = MinimumStationInfo.get(next);
-                int weight = stationTrfWeightMap.getStationTrfWeight(currMSI, nextMSI, next.getBranchDirection(), next.getDirection());
+            int weight = stationTrfWeightMap.getStationTrfWeight(currMSI, nextMSI, next.getBranchDirection(), next.getDirection());
 
             return MoveInfo.builder()
                     .lnCd(null)
@@ -119,6 +121,7 @@ public class MoveService {
             return null;
         }
 
+        curr.setPassingTime(A_FastestTrain.getDptTm());
         return MoveInfo.builder()
                 .lnCd(A_FastestTrain.getLnCd())
                 .trnNo(A_FastestTrain.getTrnNo())
@@ -130,7 +133,7 @@ public class MoveService {
     /**
      * 동일 노선 내에서의 불필요한 환승 제거
      */
-    public void removeUnnecessaryTrain(MoveInfoList moveInfoList, MetroPath compressedPath, String dateType) {
+    private void removeUnnecessaryTrain(MoveInfoList moveInfoList, MetroPath compressedPath, String dateType) {
         for (int i = moveInfoList.size() - 2; i >= 1; i--) {
             MoveInfo TO_A = moveInfoList.get(i - 1);
             MoveInfo TO_B = moveInfoList.get(i);
@@ -162,7 +165,7 @@ public class MoveService {
     /**
      * 해당 이동정보의 환승 관련 정보 설정
      */
-    public void setTrfInfo(MoveInfoList moveInfoList, String dateType) {
+    private void setTrfInfo(MoveInfoList moveInfoList, String dateType) {
         int trfCnt = 0;
         int totalTrfTime = 0;
         int trnGroupNo = 0;

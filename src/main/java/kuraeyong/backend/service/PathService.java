@@ -10,9 +10,11 @@ import kuraeyong.backend.domain.path.MetroPath;
 import kuraeyong.backend.domain.path.MoveInfoList;
 import kuraeyong.backend.domain.path.PathResult;
 import kuraeyong.backend.domain.path.PathResultList;
+import kuraeyong.backend.domain.station.congestion.StationCongestionMap;
 import kuraeyong.backend.domain.station.info.MinimumStationInfo;
 import kuraeyong.backend.domain.station.info.MinimumStationInfoWithDateType;
 import kuraeyong.backend.domain.station.time_table.StationTimeTableMap;
+import kuraeyong.backend.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,6 +38,7 @@ public class PathService {
     private final StationService stationService;
     private final MoveService moveService;
     private final StationTimeTableMap stationTimeTableMap;
+    private final StationCongestionMap stationCongestionMap;
     private final static int YEN_CANDIDATE_CNT = 10;
 
     public String searchPath(String orgStinNm, String destStinNm, String dateType, int hour, int min) {
@@ -77,21 +80,65 @@ public class PathService {
         // TODO 2. 간이 경로와 시간표 API를 이용해 실소요시간을 포함한 이동 정보 조회
         PathResultList pathResultList = new PathResultList();
         for (MetroPath path : shortestPathList) {
+            path.setDirection();
             MetroPath compressedPath = path.getCompressPath();
             MoveInfoList moveInfoList = moveService.createMoveInfoList(compressedPath, dateType, hour, min);
             if (moveInfoList == null) {
                 continue;
             }
-            pathResultList.add(new PathResult(compressedPath, moveInfoList));
+            setPassingTimeOfPath(path, compressedPath);
+            pathResultList.add(new PathResult(path, moveInfoList));
         }
 
         // TODO 3. 경로 탐색 결과 출력
         if (pathResultList.isEmpty()) {
             return "현재 운행중인 열차가 없습니다.";
         }
+        stationCongestionMap.calculateCongestionOfPathes(pathResultList, dateType);
         pathResultList.sort();
         System.out.print(pathResultList);
         return "successfully searched";
+    }
+
+    /**
+     * 압축 경로 경유역의 passingTime을 기반으로, 일반 경로 모든 역의 passingTime을 설정
+     *
+     * @param path           일반 경로
+     * @param compressedPath 압축 경로
+     */
+    private void setPassingTimeOfPath(MetroPath path, MetroPath compressedPath) {
+        // TODO. 압축 경로 경유역의 passingTime을 일반 경로의 해당역에도 반영
+        for (MetroNodeWithEdge compressedPathNode : compressedPath.getPath()) {
+            for (MetroNodeWithEdge node : path.getPath()) {
+                if (!MinimumStationInfo.get(node).equals(MinimumStationInfo.get(compressedPathNode))) {
+                    continue;
+                }
+                node.setPassingTime(compressedPathNode.getPassingTime());
+            }
+        }
+
+        // TODO. 일반 경로 모든역의 passingTime 설정
+        int size = path.size();
+        int lastPassingTimeIdx = 0;
+        for (int i = 1; i < size; i++) {
+            MetroNodeWithEdge curr = path.get(i);
+            if (curr.getPassingTime() == null) {
+                continue;
+            }
+            // i가 압축 경로 경유역인 경우
+            int increment = DateUtil.getMinDiff(path.get(lastPassingTimeIdx).getPassingTime(), curr.getPassingTime()) / (i - lastPassingTimeIdx);
+            for (int j = lastPassingTimeIdx + 1, incrementCnt = 1; j < i; j++) {
+                path.get(j).setPassingTime(DateUtil.plusMinutes(path.get(lastPassingTimeIdx).getPassingTime(), increment * incrementCnt++));
+            }
+            lastPassingTimeIdx = i;
+        }
+        // 압축 경로의 마지막 경유역 처리
+        MetroNodeWithEdge lastPassingTimeNode = path.get(lastPassingTimeIdx);
+        MetroNodeWithEdge lastNode = path.get(size - 1);
+        int increment = DateUtil.getMinDiff(lastPassingTimeNode.getPassingTime(), lastNode.getPassingTime()) / (size - lastPassingTimeIdx);
+        for (int j = lastPassingTimeIdx + 1, incrementCnt = 1; j < size; j++) {
+            path.get(j).setPassingTime(DateUtil.plusMinutes(lastPassingTimeNode.getPassingTime(), increment * incrementCnt++));
+        }
     }
 
     private List<MetroPath> removeDuplicatedElement(List<MetroPath> shortestPathList) {

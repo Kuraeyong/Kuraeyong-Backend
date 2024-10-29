@@ -1,9 +1,12 @@
 package kuraeyong.backend.domain.path;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
 public class PathResultList {
     private final List<PathResult> list;
 
