@@ -2,6 +2,7 @@ package kuraeyong.backend.service;
 
 import kuraeyong.backend.domain.constant.DomainType;
 import kuraeyong.backend.domain.constant.EdgeType;
+import kuraeyong.backend.domain.constant.SortType;
 import kuraeyong.backend.domain.graph.GraphForPathSearch;
 import kuraeyong.backend.domain.graph.MetroEdge;
 import kuraeyong.backend.domain.graph.MetroNode;
@@ -95,8 +96,7 @@ public class PathService {
             return "현재 운행중인 열차가 없습니다.";
         }
         stationCongestionMap.calculateCongestionOfPaths(pathResultList, dateType);
-        pathResultList.sortByTrfCnt();
-//        pathResultList.sortByCongestion();
+        pathResultList.sort(SortType.MIN_TIME);
         System.out.print(pathResultList);
         return "successfully searched";
     }

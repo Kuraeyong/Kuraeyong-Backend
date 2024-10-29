@@ -1,5 +1,6 @@
 package kuraeyong.backend.domain.path;
 
+import kuraeyong.backend.domain.constant.SortType;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -27,11 +28,17 @@ public class PathResultList {
         return list.get(idx);
     }
 
-    public void sort() {
-        Collections.sort(list);
+    public void sort(SortType sortType) {
+        if (sortType == SortType.CONGESTION) {
+            sortByCongestion();
+        } else if (sortType == SortType.TRF_CNT) {
+            sortByTrfCnt();
+        } else {
+            Collections.sort(list);
+        }
     }
 
-    public void sortByCongestion() {
+    private void sortByCongestion() {
         list.sort((o1, o2) -> {
             if (o1.getAverageCongestion() == o2.getAverageCongestion()) {
                 return o1.getMaxCongestion() - o2.getMaxCongestion();
@@ -40,7 +47,7 @@ public class PathResultList {
         });
     }
 
-    public void sortByTrfCnt() {
+    private void sortByTrfCnt() {
         list.sort((o1, o2) -> {
             if (o1.getTrfCnt() == o2.getTrfCnt()) {
                 return o1.getTotalTrfTime() - o2.getTotalTrfTime();
