@@ -1,7 +1,10 @@
 package kuraeyong.backend.domain.station.congestion;
 
-import jakarta.persistence.*;
-import kuraeyong.backend.domain.station.time_table.StationTimeTableElement;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -157,7 +160,7 @@ public class StationCongestion implements Comparable<StationCongestion> {
 
     @Override
     public int compareTo(StationCongestion o) {
-        return dayNm.compareTo(o.dayNm);
+        return upOrDown.compareTo(o.upOrDown);
     }
 
     public double getTime(String time) {

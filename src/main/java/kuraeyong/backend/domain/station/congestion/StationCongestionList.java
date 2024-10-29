@@ -24,10 +24,10 @@ public class StationCongestionList {
     }
 
     public StationCongestion get(DirectionType directionType) {
-        if (directionType == DirectionType.UP || directionType == DirectionType.UP_UP || directionType == DirectionType.DOWN_UP) {
+        if (directionType == DirectionType.DOWN || directionType == DirectionType.UP_DOWN || directionType == DirectionType.DOWN_DOWN) {
             return list.get(0);
         }
-        if (directionType == DirectionType.DOWN || directionType == DirectionType.UP_DOWN || directionType == DirectionType.DOWN_DOWN) {
+        if (directionType == DirectionType.UP || directionType == DirectionType.UP_UP || directionType == DirectionType.DOWN_UP) {
             return list.get(1);
         }
         return null;

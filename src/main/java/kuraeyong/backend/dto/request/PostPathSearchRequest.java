@@ -11,6 +11,7 @@ public class PostPathSearchRequest {
     private String dateType;
     private int hour;
     private int min;
+    private int congestionThreshold;
 
     @Override
     public String toString() {
@@ -20,6 +21,7 @@ public class PostPathSearchRequest {
                 ", dateType='" + dateType + '\'' +
                 ", hour=" + hour +
                 ", min=" + min +
+                ", congestionThreshold=" + congestionThreshold +
                 '}';
     }
 }

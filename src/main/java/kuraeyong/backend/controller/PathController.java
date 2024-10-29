@@ -23,6 +23,7 @@ public class PathController {
     @PostMapping("")
     public String searchPath(@RequestBody PostPathSearchRequest postPathSearchRequest) {
         return pathService.searchPath(postPathSearchRequest.getOrgStinNm(), postPathSearchRequest.getDestStinNm(),
-                postPathSearchRequest.getDateType(), postPathSearchRequest.getHour(), postPathSearchRequest.getMin());
+                postPathSearchRequest.getDateType(), postPathSearchRequest.getHour(), postPathSearchRequest.getMin(),
+                postPathSearchRequest.getCongestionThreshold());
     }
 }

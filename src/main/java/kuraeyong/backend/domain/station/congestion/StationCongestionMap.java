@@ -32,7 +32,7 @@ public class StationCongestionMap {
             map.get(key).add(row);
         }
 
-        // TODO. 방향을 기준으로 정렬 (상행이 앞으로)
+        // TODO. 방향을 기준으로 정렬 (하행이 앞으로)
         Set<MinimumStationInfoWithDateType> keySet = map.keySet();
         for (MinimumStationInfoWithDateType key : keySet) {
             map.get(key).sort();
@@ -73,7 +73,7 @@ public class StationCongestionMap {
             if (congestion <= congestionThreshold) {
                 continue;
             }
-            MetroNodeWithEdge next = i == path.size() - 1 ? null : path.get(i + 1);
+            MetroNodeWithEdge next = (i == path.size() - 1) ? null : path.get(i + 1);
             if (isPenaltyStation(curr, next, i)) {
                 congestionScore += CONGESTION_PENALTY;
                 continue;
