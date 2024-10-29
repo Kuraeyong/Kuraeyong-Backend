@@ -94,8 +94,8 @@ public class PathService {
         if (pathResultList.isEmpty()) {
             return "현재 운행중인 열차가 없습니다.";
         }
-        stationCongestionMap.calculateCongestionOfPathes(pathResultList, dateType);
-        pathResultList.sort();
+        stationCongestionMap.calculateCongestionOfPaths(pathResultList, dateType);
+        pathResultList.sortByCongestion();
         System.out.print(pathResultList);
         return "successfully searched";
     }

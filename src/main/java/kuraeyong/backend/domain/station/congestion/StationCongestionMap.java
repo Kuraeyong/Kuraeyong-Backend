@@ -37,7 +37,7 @@ public class StationCongestionMap {
         }
     }
 
-    public void calculateCongestionOfPathes(PathResultList pathResultList, String dateType) {
+    public void calculateCongestionOfPaths(PathResultList pathResultList, String dateType) {
         for (PathResult pathResult : pathResultList.getList()) {
             calculateCongestionOfPath(pathResult, dateType);
         }
@@ -47,26 +47,26 @@ public class StationCongestionMap {
         double sum = 0;
         double maxCongestion = -1;
         int cnt = 0;
+        final int INVALID_CONGESTION = 10000;
         for (MetroNodeWithEdge node : pathResult.getMetroNodeWithEdgeList()) {
             MinimumStationInfo MSI = MinimumStationInfo.get(node);
             MinimumStationInfoWithDateType key = new MinimumStationInfoWithDateType(MSI, dateType, DomainType.STATION_CONGESTION);
             StationCongestionList stationCongestionList = map.get(key);
             if (stationCongestionList == null) {
-                pathResult.setValidCongestion(false);
-                continue;
+                pathResult.setAverageCongestion(INVALID_CONGESTION);
+                pathResult.setMaxCongestion(INVALID_CONGESTION);
+                return;
             }
             String time = DateUtil.passingTimeToCongestionTime(node.getPassingTime());
             double congestion = stationCongestionList.get(node.getDirection()).getTime(time);
             if (congestion == -1) {
-                pathResult.setValidCongestion(false);
-                continue;
+                pathResult.setAverageCongestion(INVALID_CONGESTION);
+                pathResult.setMaxCongestion(INVALID_CONGESTION);
+                return;
             }
             maxCongestion = Math.max(congestion, maxCongestion);
             sum += congestion;
             cnt++;
-        }
-        if (cnt == 0) {
-            pathResult.setAverageCongestion(-1);
         }
         pathResult.setAverageCongestion((int) sum / cnt);
         pathResult.setMaxCongestion((int) maxCongestion);

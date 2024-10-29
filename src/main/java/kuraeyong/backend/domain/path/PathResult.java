@@ -1,6 +1,7 @@
 package kuraeyong.backend.domain.path;
 
 import kuraeyong.backend.util.DateUtil;
+import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
@@ -9,18 +10,17 @@ public class PathResult implements Comparable<PathResult> {
     private final MetroPath path;
     private final MetroPath compressedPath;
     private final MoveInfoList moveInfoList;
+    @Getter
     @Setter
     private int averageCongestion;
+    @Getter
     @Setter
     private int maxCongestion;
-    @Setter
-    private boolean isValidCongestion;
 
     public PathResult(MetroPath path, MoveInfoList moveInfoList) {
         this.path = path;
         this.compressedPath = path.getCompressPath();
         this.moveInfoList = moveInfoList;
-        this.isValidCongestion = true;
     }
 
     public List<MetroNodeWithEdge> getMetroNodeWithEdgeList() {
@@ -57,7 +57,6 @@ public class PathResult implements Comparable<PathResult> {
         sb.append("총 환승시간: ").append(getTotalTrfTime()).append("분\n");
         sb.append("평균 혼잡도: ").append(averageCongestion).append("\n");
         sb.append("최대 혼잡도: ").append(maxCongestion).append("\n");
-        sb.append("전 구간 혼잡도 제공 유무: ").append(isValidCongestion).append("\n");
         sb.append("노선\t\t").append(equalizeStinNmLen("출발역")).append(equalizeStinNmLen("도착역")).append("시간\n");
         sb.append("-".repeat(84)).append('\n');
 
