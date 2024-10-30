@@ -1,6 +1,10 @@
 package kuraeyong.backend.domain.station.convenience;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -41,7 +45,7 @@ public class StationConvenience {
     private int wheelchairCharger;  // 휠체어충전기
 
     @Column
-    private int wheelchiarLift; // 휠체어리프트
+    private int wheelchairLift; // 휠체어리프트
 
     @Column
     private int mobileSafetyBoard;  // 이동식안전발판

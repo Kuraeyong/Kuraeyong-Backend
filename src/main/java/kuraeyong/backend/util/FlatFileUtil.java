@@ -146,7 +146,7 @@ public class FlatFileUtil {
                     .disabledToilet(Integer.parseInt(row.get(5).split("\\.")[0]))
                     .lactationRoom(Integer.parseInt(row.get(6).split("\\.")[0]))
                     .wheelchairCharger(Integer.parseInt(row.get(7).split("\\.")[0]))
-                    .wheelchiarLift(Integer.parseInt(row.get(8).split("\\.")[0]))
+                    .wheelchairLift(Integer.parseInt(row.get(8).split("\\.")[0]))
                     .mobileSafetyBoard(Integer.parseInt(row.get(9).split("\\.")[0]))
                     .infoCenter(Integer.parseInt(row.get(10).split("\\.")[0]))
                     .lostAndFoundCenter(Integer.parseInt(row.get(11).split("\\.")[0]))
