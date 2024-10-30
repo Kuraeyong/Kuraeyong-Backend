@@ -42,7 +42,7 @@ public class PathService {
     private final StationCongestionMap stationCongestionMap;
     private final static int YEN_CANDIDATE_CNT = 10;
 
-    public String searchPath(String orgStinNm, String destStinNm, String dateType, int hour, int min, int congestionThreshold) {
+    public String searchPath(String orgStinNm, String destStinNm, String dateType, int hour, int min, int congestionThreshold, String convenience) {
         // TODO 0. 유효성 검증
         if (orgStinNm.equals(destStinNm)) {
             return "출발역과 도착역의 이름이 동일합니다.";

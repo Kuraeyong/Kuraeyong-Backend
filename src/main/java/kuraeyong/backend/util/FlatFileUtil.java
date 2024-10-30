@@ -150,7 +150,7 @@ public class FlatFileUtil {
                     .mobileSafetyBoard(Integer.parseInt(row.get(9).split("\\.")[0]))
                     .infoCenter(Integer.parseInt(row.get(10).split("\\.")[0]))
                     .lostAndFoundCenter(Integer.parseInt(row.get(11).split("\\.")[0]))
-                    .autoDisp(Integer.parseInt(row.get(12).split("\\.")[0]))
+                    .autoDispenser(Integer.parseInt(row.get(12).split("\\.")[0]))
                     .build());
         }
 

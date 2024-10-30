@@ -12,6 +12,7 @@ public class PostPathSearchRequest {
     private int hour;
     private int min;
     private int congestionThreshold;
+    private String convenience;
 
     @Override
     public String toString() {
@@ -22,6 +23,7 @@ public class PostPathSearchRequest {
                 ", hour=" + hour +
                 ", min=" + min +
                 ", congestionThreshold=" + congestionThreshold +
+                ", convenience=" + convenience +
                 '}';
     }
 }

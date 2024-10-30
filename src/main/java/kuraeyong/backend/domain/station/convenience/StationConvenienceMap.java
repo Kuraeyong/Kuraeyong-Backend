@@ -1,9 +1,12 @@
 package kuraeyong.backend.domain.station.convenience;
 
+import kuraeyong.backend.domain.constant.ConvenienceType;
 import kuraeyong.backend.repository.StationConvenienceRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 @Component
 public class StationConvenienceMap {
@@ -22,7 +25,7 @@ public class StationConvenienceMap {
                     .mobileSafetyBoard(row.getMobileSafetyBoard() == 1)
                     .infoCenter(row.getInfoCenter() == 1)
                     .lostAndFoundCenter(row.getLostAndFoundCenter() == 1)
-                    .autoDisp(row.getAutoDisp() == 1)
+                    .autoDispenser(row.getAutoDispenser() == 1)
                     .build();
             if (!map.containsKey(row.getStinNm())) {
                 map.put(row.getStinNm(), stationConvenienceBits);
@@ -30,5 +33,15 @@ public class StationConvenienceMap {
             }
             map.get(row.getStinNm()).operateBits(stationConvenienceBits);
         }
+    }
+
+    public List<String> getConvenienceStationList(ConvenienceType convenienceType) {
+        List<String> list = new ArrayList<>();
+        map.keySet().forEach(key -> {
+            if (map.get(key).contains(convenienceType)) {
+                list.add(key);
+            }
+        });
+        return list;
     }
 }

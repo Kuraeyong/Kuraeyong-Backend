@@ -1,5 +1,6 @@
 package kuraeyong.backend.domain.station.convenience;
 
+import kuraeyong.backend.domain.constant.ConvenienceType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,7 +19,7 @@ public class StationConvenienceBits {
     private boolean mobileSafetyBoard;  // 이동식안전발판
     private boolean infoCenter;  // 고객안내센터
     private boolean lostAndFoundCenter; // 유실물센터
-    private boolean autoDisp;   // 무인민원발급기
+    private boolean autoDispenser;   // 무인민원발급기
 
     public void operateBits(StationConvenienceBits o) {
         elevator |= o.elevator;
@@ -29,6 +30,28 @@ public class StationConvenienceBits {
         mobileSafetyBoard |= o.mobileSafetyBoard;
         infoCenter |= o.infoCenter;
         lostAndFoundCenter |= o.lostAndFoundCenter;
-        autoDisp |= o.autoDisp;
+        autoDispenser |= o.autoDispenser;
+    }
+
+    public boolean contains(ConvenienceType convenienceType) {
+        if (convenienceType == ConvenienceType.ELEVATOR) {
+            return elevator;
+        } else if (convenienceType == ConvenienceType.DISABLED_TOILET) {
+            return disabledToilet;
+        } else if (convenienceType == ConvenienceType.LACTATION_ROOM) {
+            return lactationRoom;
+        } else if (convenienceType == ConvenienceType.WHEELCHAIR_CHARGER) {
+            return wheelchairCharger;
+        } else if (convenienceType == ConvenienceType.WHEELCHAIR_LIFT) {
+            return wheelchairLift;
+        } else if (convenienceType == ConvenienceType.MOBILE_SAFETY_BOARD) {
+            return mobileSafetyBoard;
+        } else if (convenienceType == ConvenienceType.INFO_CENTER) {
+            return infoCenter;
+        } else if (convenienceType == ConvenienceType.LOST_AND_FOUND_CENTER) {
+            return lostAndFoundCenter;
+        } else {
+            return autoDispenser;
+        }
     }
 }

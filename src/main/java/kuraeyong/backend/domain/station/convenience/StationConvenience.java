@@ -57,5 +57,5 @@ public class StationConvenience {
     private int lostAndFoundCenter; // 유실물센터
 
     @Column
-    private int autoDisp;   // 무인민원발급기
+    private int autoDispenser;   // 무인민원발급기
 }
