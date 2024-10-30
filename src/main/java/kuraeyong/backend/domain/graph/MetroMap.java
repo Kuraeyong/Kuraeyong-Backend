@@ -61,7 +61,7 @@ public class MetroMap {
 
             MetroEdge edge = MetroEdge.builder()
                     .trfRailOprIsttCd(edgeInfo.getTrfRailOprIsttCd())
-                    .trflnCd(edgeInfo.getTrfLnCd())
+                    .trfLnCd(edgeInfo.getTrfLnCd())
                     .trfStinCd(edgeInfo.getTrfStinCd())
                     .trfStinNm(edgeInfo.getTrfStinNm())
                     .weight(edgeInfo.getWeight())
@@ -80,7 +80,7 @@ public class MetroMap {
             node = getNode(MSI);
             MetroEdge edge = MetroEdge.builder()
                     .trfRailOprIsttCd(edgeInfo.getTrfRailOprIsttCd())
-                    .trflnCd(edgeInfo.getTrfLnCd())
+                    .trfLnCd(edgeInfo.getTrfLnCd())
                     .trfStinCd(edgeInfo.getTrfStinCd())
                     .trfStinNm(edgeInfo.getTrfStinNm())
                     .weight(edgeInfo.getWeight())
@@ -95,7 +95,7 @@ public class MetroMap {
     private void initTrfNodeNo() {
         for (MetroNode node : graph) {
             for (MetroEdge edge : node.getEdgeList()) {
-                MinimumStationInfo trfNodeMSI = MinimumStationInfo.build(edge.getTrfRailOprIsttCd(), edge.getTrflnCd(), edge.getTrfStinCd());
+                MinimumStationInfo trfNodeMSI = MinimumStationInfo.build(edge.getTrfRailOprIsttCd(), edge.getTrfLnCd(), edge.getTrfStinCd());
                 MetroNode trfNode = getNode(trfNodeMSI);
                 edge.setTrfNodeNo(trfNode.getNodeNo());
             }

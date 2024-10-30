@@ -65,7 +65,7 @@ public class GraphForPathSearch {
                 MetroNode trfNode = metroMap.getNode(trfNodeMSI);
                 MetroEdge edge = MetroEdge.builder()
                         .trfRailOprIsttCd(edgeInfo.getTrfRailOprIsttCd())
-                        .trflnCd(edgeInfo.getTrfLnCd())
+                        .trfLnCd(edgeInfo.getTrfLnCd())
                         .trfStinCd(edgeInfo.getTrfStinCd())
                         .trfStinNm(edgeInfo.getTrfStinNm())
                         .weight(edgeInfo.getWeight())
@@ -110,7 +110,7 @@ public class GraphForPathSearch {
             connectedTrfStinList.add(trfNode);
             MetroEdge newEdge = MetroEdge.builder()
                     .trfRailOprIsttCd(node.getRailOprIsttCd())
-                    .trflnCd(node.getLnCd())
+                    .trfLnCd(node.getLnCd())
                     .trfStinCd(node.getStinCd())
                     .trfStinNm(node.getStinNm())
                     .weight(edge.getWeight())

@@ -9,7 +9,7 @@ import lombok.*;
 @AllArgsConstructor
 public class MetroEdge {
     private String trfRailOprIsttCd;
-    private String trflnCd;
+    private String trfLnCd;
     private String trfStinCd;
     private String trfStinNm;
     private double weight;
@@ -21,7 +21,7 @@ public class MetroEdge {
     public String toString() {
         return "MetroEdge{" +
                 "trfRailOprIsttCd='" + trfRailOprIsttCd + '\'' +
-                ", trflnCd='" + trflnCd + '\'' +
+                ", trflnCd='" + trfLnCd + '\'' +
                 ", trfStinCd='" + trfStinCd + '\'' +
                 ", trfStinNm='" + trfStinNm + '\'' +
                 ", weight=" + weight +
@@ -32,7 +32,7 @@ public class MetroEdge {
 
     public MetroEdge(MetroEdge edge) {
         this.trfRailOprIsttCd = edge.trfRailOprIsttCd;
-        this.trflnCd = edge.trflnCd;
+        this.trfLnCd = edge.trfLnCd;
         this.trfStinCd = edge.trfStinCd;
         this.trfStinNm = edge.trfStinNm;
         this.weight = edge.weight;
