@@ -4,7 +4,7 @@ import kuraeyong.backend.domain.constant.DomainType;
 import kuraeyong.backend.domain.constant.EdgeType;
 import kuraeyong.backend.domain.path.MetroNodeWithEdge;
 import kuraeyong.backend.domain.path.PathResult;
-import kuraeyong.backend.domain.path.PathResultList;
+import kuraeyong.backend.domain.path.PathResults;
 import kuraeyong.backend.domain.station.info.MinimumStationInfo;
 import kuraeyong.backend.domain.station.info.MinimumStationInfoWithDateType;
 import kuraeyong.backend.repository.StationCongestionRepository;
@@ -39,8 +39,8 @@ public class StationCongestionMap {
         }
     }
 
-    public void setCongestionScoreOfPaths(PathResultList pathResultList, String dateType, int congestionThreshold) {
-        for (PathResult pathResult : pathResultList.getList()) {
+    public void setCongestionScoreOfPaths(PathResults pathResults, String dateType, int congestionThreshold) {
+        for (PathResult pathResult : pathResults.getList()) {
             setCongestionScoreOfPath(pathResult, dateType, congestionThreshold);
         }
     }

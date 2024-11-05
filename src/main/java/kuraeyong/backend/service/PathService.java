@@ -10,7 +10,7 @@ import kuraeyong.backend.domain.path.MetroNodeWithEdge;
 import kuraeyong.backend.domain.path.MetroPath;
 import kuraeyong.backend.domain.path.MoveInfoList;
 import kuraeyong.backend.domain.path.PathResult;
-import kuraeyong.backend.domain.path.PathResultList;
+import kuraeyong.backend.domain.path.PathResults;
 import kuraeyong.backend.domain.station.congestion.StationCongestionMap;
 import kuraeyong.backend.domain.station.info.MinimumStationInfo;
 import kuraeyong.backend.domain.station.info.MinimumStationInfoWithDateType;
@@ -40,47 +40,63 @@ public class PathService {
     private final MoveService moveService;
     private final StationTimeTableMap stationTimeTableMap;
     private final StationCongestionMap stationCongestionMap;
-    private final static int YEN_CANDIDATE_CNT = 10;
+    private static final int YEN_CANDIDATE_CNT = 10;
 
     public String searchPath(String orgStinNm, String destStinNm, String dateType, int hour, int min, int congestionThreshold, String convenience) {
-        // TODO 0. 유효성 검증
-        if (orgStinNm.equals(destStinNm)) {
-            return "출발역과 도착역의 이름이 동일합니다.";
-        }
+        validateExistStinNm(orgStinNm);
+        validateExistStinNm(destStinNm);
+
+        List<MetroPath> temporaryPaths = createTemporaryPaths(orgStinNm, destStinNm, dateType);
+        PathResults pathResults = createPathResults(temporaryPaths, dateType, hour, min);
+        stationCongestionMap.setCongestionScoreOfPaths(pathResults, dateType, congestionThreshold);
+        pathResults.sort(SortType.CONGESTION);
+        showPathResults(pathResults);
+
+        return "successfully searched";
+    }
+
+    /**
+     * 출발역, 도착역, 요일만을 고려한 간이 경로 목록 생성
+     *
+     * @param orgStinNm  출발역명
+     * @param destStinNm 도착역명
+     * @param dateType   요일 정보
+     * @return 간이 경로 목록
+     */
+    private List<MetroPath> createTemporaryPaths(String orgStinNm, String destStinNm, String dateType) {
+        // 경로 탐색용 그래프 초기화
+        graphForPathSearch.init();
         MinimumStationInfo orgMSI = stationService.getStationByName(orgStinNm);
         MinimumStationInfo destMSI = stationService.getStationByName(destStinNm);
-        if (orgMSI == null || destMSI == null) {
-            return "역명이 유효하지 않습니다.";
-        }
-        if (!dateType.equals("평일") && !dateType.equals("토") && !dateType.equals("휴일")) {
-            return "요일명이 유효하지 않습니다.";
-        }
-        if (!((hour >= 0 && hour < 24) && (min >= 0 && min < 60))) {
-            return "시간 정보가 유효하지 않습니다.";
-        }
-
-        // TODO 1. 시간표 API를 조회할 간이 경로 조회
-        graphForPathSearch.init();
         int orgNo = graphForPathSearch.addNode(orgMSI);
         int destNo = graphForPathSearch.addNode(destMSI);
         graphForPathSearch.updateEdgeList(orgNo);
         graphForPathSearch.updateEdgeList(destNo);
 
-        List<MetroPath> shortestPathList = searchCandidatePathList(orgNo, destNo, false, dateType);
-        if (shortestPathList == null) {
-            // FIXME: 간이 경로를 하나도 못 찾은 경우
-            return "not existed";
+        // 간이 경로 리스트 생성
+        List<MetroPath> temporaryPaths = searchCandidatePathList(orgNo, destNo, false, dateType);
+        assert temporaryPaths != null;
+        List<MetroPath> temporaryPathsWithExpEdge = searchCandidatePathList(orgNo, destNo, true, dateType);
+        if (temporaryPathsWithExpEdge != null) {
+            temporaryPaths.addAll(temporaryPathsWithExpEdge);
         }
-        List<MetroPath> shortestPathListWithExpEdge = searchCandidatePathList(orgNo, destNo, true, dateType);
-        if (shortestPathListWithExpEdge != null) {
-            shortestPathList.addAll(shortestPathListWithExpEdge);
-        }
-        shortestPathList = removeDuplicatedElement(shortestPathList);
-        addDirectPath(shortestPathList, orgNo, destNo);
+        temporaryPaths = removeDuplicatedElement(temporaryPaths);
+        addDirectPath(temporaryPaths, orgNo, destNo);
+        return temporaryPaths;
+    }
 
-        // TODO 2. 간이 경로와 시간표 API를 이용해 실소요시간을 포함한 이동 정보 조회
-        PathResultList pathResultList = new PathResultList();
-        for (MetroPath path : shortestPathList) {
+    /**
+     * 간이 경로 목록과 시간 정보를 이용해 실제 경로 목록을 생성
+     *
+     * @param temporaryPaths 간이 경로 목록
+     * @param dateType       요일 정보
+     * @param hour           시간
+     * @param min            분
+     * @return 실제 경로 목록
+     */
+    private PathResults createPathResults(List<MetroPath> temporaryPaths, String dateType, int hour, int min) {
+        PathResults pathResults = new PathResults();
+        for (MetroPath path : temporaryPaths) {
             path.setDirection();
             MetroPath compressedPath = path.getCompressPath();
             MoveInfoList moveInfoList = moveService.createMoveInfoList(compressedPath, dateType, hour, min);
@@ -88,17 +104,21 @@ public class PathService {
                 continue;
             }
             setPassingTimeOfPath(path, compressedPath);
-            pathResultList.add(new PathResult(path, moveInfoList));
+            pathResults.add(new PathResult(path, moveInfoList));
         }
+        return pathResults;
+    }
 
-        // TODO 3. 경로 탐색 결과 출력
-        if (pathResultList.isEmpty()) {
-            return "현재 운행중인 열차가 없습니다.";
+    /**
+     * 경로 탐색 결과를 출력
+     *
+     * @param pathResults 경로 탐색 결과
+     */
+    private void showPathResults(PathResults pathResults) {
+        if (pathResults.isEmpty()) {
+            System.out.println("현재 운행중인 열차가 없습니다.");
         }
-        stationCongestionMap.setCongestionScoreOfPaths(pathResultList, dateType, congestionThreshold);
-        pathResultList.sort(SortType.CONGESTION);
-        System.out.print(pathResultList);
-        return "successfully searched";
+        System.out.print(pathResults);
     }
 
     /**
@@ -108,7 +128,7 @@ public class PathService {
      * @param compressedPath 압축 경로
      */
     private void setPassingTimeOfPath(MetroPath path, MetroPath compressedPath) {
-        // TODO. 압축 경로 경유역의 passingTime을 일반 경로의 해당역에도 반영
+        // 압축 경로 경유역의 passingTime을 일반 경로의 해당역에도 반영
         for (MetroNodeWithEdge compressedPathNode : compressedPath.getPath()) {
             for (MetroNodeWithEdge node : path.getPath()) {
                 if (!MinimumStationInfo.get(node).equals(MinimumStationInfo.get(compressedPathNode))) {
@@ -118,7 +138,7 @@ public class PathService {
             }
         }
 
-        // TODO. 일반 경로 모든역의 passingTime 설정
+        // 일반 경로 모든역의 passingTime 설정
         int size = path.size();
         int lastPassingTimeIdx = 0;
         for (int i = 1; i < size; i++) {
@@ -133,6 +153,7 @@ public class PathService {
             }
             lastPassingTimeIdx = i;
         }
+
         // 압축 경로의 마지막 경유역 처리
         MetroNodeWithEdge lastPassingTimeNode = path.get(lastPassingTimeIdx);
         MetroNodeWithEdge lastNode = path.get(size - 1);
@@ -142,13 +163,27 @@ public class PathService {
         }
     }
 
-    private List<MetroPath> removeDuplicatedElement(List<MetroPath> shortestPathList) {
-        LinkedHashSet<MetroPath> linkedHashSet = new LinkedHashSet<>(shortestPathList);
+    /**
+     * 중복된 간이 경로를 제거
+     *
+     * @param temporaryPaths 간이 경로 목록
+     * @return 간이 경로들이 중복되지 않는, 간이 경로 목록
+     */
+    private List<MetroPath> removeDuplicatedElement(List<MetroPath> temporaryPaths) {
+        LinkedHashSet<MetroPath> linkedHashSet = new LinkedHashSet<>(temporaryPaths);
 
         return new ArrayList<>(linkedHashSet);
     }
 
-    private void addDirectPath(List<MetroPath> shortestPathList, int orgNo, int destNo) {
+    /**
+     * 두 일반역을 직선으로 잇는 경로를 추가
+     *
+     * @param temporaryPaths 간이 경로 목록
+     * @param orgNo          출발역명
+     * @param destNo         도착역명
+     */
+    private void addDirectPath(List<MetroPath> temporaryPaths, int orgNo, int destNo) {
+        // 두 일반역을 직선으로 잇는 경로를 추가할 필요가 없는지 검사
         MetroNode org = graphForPathSearch.get(orgNo);
         MetroNode dest = graphForPathSearch.get(destNo);
         if (!org.getLnCd().equals(dest.getLnCd())) {    // 노선 환승이 필요한 경우
@@ -158,7 +193,7 @@ public class PathService {
             return;
         }
 
-        // TODO. 두 일반역을 직선으로 잇는 경로 하나 생성
+        // 두 일반역을 직선으로 잇는 경로 하나 추가
         MetroPath directPath = new MetroPath(new ArrayList<>());
         directPath.addNode(MetroNodeWithEdge.builder()
                 .node(new MetroNode(org))
@@ -168,19 +203,20 @@ public class PathService {
                 .node(new MetroNode(dest))
                 .edgeType(EdgeType.GEN_EDGE)
                 .build());
-        shortestPathList.add(directPath);
+        temporaryPaths.add(directPath);
     }
 
     /**
-     * 다익스트라 알고리즘을 통해서 하나의 간이 경로를 탐색
+     * 다익스트라 알고리즘을 통해 하나의 간이 경로를 생성
      *
-     * @description 같은 MetroNodeWithWeight여도 다음과 같이 사용하는 방식이 조금씩 다름
-     * @inline-variable prevNode         이전 노드를 담고 있는 배열
-     * e.g.) [(1, 10), (2, 20), (4, 30)]
-     * @inline-variable pq               경로 탐색에서 사용할 우선순위 큐
-     * e.g.) [(1, 0), (2, 10), (4, 20), (5, 30)]
+     * @param orgNo      출발역 번호
+     * @param destNo     도착역 번호
+     * @param rootPath   현재 생성하려는 간이 경로가 스퍼 경로인 경우에 필요한 루트 경로 정보
+     * @param containExp 급행 간선 포함 여부
+     * @param dateType   요일 종류
+     * @return 간이 경로
      */
-    private MetroPath searchPath(int orgNo, int destNo, MetroPath rootPath, boolean containExp, String dateType) {
+    private MetroPath createTemporaryPath(int orgNo, int destNo, MetroPath rootPath, boolean containExp, String dateType) {
         int graphSize = graphForPathSearch.size();
         boolean[] check = new boolean[graphSize];
         double[] dist = new double[graphSize];
@@ -272,11 +308,10 @@ public class PathService {
         Set<MetroPath> pathSet = new HashSet<>();
 
         // 첫 번째 최단 경로 계산
-        MetroPath initialPath = searchPath(orgNo, destNo, null, containExp, dateType);
+        MetroPath initialPath = createTemporaryPath(orgNo, destNo, null, containExp, dateType);
         if (initialPath == null) {
             return null;
         }
-//        initialPath.removeUnnecessaryPath();
         shortestPathList.add(initialPath);
         pathSet.add(initialPath);
 
@@ -314,26 +349,10 @@ public class PathService {
                     }
                 }
 
-                MetroPath spurPath = searchPath(spurNode.getNodeNo(), destNo, rootPath, containExp, dateType);
+                MetroPath spurPath = createTemporaryPath(spurNode.getNodeNo(), destNo, rootPath, containExp, dateType);
                 if (spurPath != null) {
                     MetroPath totalPath = new MetroPath(rootPath);
                     totalPath.concat(spurPath);
-//                    totalPath.removeUnnecessaryPath();
-
-//                    System.out.printf("[%d, %d]\n", i, j);
-//                    for (int t = 0; t < shortestPathList.size(); t++) {
-//                        System.out.printf("shortestPath[%d]: %s\n", t, shortestPathList.get(t));
-//                    }
-//                    for (int t = 0; t < removedEdgeList.size(); t++) {
-//                        System.out.printf("removedEdgeList[%d]: %s\n", t, removedEdgeList.get(t));
-//                    }
-//                    System.out.printf("rootPath: %s\n", rootPath);
-//                    System.out.printf("spurPath: %s\n", spurPath);
-//                    System.out.printf("spurNode: %s\n", spurPath.get(0).getNode());
-//                    System.out.printf("totalPath: %s\n", totalPath);
-//                    System.out.printf("totalPath.getPathWeight(): %.1f\n", totalPath.getTotalWeight());
-//                    System.out.println();
-
                     if (!pathSet.contains(totalPath)) {
                         candidates.add(totalPath);
                         pathSet.add(totalPath);
@@ -352,43 +371,48 @@ public class PathService {
             }
             shortestPathList.add(candidates.poll());
         }
-
-        removeUnnecessaryPath(pathSet, shortestPathList, candidates);
+        removeUnnecessaryPath(shortestPathList, candidates);
 
         return shortestPathList;
     }
 
     /**
      * 출발역->출발역 및 도착역->도착역인 불필요한 경로 제거
+     *
+     * @param shortestPaths 최단 경로 목록
+     * @param candidates    후보 경로 목록
      */
-    private void removeUnnecessaryPath(Set<MetroPath> pathSet, List<MetroPath> shortestPathList, PriorityQueue<MetroPath> candidates) {
+    private void removeUnnecessaryPath(List<MetroPath> shortestPaths, PriorityQueue<MetroPath> candidates) {
         // 불필요한 경로 제거 후, 중복을 제거하기 위해 pathSet에 모두 집합
-        pathSet.clear();
-        for (MetroPath shortestPath : shortestPathList) {
+        Set<MetroPath> paths = new HashSet<>();
+        for (MetroPath shortestPath : shortestPaths) {
             shortestPath.removeUnnecessaryPath();
-            pathSet.add(shortestPath);
+            paths.add(shortestPath);
         }
         for (MetroPath candidate : candidates) {
             candidate.removeUnnecessaryPath();
-            pathSet.add(candidate);
+            paths.add(candidate);
         }
 
         // 정렬을 위해 우선순위 큐에 삽입
         candidates.clear();
-        candidates.addAll(pathSet);
+        candidates.addAll(paths);
 
         // 상위 k개에 대해서 조회
-        shortestPathList.clear();
-        while (!candidates.isEmpty() && shortestPathList.size() < YEN_CANDIDATE_CNT) {
+        shortestPaths.clear();
+        while (!candidates.isEmpty() && shortestPaths.size() < YEN_CANDIDATE_CNT) {
             MetroPath candidate = candidates.poll();
             if (isEfficientPath(candidate)) {
-                shortestPathList.add(candidate);
+                shortestPaths.add(candidate);
             }
         }
     }
 
     /**
-     * 공딴딴공 제거
+     * 공딴딴공을 포함한 경로인지 검사
+     *
+     * @param candidate 후보 경로
+     * @return 공딴딴공 포함 경로 여부
      */
     private boolean isEfficientPath(MetroPath candidate) {
         HashMap<String, Integer> firstOccurrenceIdx = new HashMap<>();
@@ -407,7 +431,12 @@ public class PathService {
     }
 
     /**
-     * 다익스트라 알고리즘의 결과로, MetroPath를 일차적으로 완성 (이후 가공)
+     * 다익스트라 알고리즘의 결과로, 간이 경로를 생성
+     *
+     * @param prevNode 이전 노드들
+     * @param orgNo    출발역 번호
+     * @param destNo   도착역 번호
+     * @return 간이 경로
      */
     private MetroPath createPath(MetroNodeWithEdge[] prevNode, int orgNo, int destNo) {
         Stack<MetroNodeWithEdge> pathStack = new Stack<>();
@@ -437,5 +466,11 @@ public class PathService {
         }
 
         return path;
+    }
+
+    private void validateExistStinNm(String stinNm) {
+        if (stationService.getStationByName(stinNm) == null) {
+            throw new IllegalArgumentException("존재하지 않는 역명입니다.");
+        }
     }
 }

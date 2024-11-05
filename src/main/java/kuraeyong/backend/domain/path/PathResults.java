@@ -8,10 +8,10 @@ import java.util.Collections;
 import java.util.List;
 
 @Getter
-public class PathResultList {
+public class PathResults {
     private final List<PathResult> list;
 
-    public PathResultList() {
+    public PathResults() {
         list = new ArrayList<>();
     }
 

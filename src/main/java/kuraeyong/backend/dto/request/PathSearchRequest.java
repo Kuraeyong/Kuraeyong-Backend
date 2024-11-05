@@ -5,8 +5,9 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class PostPathSearchRequest {
+public class PathSearchRequest {
     private String orgStinNm;
+    private String stopoverStinNm;
     private String destStinNm;
     private String dateType;
     private int hour;
@@ -16,14 +17,15 @@ public class PostPathSearchRequest {
 
     @Override
     public String toString() {
-        return "PostPathSearchRequest{" +
+        return "PathSearchRequest{" +
                 "orgStinNm='" + orgStinNm + '\'' +
+                ", stopoverStinNm='" + stopoverStinNm + '\'' +
                 ", destStinNm='" + destStinNm + '\'' +
                 ", dateType='" + dateType + '\'' +
                 ", hour=" + hour +
                 ", min=" + min +
                 ", congestionThreshold=" + congestionThreshold +
-                ", convenience=" + convenience +
+                ", convenience='" + convenience + '\'' +
                 '}';
     }
 }
