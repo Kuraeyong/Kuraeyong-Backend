@@ -42,7 +42,7 @@ public class PathService {
     private final StationCongestionMap stationCongestionMap;
     private static final int YEN_CANDIDATE_CNT = 10;
 
-    public String searchPath(String orgStinNm, String destStinNm, String dateType, int hour, int min, int congestionThreshold, String convenience) {
+    public PathResult searchPath(String orgStinNm, String destStinNm, String dateType, int hour, int min, int congestionThreshold, String convenience) {
         validateExistStinNm(orgStinNm);
         validateExistStinNm(destStinNm);
 
@@ -52,7 +52,7 @@ public class PathService {
         pathResults.sort(SortType.CONGESTION);
         showPathResults(pathResults);
 
-        return "successfully searched";
+        return pathResults.getOptimalPath();
     }
 
     /**

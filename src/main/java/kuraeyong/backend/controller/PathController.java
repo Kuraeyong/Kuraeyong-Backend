@@ -1,5 +1,6 @@
 package kuraeyong.backend.controller;
 
+import kuraeyong.backend.domain.path.PathResult;
 import kuraeyong.backend.dto.request.PathSearchRequest;
 import kuraeyong.backend.service.PathService;
 import lombok.RequiredArgsConstructor;
@@ -21,15 +22,20 @@ public class PathController {
      * 환승역 번호   0~268 (총 환승역 269개)
      */
     @PostMapping("")
-    public String searchPath(@RequestBody PathSearchRequest pathSearchRequest) {
+    public PathResult searchPath(@RequestBody PathSearchRequest pathSearchRequest) {
         validatePathSearchRequest(pathSearchRequest);
-        return pathService.searchPath(pathSearchRequest.getOrgStinNm(),
-                pathSearchRequest.getDestStinNm(),
-                pathSearchRequest.getDateType(),
-                pathSearchRequest.getHour(),
-                pathSearchRequest.getMin(),
-                pathSearchRequest.getCongestionThreshold(),
-                pathSearchRequest.getConvenience());
+
+        if (isDirectSearchPath(pathSearchRequest.getStopoverStinNm())) {
+            return pathService.searchPath(pathSearchRequest.getOrgStinNm(),
+                    pathSearchRequest.getDestStinNm(),
+                    pathSearchRequest.getDateType(),
+                    pathSearchRequest.getHour(),
+                    pathSearchRequest.getMin(),
+                    pathSearchRequest.getCongestionThreshold(),
+                    pathSearchRequest.getConvenience());
+        }
+        // FIXME
+        return null;
     }
 
     private void validatePathSearchRequest(PathSearchRequest pathSearchRequest) {
@@ -53,6 +59,9 @@ public class PathController {
     }
 
     private void validateUniqueStinNm(String orgStinNm, String stopoverStinNm, String destStinNm) {
+        if (isDirectSearchPath(stopoverStinNm)) {
+            return;
+        }
         if (orgStinNm.equals(stopoverStinNm)) {
             throw new IllegalArgumentException("출발역과 경유역의 이름이 동일합니다.");
         }
@@ -62,5 +71,9 @@ public class PathController {
         if (stopoverStinNm.equals(destStinNm)) {
             throw new IllegalArgumentException("경유역과 도착역의 이름이 동일합니다.");
         }
+    }
+
+    private boolean isDirectSearchPath(String stopoverStinNm) {
+        return stopoverStinNm == null;
     }
 }

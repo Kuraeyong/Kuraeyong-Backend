@@ -1,13 +1,11 @@
 package kuraeyong.backend.domain.path;
 
 import kuraeyong.backend.domain.constant.SortType;
-import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-@Getter
 public class PathResults {
     private final List<PathResult> list;
 
@@ -23,8 +21,11 @@ public class PathResults {
         return size() == 0;
     }
 
-    public PathResult get(int idx) {
-        return list.get(idx);
+    public PathResult getOptimalPath() {
+        if (isEmpty()) {
+            return null;
+        }
+        return list.get(0);
     }
 
     public void sort(SortType sortType) {
