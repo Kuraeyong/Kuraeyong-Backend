@@ -9,13 +9,13 @@ import java.util.List;
 
 @Getter
 @Setter
-public class MoveInfoList {
+public class MoveInfos {
     @Setter(AccessLevel.NONE)
     private final List<MoveInfo> moveInfoList;
     private int trfCnt;
     private int totalTrfTime;
 
-    public MoveInfoList() {
+    public MoveInfos() {
         moveInfoList = new ArrayList<>();
     }
 

@@ -8,7 +8,7 @@ import kuraeyong.backend.domain.graph.MetroEdge;
 import kuraeyong.backend.domain.graph.MetroNode;
 import kuraeyong.backend.domain.path.MetroNodeWithEdge;
 import kuraeyong.backend.domain.path.MetroPath;
-import kuraeyong.backend.domain.path.MoveInfoList;
+import kuraeyong.backend.domain.path.MoveInfos;
 import kuraeyong.backend.domain.path.PathResult;
 import kuraeyong.backend.domain.path.PathResults;
 import kuraeyong.backend.domain.station.congestion.StationCongestionMap;
@@ -99,12 +99,12 @@ public class PathService {
         for (MetroPath path : temporaryPaths) {
             path.setDirection();
             MetroPath compressedPath = path.getCompressPath();
-            MoveInfoList moveInfoList = moveService.createMoveInfoList(compressedPath, dateType, hour, min);
-            if (moveInfoList == null) {
+            MoveInfos moveInfos = moveService.createMoveInfoList(compressedPath, dateType, hour, min);
+            if (moveInfos == null) {
                 continue;
             }
             setPassingTimeOfPath(path, compressedPath);
-            pathResults.add(new PathResult(path, moveInfoList));
+            pathResults.add(new PathResult(path, moveInfos));
         }
         return pathResults;
     }

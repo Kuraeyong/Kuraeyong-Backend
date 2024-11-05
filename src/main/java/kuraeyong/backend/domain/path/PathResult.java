@@ -9,15 +9,15 @@ import java.util.List;
 public class PathResult implements Comparable<PathResult> {
     private final MetroPath path;
     private final MetroPath compressedPath;
-    private final MoveInfoList moveInfoList;
+    private final MoveInfos moveInfos;
     @Getter
     @Setter
     private int congestionScore;
 
-    public PathResult(MetroPath path, MoveInfoList moveInfoList) {
+    public PathResult(MetroPath path, MoveInfos moveInfos) {
         this.path = path;
         this.compressedPath = path.getCompressPath();
-        this.moveInfoList = moveInfoList;
+        this.moveInfos = moveInfos;
     }
 
     public List<MetroNodeWithEdge> getMetroNodeWithEdgeList() {
@@ -25,19 +25,19 @@ public class PathResult implements Comparable<PathResult> {
     }
 
     public String getFinalArvTm() {
-        return moveInfoList.getArvTm(moveInfoList.size() - 1);
+        return moveInfos.getArvTm(moveInfos.size() - 1);
     }
 
     public int getTotalTime() {
-        return DateUtil.getMinDiff(moveInfoList.getArvTm(0), moveInfoList.getArvTm(moveInfoList.size() - 1));
+        return DateUtil.getMinDiff(moveInfos.getArvTm(0), moveInfos.getArvTm(moveInfos.size() - 1));
     }
 
     public int getTrfCnt() {
-        return moveInfoList.getTrfCnt();
+        return moveInfos.getTrfCnt();
     }
 
     public int getTotalTrfTime() {
-        return moveInfoList.getTotalTrfTime();
+        return moveInfos.getTotalTrfTime();
     }
 
     public int getPathSize() {
@@ -63,15 +63,15 @@ public class PathResult implements Comparable<PathResult> {
         int lnOrgIdx = 1;
         MoveInfo lnOrg;
         String orgDptTm, destArvTm;
-        for (int i = 2; i < moveInfoList.size(); i++) {
-            MoveInfo prev = moveInfoList.get(i - 1);
-            MoveInfo curr = moveInfoList.get(i);
+        for (int i = 2; i < moveInfos.size(); i++) {
+            MoveInfo prev = moveInfos.get(i - 1);
+            MoveInfo curr = moveInfos.get(i);
 
             if (curr.getTrnGroupNo() == prev.getTrnGroupNo()) {
                 continue;
             }
             // userMoveInfo 처리
-            lnOrg = moveInfoList.get(lnOrgIdx);
+            lnOrg = moveInfos.get(lnOrgIdx);
             orgDptTm = lnOrg.getDptTm();
             destArvTm = prev.getArvTm();
             appendUserMoveInfo(sb, lnOrg.getLnCd(), compressedPath.get(lnOrgIdx - 1).getStinNm(),
@@ -86,9 +86,9 @@ public class PathResult implements Comparable<PathResult> {
             }
         }
         // 마지막 userMoveInfo 처리
-        lnOrg = moveInfoList.get(lnOrgIdx);
+        lnOrg = moveInfos.get(lnOrgIdx);
         orgDptTm = lnOrg.getDptTm();
-        destArvTm = moveInfoList.getArvTm(moveInfoList.size() - 1);
+        destArvTm = moveInfos.getArvTm(moveInfos.size() - 1);
         appendUserMoveInfo(sb, lnOrg.getLnCd(), compressedPath.get(lnOrgIdx - 1).getStinNm(),
                 compressedPath.get(compressedPath.size() - 1).getStinNm(), orgDptTm, destArvTm);
 

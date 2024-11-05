@@ -5,7 +5,7 @@ import kuraeyong.backend.domain.constant.EdgeType;
 import kuraeyong.backend.domain.path.MetroNodeWithEdge;
 import kuraeyong.backend.domain.path.MetroPath;
 import kuraeyong.backend.domain.path.MoveInfo;
-import kuraeyong.backend.domain.path.MoveInfoList;
+import kuraeyong.backend.domain.path.MoveInfos;
 import kuraeyong.backend.domain.station.info.MinimumStationInfo;
 import kuraeyong.backend.domain.station.info.MinimumStationInfoWithDateType;
 import kuraeyong.backend.domain.station.time_table.StationTimeTable;
@@ -34,11 +34,11 @@ public class MoveService {
      * @param min            사용자의 해당 역 도착 시간 (분)
      * @return 이동 정보 리스트
      */
-    public MoveInfoList createMoveInfoList(MetroPath compressedPath, String dateType, int hour, int min) {
-        MoveInfoList moveInfoList = new MoveInfoList();
+    public MoveInfos createMoveInfoList(MetroPath compressedPath, String dateType, int hour, int min) {
+        MoveInfos moveInfos = new MoveInfos();
         String currTime = DateUtil.getCurrTime(hour, min);
 
-        moveInfoList.add(MoveInfo.builder()
+        moveInfos.add(MoveInfo.builder()
                 .arvTm(currTime)
                 .build());
         for (int i = 0; i < compressedPath.size() - 1; i++) {
@@ -50,14 +50,14 @@ public class MoveService {
                 return null;
             }
             currTime = moveInfo.getArvTm();
-            moveInfoList.add(moveInfo);
+            moveInfos.add(moveInfo);
         }
         compressedPath.get(compressedPath.size() - 1)
-                .setPassingTime(moveInfoList.get(moveInfoList.size() - 1).getArvTm());  // 도착역에 최종 도착 시간을 기재
-        removeUnnecessaryTrain(moveInfoList, compressedPath, dateType);
-        setTrfInfo(moveInfoList, dateType);
+                .setPassingTime(moveInfos.get(moveInfos.size() - 1).getArvTm());  // 도착역에 최종 도착 시간을 기재
+        removeUnnecessaryTrain(moveInfos, compressedPath, dateType);
+        setTrfInfo(moveInfos, dateType);
 
-        return moveInfoList;
+        return moveInfos;
     }
 
     /**
@@ -133,11 +133,11 @@ public class MoveService {
     /**
      * 동일 노선 내에서의 불필요한 환승 제거
      */
-    private void removeUnnecessaryTrain(MoveInfoList moveInfoList, MetroPath compressedPath, String dateType) {
-        for (int i = moveInfoList.size() - 2; i >= 1; i--) {
-            MoveInfo TO_A = moveInfoList.get(i - 1);
-            MoveInfo TO_B = moveInfoList.get(i);
-            MoveInfo TO_C = moveInfoList.get(i + 1);
+    private void removeUnnecessaryTrain(MoveInfos moveInfos, MetroPath compressedPath, String dateType) {
+        for (int i = moveInfos.size() - 2; i >= 1; i--) {
+            MoveInfo TO_A = moveInfos.get(i - 1);
+            MoveInfo TO_B = moveInfos.get(i);
+            MoveInfo TO_C = moveInfos.get(i + 1);
             if (TO_B.getTrnNo() == null || TO_C.getTrnNo() == null) {
                 continue;
             }
@@ -165,14 +165,14 @@ public class MoveService {
     /**
      * 해당 이동정보의 환승 관련 정보 설정
      */
-    private void setTrfInfo(MoveInfoList moveInfoList, String dateType) {
+    private void setTrfInfo(MoveInfos moveInfos, String dateType) {
         int trfCnt = 0;
         int totalTrfTime = 0;
         int trnGroupNo = 0;
 
-        for (int i = 0; i < moveInfoList.size() - 1; i++) {
-            MoveInfo curr = moveInfoList.get(i);
-            MoveInfo next = moveInfoList.get(i + 1);
+        for (int i = 0; i < moveInfos.size() - 1; i++) {
+            MoveInfo curr = moveInfos.get(i);
+            MoveInfo next = moveInfos.get(i + 1);
             String currTrnNo = curr.getTrnNo();
             String nextTrnNo = next.getTrnNo();
 
@@ -193,8 +193,8 @@ public class MoveService {
             curr.setTrnGroupNo(trnGroupNo++);
             trfCnt++;
         }
-        moveInfoList.get(moveInfoList.size() - 1).setTrnGroupNo(trnGroupNo);
-        moveInfoList.setTrfCnt(trfCnt);
-        moveInfoList.setTotalTrfTime(totalTrfTime);
+        moveInfos.get(moveInfos.size() - 1).setTrnGroupNo(trnGroupNo);
+        moveInfos.setTrfCnt(trfCnt);
+        moveInfos.setTotalTrfTime(totalTrfTime);
     }
 }
