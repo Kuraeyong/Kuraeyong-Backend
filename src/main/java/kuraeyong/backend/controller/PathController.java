@@ -27,13 +27,15 @@ public class PathController {
         validatePathSearchRequest(pathSearchRequest);
 
         if (isDirectSearchPath(pathSearchRequest.getStopoverStinNm())) {
-            return pathService.searchPath(pathSearchRequest.getOrgStinNm(),
+            PathResult pathResult = pathService.searchPath(pathSearchRequest.getOrgStinNm(),
                     pathSearchRequest.getDestStinNm(),
                     pathSearchRequest.getDateType(),
                     pathSearchRequest.getHour(),
                     pathSearchRequest.getMin(),
                     pathSearchRequest.getCongestionThreshold(),
                     pathSearchRequest.getConvenience());
+            showPathResult(pathResult);
+            return pathResult;
         }
         PathResult pathResultBeforeStopoverStin = pathService.searchPath(pathSearchRequest.getOrgStinNm(),
                 pathSearchRequest.getStopoverStinNm(),
@@ -50,8 +52,14 @@ public class PathController {
                 DateUtil.getMinute(stopoverArvTm),
                 pathSearchRequest.getCongestionThreshold(),
                 pathSearchRequest.getConvenience());
-        // 연결
-        return null;
+        PathResult totalPathResult = pathResultBeforeStopoverStin.join(pathResultAfterStopoverStin);
+        showPathResult(totalPathResult);
+
+        return totalPathResult;
+    }
+
+    private void showPathResult(PathResult pathResult) {
+        System.out.println(pathResult);
     }
 
     private void validatePathSearchRequest(PathSearchRequest pathSearchRequest) {

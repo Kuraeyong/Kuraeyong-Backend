@@ -1,11 +1,13 @@
 package kuraeyong.backend.domain.path;
 
 import kuraeyong.backend.util.DateUtil;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 
+@AllArgsConstructor
 public class PathResult implements Comparable<PathResult> {
     private final MetroPath path;
     private final MetroPath compressedPath;
@@ -44,6 +46,26 @@ public class PathResult implements Comparable<PathResult> {
         return path.size();
     }
 
+
+    public PathResult join(PathResult pathResultAfterStopoverStin) {
+        // 일반 경로 합치기
+        MetroPath totalPath = new MetroPath(path);
+        totalPath.concat(pathResultAfterStopoverStin.path, false);
+
+        // 압축 경로 합치기
+        MetroPath totalCompressedPath = new MetroPath(compressedPath);
+        totalCompressedPath.concat(pathResultAfterStopoverStin.compressedPath, false);
+
+        // 이동 정보 합치기
+        MoveInfos totalMoveInfos = new MoveInfos(moveInfos);
+        totalMoveInfos.concat(pathResultAfterStopoverStin.moveInfos);
+
+        // 혼잡도 점수 계산
+        int congestionScore = (this.congestionScore + pathResultAfterStopoverStin.congestionScore) / 2;
+
+        return new PathResult(totalPath, totalCompressedPath, totalMoveInfos, congestionScore);
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -51,6 +73,7 @@ public class PathResult implements Comparable<PathResult> {
         // TODO 1. compressedPath
         sb.append(path).append('\n');
         sb.append(compressedPath).append('\n');
+//        sb.append(moveInfos).append('\n');
 
         // TODO 2. moveInfoList
         sb.append("총 소요시간(대기시간 포함): ").append(getTotalTime()).append("분\n");

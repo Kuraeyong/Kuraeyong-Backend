@@ -27,8 +27,9 @@ public class MetroPath implements Comparable<MetroPath> {
         path.add(node);
     }
 
-    public void concat(MetroPath path) {    // 깊은 복사
-        for (MetroNodeWithEdge node : path.subPath(1, path.size()).getPath()) {
+    public void concat(MetroPath path, boolean usedInYen) {    // 깊은 복사
+        int idx = usedInYen ? 1 : 0;
+        for (MetroNodeWithEdge node : path.subPath(idx, path.size()).getPath()) {
             addNode(new MetroNodeWithEdge(node));
         }
     }

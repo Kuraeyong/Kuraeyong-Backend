@@ -17,6 +17,14 @@ public class MoveInfo {
     @Setter
     private int trnGroupNo;
 
+    public MoveInfo(MoveInfo moveInfo) {
+        this.lnCd = moveInfo.lnCd;
+        this.trnNo = moveInfo.trnNo;
+        this.dptTm = moveInfo.dptTm;
+        this.arvTm = moveInfo.arvTm;
+        this.trnGroupNo = moveInfo.trnGroupNo;;
+    }
+
     @Override
     public String toString() {
         return "MoveInfo{" +

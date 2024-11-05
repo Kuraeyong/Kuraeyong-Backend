@@ -51,7 +51,7 @@ public class PathService {
         stationCongestionMap.setCongestionScoreOfPaths(pathResults, dateType, congestionThreshold);
         pathResults.sort(SortType.CONGESTION);
 //        showPathResults(pathResults);
-        showOptimalPath(pathResults);
+//        showOptimalPath(pathResults);
 
         return pathResults.getOptimalPath();
     }
@@ -360,7 +360,7 @@ public class PathService {
                 MetroPath spurPath = createTemporaryPath(spurNode.getNodeNo(), destNo, rootPath, containExp, dateType);
                 if (spurPath != null) {
                     MetroPath totalPath = new MetroPath(rootPath);
-                    totalPath.concat(spurPath);
+                    totalPath.concat(spurPath, true);
                     if (!pathSet.contains(totalPath)) {
                         candidates.add(totalPath);
                         pathSet.add(totalPath);
