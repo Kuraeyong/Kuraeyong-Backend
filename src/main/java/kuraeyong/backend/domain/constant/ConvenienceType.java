@@ -20,4 +20,19 @@ public enum ConvenienceType {
     public String get() {
         return convenienceType;
     }
+
+    public static ConvenienceType toConvenienceType(String convenience) {
+        return switch (convenience) {
+            case "elevator" -> ELEVATOR;
+            case "disabledToilet" -> DISABLED_TOILET;
+            case "lactationRoom" -> LACTATION_ROOM;
+            case "wheelchairCharger" -> WHEELCHAIR_CHARGER;
+            case "wheelchairLift" -> WHEELCHAIR_LIFT;
+            case "mobileSafetyBoard" -> MOBILE_SAFETY_BOARD;
+            case "infoCenter" -> INFO_CENTER;
+            case "lostAndFoundCenter" -> LOST_AND_FOUND_CENTER;
+            case "autoDispenser" -> AUTO_DISPENSER;
+            default -> null;
+        };
+    }
 }

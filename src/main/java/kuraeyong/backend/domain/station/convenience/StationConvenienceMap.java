@@ -29,7 +29,7 @@ public class StationConvenienceMap {
                     .build();
             if (!map.containsKey(row.getStinNm())) {
                 map.put(row.getStinNm(), stationConvenienceBits);
-                return;
+                continue;
             }
             map.get(row.getStinNm()).operateBits(stationConvenienceBits);
         }
