@@ -50,7 +50,8 @@ public class PathService {
         PathResults pathResults = createPathResults(temporaryPaths, dateType, hour, min);
         stationCongestionMap.setCongestionScoreOfPaths(pathResults, dateType, congestionThreshold);
         pathResults.sort(SortType.CONGESTION);
-        showPathResults(pathResults);
+//        showPathResults(pathResults);
+        showOptimalPath(pathResults);
 
         return pathResults.getOptimalPath();
     }
@@ -119,6 +120,13 @@ public class PathService {
             System.out.println("현재 운행중인 열차가 없습니다.");
         }
         System.out.print(pathResults);
+    }
+
+    private void showOptimalPath(PathResults pathResults) {
+        if (pathResults.isEmpty()) {
+            System.out.println("현재 운행중인 열차가 없습니다.");
+        }
+        System.out.print(pathResults.getOptimalPath());
     }
 
     /**

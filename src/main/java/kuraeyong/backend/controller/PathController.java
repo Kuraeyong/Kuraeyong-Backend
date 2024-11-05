@@ -3,6 +3,7 @@ package kuraeyong.backend.controller;
 import kuraeyong.backend.domain.path.PathResult;
 import kuraeyong.backend.dto.request.PathSearchRequest;
 import kuraeyong.backend.service.PathService;
+import kuraeyong.backend.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,7 +35,22 @@ public class PathController {
                     pathSearchRequest.getCongestionThreshold(),
                     pathSearchRequest.getConvenience());
         }
-        // FIXME
+        PathResult pathResultBeforeStopoverStin = pathService.searchPath(pathSearchRequest.getOrgStinNm(),
+                pathSearchRequest.getStopoverStinNm(),
+                pathSearchRequest.getDateType(),
+                pathSearchRequest.getHour(),
+                pathSearchRequest.getMin(),
+                pathSearchRequest.getCongestionThreshold(),
+                pathSearchRequest.getConvenience());
+        String stopoverArvTm = pathResultBeforeStopoverStin.getFinalArvTm();
+        PathResult pathResultAfterStopoverStin = pathService.searchPath(pathSearchRequest.getStopoverStinNm(),
+                pathSearchRequest.getDestStinNm(),
+                pathSearchRequest.getDateType(),
+                DateUtil.getHour(stopoverArvTm),
+                DateUtil.getMinute(stopoverArvTm),
+                pathSearchRequest.getCongestionThreshold(),
+                pathSearchRequest.getConvenience());
+        // 연결
         return null;
     }
 

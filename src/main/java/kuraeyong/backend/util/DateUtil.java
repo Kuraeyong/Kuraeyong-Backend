@@ -88,4 +88,12 @@ public class DateUtil {
     public static boolean isValidTime(String str) {
         return !str.matches("[0-9]{6}");
     }
+
+    public static int getHour(String time) {
+        return Integer.parseInt(time.substring(0, 2));
+    }
+
+    public static int getMinute(String time) {
+        return Integer.parseInt(time.substring(2, 4));
+    }
 }

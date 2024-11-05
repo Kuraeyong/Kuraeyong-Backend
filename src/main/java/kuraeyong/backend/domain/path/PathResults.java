@@ -1,11 +1,13 @@
 package kuraeyong.backend.domain.path;
 
 import kuraeyong.backend.domain.constant.SortType;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+@Getter
 public class PathResults {
     private final List<PathResult> list;
 
