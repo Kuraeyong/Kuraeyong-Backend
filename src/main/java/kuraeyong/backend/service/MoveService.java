@@ -198,6 +198,31 @@ public class MoveService {
         moveInfos.setTotalTrfTime(totalTrfTime);
     }
 
+    private void setStopOverInfo(MoveInfos moveInfos, int stopoverIdx, String dateType) {
+        MoveInfo prev = moveInfos.get(stopoverIdx - 1);
+        MoveInfo next = moveInfos.get(stopoverIdx + 1);
+
+        // 환승인 경우
+        if (!prev.getLnCd().equals(next.getLnCd())) {
+            return;
+        }
+        if (!stationTimeTableMap.isSameTrain(prev.getTrnNo(), next.getTrnNo(), prev.getLnCd(), dateType)) {
+            return;
+        }
+        // 단순 경유인 경우
+        for (int i = stopoverIdx + 1; i < moveInfos.size(); i++) {
+            MoveInfo curr = moveInfos.get(i);
+            int currTrnGroupNo = curr.getTrnGroupNo();
+            if (currTrnGroupNo != -1) {
+                curr.setTrnGroupNo(currTrnGroupNo - 1);
+            }
+        }
+        MoveInfo stopoverInfo = moveInfos.get(stopoverIdx);
+        int stopoverTime = DateUtil.getMinDiff(stopoverInfo.getArvTm(), stopoverInfo.getDptTm());
+        moveInfos.setTotalTrfTime(moveInfos.getTotalTrfTime() - stopoverTime);
+        moveInfos.setTrfCnt(moveInfos.getTrfCnt() - 1);
+    }
+
     public MoveInfos join(MoveInfos front, MoveInfos rear, String dateType) {
         MoveInfos moveInfos = new MoveInfos(front);
 
@@ -212,8 +237,9 @@ public class MoveService {
             moveInfos.add(new MoveInfo(rear.get(i)));
         }
 
-        // 환승 정보 재설정
+        // 환승 및 경유 정보 재설정
         setTrfInfo(moveInfos, dateType);
+        setStopOverInfo(moveInfos, front.size(), dateType);
 
         return moveInfos;
     }
