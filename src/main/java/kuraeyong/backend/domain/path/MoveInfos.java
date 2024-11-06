@@ -1,5 +1,6 @@
 package kuraeyong.backend.domain.path;
 
+import kuraeyong.backend.util.DateUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,11 +29,15 @@ public class MoveInfos {
         this.totalTrfTime = moveInfos.totalTrfTime;
     }
 
-    public void concat(MoveInfos moveInfos) {
+    public void concat(MoveInfos moveInfos, int stopoverTime) {
         // 첫번째 무프인포 연결
         MoveInfo moveInfo = new MoveInfo(moveInfos.get(0));
         moveInfo.setDptTm(get(size() - 1).getArvTm());
         moveInfo.setArvTm(moveInfos.get(1).getDptTm());
+        if (isValidStopoverTime(stopoverTime)) {
+            this.trfCnt++;
+            this.totalTrfTime += DateUtil.getMinDiff(moveInfo.getArvTm(), moveInfo.getDptTm());
+        }
         add(moveInfo);
 
         // 남은 무브인포 연결
@@ -46,8 +51,17 @@ public class MoveInfos {
 
         // 남은 필드 연결
         this.trfCnt += moveInfos.trfCnt;
-        this.trfCnt++;  // 경유역 환승
         this.totalTrfTime += moveInfos.totalTrfTime;
+    }
+
+    /**
+     * 경유역에서 환승을 하는 경우인지 검사
+     *
+     * @param stopoverTime 경유 시간
+     * @return 경유역 환승 여부
+     */
+    private boolean isValidStopoverTime(int stopoverTime) {
+        return stopoverTime != -1;
     }
 
     public void add(MoveInfo moveInfo) {

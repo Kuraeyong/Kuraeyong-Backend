@@ -14,6 +14,7 @@ public class PathSearchRequest {
     private int min;
     private int congestionThreshold;
     private String convenience;
+    private int stopoverTime;
 
     @Override
     public String toString() {
@@ -26,6 +27,7 @@ public class PathSearchRequest {
                 ", min=" + min +
                 ", congestionThreshold=" + congestionThreshold +
                 ", convenience='" + convenience + '\'' +
+                ", stopoverTime=" + stopoverTime +
                 '}';
     }
 }

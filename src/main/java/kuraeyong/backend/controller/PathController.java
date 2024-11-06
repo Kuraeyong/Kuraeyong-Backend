@@ -44,18 +44,26 @@ public class PathController {
                 pathSearchRequest.getMin(),
                 pathSearchRequest.getCongestionThreshold(),
                 pathSearchRequest.getConvenience());
-        String stopoverArvTm = pathResultBeforeStopoverStin.getFinalArvTm();
+        int stopoverTime = calculateStopoverTime(pathSearchRequest.getStopoverTime());
+        String stopoverDptTm = DateUtil.plusMinutes(pathResultBeforeStopoverStin.getFinalArvTm(), stopoverTime);
         PathResult pathResultAfterStopoverStin = pathService.searchPath(pathSearchRequest.getStopoverStinNm(),
                 pathSearchRequest.getDestStinNm(),
                 pathSearchRequest.getDateType(),
-                DateUtil.getHour(stopoverArvTm),
-                DateUtil.getMinute(stopoverArvTm),
+                DateUtil.getHour(stopoverDptTm),
+                DateUtil.getMinute(stopoverDptTm),
                 pathSearchRequest.getCongestionThreshold(),
                 pathSearchRequest.getConvenience());
-        PathResult totalPathResult = pathResultBeforeStopoverStin.join(pathResultAfterStopoverStin);
+        PathResult totalPathResult = pathResultBeforeStopoverStin.join(pathResultAfterStopoverStin, stopoverTime);
         showPathResult(totalPathResult);
 
         return totalPathResult;
+    }
+
+    private int calculateStopoverTime(int stopoverTime) {
+        if (stopoverTime == 0) {
+            return -1;
+        }
+        return stopoverTime;
     }
 
     private void showPathResult(PathResult pathResult) {

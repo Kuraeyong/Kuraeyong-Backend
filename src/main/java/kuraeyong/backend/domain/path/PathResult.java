@@ -47,7 +47,7 @@ public class PathResult implements Comparable<PathResult> {
     }
 
 
-    public PathResult join(PathResult pathResultAfterStopoverStin) {
+    public PathResult join(PathResult pathResultAfterStopoverStin, int stopoverTime) {
         // 일반 경로 합치기
         MetroPath totalPath = new MetroPath(path);
         totalPath.concat(pathResultAfterStopoverStin.path, false);
@@ -58,7 +58,7 @@ public class PathResult implements Comparable<PathResult> {
 
         // 이동 정보 합치기
         MoveInfos totalMoveInfos = new MoveInfos(moveInfos);
-        totalMoveInfos.concat(pathResultAfterStopoverStin.moveInfos);
+        totalMoveInfos.concat(pathResultAfterStopoverStin.moveInfos, stopoverTime);
 
         // 혼잡도 점수 계산
         int congestionScore = (this.congestionScore + pathResultAfterStopoverStin.congestionScore) / 2;
@@ -73,7 +73,7 @@ public class PathResult implements Comparable<PathResult> {
         // TODO 1. compressedPath
         sb.append(path).append('\n');
         sb.append(compressedPath).append('\n');
-//        sb.append(moveInfos).append('\n');
+        sb.append(moveInfos).append('\n');
 
         // TODO 2. moveInfoList
         sb.append("총 소요시간(대기시간 포함): ").append(getTotalTime()).append("분\n");
