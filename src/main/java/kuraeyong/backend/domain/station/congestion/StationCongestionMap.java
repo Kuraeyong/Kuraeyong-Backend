@@ -47,6 +47,7 @@ public class StationCongestionMap {
 
     private void setCongestionScoreOfPath(PathResult pathResult, String dateType, int congestionThreshold) {
         final int CONGESTION_PENALTY = 10000;
+        final int UNKNOWN_CONGESTION = 1000000;
         int congestionScore = 0;
 
         List<MetroNodeWithEdge> path = pathResult.getIterablePath();
@@ -57,7 +58,7 @@ public class StationCongestionMap {
             MinimumStationInfoWithDateType key = new MinimumStationInfoWithDateType(MSI, dateType, DomainType.STATION_CONGESTION);
             StationCongestionList stationCongestionList = map.get(key);
             if (stationCongestionList == null) {
-                pathResult.setCongestionScore(Integer.MAX_VALUE);
+                pathResult.setCongestionScore(UNKNOWN_CONGESTION);
                 return;
             }
 
@@ -65,7 +66,7 @@ public class StationCongestionMap {
             String time = DateUtil.passingTimeToCongestionTime(curr.getPassingTime());
             double congestion = stationCongestionList.get(curr.getDirection()).getTime(time);
             if (congestion == -1) {
-                pathResult.setCongestionScore(Integer.MAX_VALUE);
+                pathResult.setCongestionScore(UNKNOWN_CONGESTION);
                 return;
             }
 
