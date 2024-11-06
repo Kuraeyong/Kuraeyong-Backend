@@ -197,4 +197,24 @@ public class MoveService {
         moveInfos.setTrfCnt(trfCnt);
         moveInfos.setTotalTrfTime(totalTrfTime);
     }
+
+    public MoveInfos join(MoveInfos front, MoveInfos rear, String dateType) {
+        MoveInfos moveInfos = new MoveInfos(front);
+
+        // 첫번째 무브인포 연결
+        MoveInfo moveInfo = new MoveInfo(rear.get(0));
+        moveInfo.setDptTm(front.get(front.size() - 1).getArvTm());
+        moveInfo.setArvTm(rear.get(1).getDptTm());
+        moveInfos.add(moveInfo);
+
+        // 남은 무브인포 연결
+        for (int i = 1; i < rear.size(); i++) {
+            moveInfos.add(new MoveInfo(rear.get(i)));
+        }
+
+        // 환승 정보 재설정
+        setTrfInfo(moveInfos, dateType);
+
+        return moveInfos;
+    }
 }

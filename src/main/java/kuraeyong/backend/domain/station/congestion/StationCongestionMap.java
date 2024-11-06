@@ -49,7 +49,7 @@ public class StationCongestionMap {
         final int CONGESTION_PENALTY = 10000;
         int congestionScore = 0;
 
-        List<MetroNodeWithEdge> path = pathResult.getMetroNodeWithEdgeList();
+        List<MetroNodeWithEdge> path = pathResult.getIterablePath();
         for (int i = 0; i < path.size(); i++) {
             // 해당 요일 종류에 혼잡도 정보를 제공하는 역인지 검사
             MetroNodeWithEdge curr = path.get(i);

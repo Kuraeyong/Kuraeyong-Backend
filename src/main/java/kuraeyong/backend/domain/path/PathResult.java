@@ -7,12 +7,12 @@ import lombok.Setter;
 
 import java.util.List;
 
+@Getter
 @AllArgsConstructor
 public class PathResult implements Comparable<PathResult> {
     private final MetroPath path;
     private final MetroPath compressedPath;
     private final MoveInfos moveInfos;
-    @Getter
     @Setter
     private int congestionScore;
 
@@ -22,7 +22,7 @@ public class PathResult implements Comparable<PathResult> {
         this.moveInfos = moveInfos;
     }
 
-    public List<MetroNodeWithEdge> getMetroNodeWithEdgeList() {
+    public List<MetroNodeWithEdge> getIterablePath() {
         return path.getPath();
     }
 
@@ -40,30 +40,6 @@ public class PathResult implements Comparable<PathResult> {
 
     public int getTotalTrfTime() {
         return moveInfos.getTotalTrfTime();
-    }
-
-    public int getPathSize() {
-        return path.size();
-    }
-
-
-    public PathResult join(PathResult pathResultAfterStopoverStin, int stopoverTime) {
-        // 일반 경로 합치기
-        MetroPath totalPath = new MetroPath(path);
-        totalPath.concat(pathResultAfterStopoverStin.path, false);
-
-        // 압축 경로 합치기
-        MetroPath totalCompressedPath = new MetroPath(compressedPath);
-        totalCompressedPath.concat(pathResultAfterStopoverStin.compressedPath, false);
-
-        // 이동 정보 합치기
-        MoveInfos totalMoveInfos = new MoveInfos(moveInfos);
-        totalMoveInfos.concat(pathResultAfterStopoverStin.moveInfos, stopoverTime);
-
-        // 혼잡도 점수 계산
-        int congestionScore = (this.congestionScore + pathResultAfterStopoverStin.congestionScore) / 2;
-
-        return new PathResult(totalPath, totalCompressedPath, totalMoveInfos, congestionScore);
     }
 
     @Override

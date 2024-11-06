@@ -23,7 +23,7 @@ public class PathController {
      * 환승역 번호   0~268 (총 환승역 269개)
      */
     @PostMapping("")
-    public PathResult searchPath(@RequestBody PathSearchRequest pathSearchRequest) {
+    public void searchPath(@RequestBody PathSearchRequest pathSearchRequest) {
         validatePathSearchRequest(pathSearchRequest);
 
         if (isDirectSearchPath(pathSearchRequest.getStopoverStinNm())) {
@@ -35,7 +35,7 @@ public class PathController {
                     pathSearchRequest.getCongestionThreshold(),
                     pathSearchRequest.getConvenience());
             showPathResult(pathResult);
-            return pathResult;
+            // FIXME: return pathResult;
         }
         PathResult pathResultBeforeStopoverStin = pathService.searchPath(pathSearchRequest.getOrgStinNm(),
                 pathSearchRequest.getStopoverStinNm(),
@@ -53,10 +53,10 @@ public class PathController {
                 DateUtil.getMinute(stopoverDptTm),
                 pathSearchRequest.getCongestionThreshold(),
                 pathSearchRequest.getConvenience());
-        PathResult totalPathResult = pathResultBeforeStopoverStin.join(pathResultAfterStopoverStin, stopoverTime);
+        PathResult totalPathResult = pathService.join(pathResultBeforeStopoverStin, pathResultAfterStopoverStin, pathSearchRequest.getDateType());
         showPathResult(totalPathResult);
 
-        return totalPathResult;
+        // FIXME: return totalPathResult;
     }
 
     private int calculateStopoverTime(int stopoverTime) {

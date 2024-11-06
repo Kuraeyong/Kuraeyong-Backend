@@ -110,6 +110,24 @@ public class PathService {
         return pathResults;
     }
 
+    public PathResult join(PathResult front, PathResult rear, String dateType) {
+        // 일반 경로 합치기
+        MetroPath totalPath = new MetroPath(front.getPath());
+        totalPath.concat(rear.getPath(), false);
+
+        // 압축 경로 합치기
+        MetroPath totalCompressedPath = new MetroPath(front.getCompressedPath());
+        totalCompressedPath.concat(rear.getCompressedPath(), false);
+
+        // 이동 정보 합치기
+        MoveInfos totalMoveInfos = moveService.join(front.getMoveInfos(), rear.getMoveInfos(), dateType);
+
+        // 혼잡도 점수 계산
+        int congestionScore = (front.getCongestionScore() + rear.getCongestionScore()) / 2;
+
+        return new PathResult(totalPath, totalCompressedPath, totalMoveInfos, congestionScore);
+    }
+
     /**
      * 경로 탐색 결과를 출력
      *
