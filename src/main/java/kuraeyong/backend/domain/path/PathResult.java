@@ -49,7 +49,7 @@ public class PathResult implements Comparable<PathResult> {
         // TODO 1. compressedPath
         sb.append(path).append('\n');
         sb.append(compressedPath).append('\n');
-        sb.append(moveInfos).append('\n');
+        sb.append(moveInfos);
 
         // TODO 2. moveInfoList
         sb.append("총 소요시간(대기시간 포함): ").append(getTotalTime()).append("분\n");
@@ -90,6 +90,7 @@ public class PathResult implements Comparable<PathResult> {
         destArvTm = moveInfos.getArvTm(moveInfos.size() - 1);
         appendUserMoveInfo(sb, lnOrg.getLnCd(), compressedPath.get(lnOrgIdx - 1).getStinNm(),
                 compressedPath.get(compressedPath.size() - 1).getStinNm(), orgDptTm, destArvTm);
+        sb.append('\n');
 
         return sb.toString();
     }

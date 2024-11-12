@@ -36,6 +36,7 @@ public class PathController {
                     pathSearchRequest.getConvenience());
             showPathResult(pathResult);
             // FIXME: return pathResult;
+            return;
         }
         PathResult pathResultBeforeStopoverStin = pathService.searchPath(pathSearchRequest.getOrgStinNm(),
                 pathSearchRequest.getStopoverStinNm(),
@@ -44,7 +45,7 @@ public class PathController {
                 pathSearchRequest.getMin(),
                 pathSearchRequest.getCongestionThreshold(),
                 pathSearchRequest.getConvenience());
-        int stopoverTime = calculateStopoverTime(pathSearchRequest.getStopoverTime());
+        int stopoverTime = pathSearchRequest.getStopoverTime();
         String stopoverDptTm = DateUtil.plusMinutes(pathResultBeforeStopoverStin.getFinalArvTm(), stopoverTime);
         PathResult pathResultAfterStopoverStin = pathService.searchPath(pathSearchRequest.getStopoverStinNm(),
                 pathSearchRequest.getDestStinNm(),
@@ -55,15 +56,7 @@ public class PathController {
                 pathSearchRequest.getConvenience());
         PathResult totalPathResult = pathService.join(pathResultBeforeStopoverStin, pathResultAfterStopoverStin, pathSearchRequest.getDateType());
         showPathResult(totalPathResult);
-
         // FIXME: return totalPathResult;
-    }
-
-    private int calculateStopoverTime(int stopoverTime) {
-        if (stopoverTime == 0) {
-            return -1;
-        }
-        return stopoverTime;
     }
 
     private void showPathResult(PathResult pathResult) {
