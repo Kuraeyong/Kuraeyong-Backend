@@ -33,7 +33,8 @@ public class PathController {
                     pathSearchRequest.getHour(),
                     pathSearchRequest.getMin(),
                     pathSearchRequest.getCongestionThreshold(),
-                    pathSearchRequest.getConvenience());
+                    pathSearchRequest.getConvenience(),
+                    null);
             showPathResult(pathResult);
             // FIXME: return pathResult;
             return;
@@ -44,7 +45,8 @@ public class PathController {
                 pathSearchRequest.getHour(),
                 pathSearchRequest.getMin(),
                 pathSearchRequest.getCongestionThreshold(),
-                pathSearchRequest.getConvenience());
+                pathSearchRequest.getConvenience(),
+                null);
         int stopoverTime = pathSearchRequest.getStopoverTime();
         String stopoverDptTm = DateUtil.plusMinutes(pathResultBeforeStopoverStin.getFinalArvTm(), stopoverTime);
         PathResult pathResultAfterStopoverStin = pathService.searchPath(pathSearchRequest.getStopoverStinNm(),
@@ -53,7 +55,8 @@ public class PathController {
                 DateUtil.getHour(stopoverDptTm),
                 DateUtil.getMinute(stopoverDptTm),
                 pathSearchRequest.getCongestionThreshold(),
-                pathSearchRequest.getConvenience());
+                pathSearchRequest.getConvenience(),
+                pathResultBeforeStopoverStin);
         PathResult totalPathResult = pathService.join(pathResultBeforeStopoverStin, pathResultAfterStopoverStin, pathSearchRequest.getDateType());
         showPathResult(totalPathResult);
         // FIXME: return totalPathResult;

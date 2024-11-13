@@ -67,7 +67,11 @@ public class MetroNodeWithEdge implements Comparable<MetroNodeWithEdge> {
     }
 
     public boolean isJctStin() {
-        return node.getIsJctStin() > 0;
+        return getJctStin() > 0;
+    }
+
+    public int getJctStin() {
+        return node.getIsJctStin();
     }
 
     public boolean isExpStin() {

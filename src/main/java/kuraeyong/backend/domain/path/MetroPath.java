@@ -51,6 +51,10 @@ public class MetroPath implements Comparable<MetroPath> {
         return path.get(idx);
     }
 
+    public MetroNodeWithEdge getFromEnd(int idxFromEnd) {
+        return get(size() - idxFromEnd);
+    }
+
     public String getStinNm(int idx) {
         return path.get(idx).getStinNm();
     }
@@ -144,6 +148,12 @@ public class MetroPath implements Comparable<MetroPath> {
         return compressedPath;
     }
 
+    /**
+     * 경로를 순회하면서 분기점 환승이 필요한 역을 발견한 경우, 경로에 분기점 환승을 나타내는 MetroNodeWithEdge 하나를 추가
+     *
+     * @param idx   분기점 환승 검사를 시작할 노드의 인덱스
+     * @return 분기점 환승 검사를 시작할 다음 노드의 인덱스를 반환
+     */
     private int addBranchTrfNode(int idx) {
         for (int i = idx; i < size() - 1; i++) {
             MetroNodeWithEdge prev = get(i - 1);
@@ -152,25 +162,8 @@ public class MetroPath implements Comparable<MetroPath> {
             String prevBranchInfo = prev.getBranchInfo();
             String nextBranchInfo = next.getBranchInfo();
 
-            if (!isBranchTrf(prev, curr, next)) {
+            if (!BranchDirectionType.isBranchTrf(prev, curr, next)) {
                 continue;
-            }
-            if (prevBranchInfo.equals(nextBranchInfo)) {
-                continue;
-            }
-            if (prevBranchInfo.length() != nextBranchInfo.length()) {
-                continue;
-            }
-            if (curr.getLnCd().equals("6")) {
-                int prevBranchVal = Integer.parseInt(prevBranchInfo);
-                int nextBranchVal = Integer.parseInt(nextBranchInfo);
-
-                if (prevBranchVal < 1 || nextBranchVal < 1) {
-                    continue;
-                }
-                if (prevBranchVal - nextBranchVal >= 0) {
-                    continue;
-                }
             }
             path.add(i + 1, MetroNodeWithEdge.builder()
                     .node(curr.getNode())
@@ -180,10 +173,6 @@ public class MetroPath implements Comparable<MetroPath> {
             return i + 2;
         }
         return -1;
-    }
-
-    private boolean isBranchTrf(MetroNodeWithEdge prev, MetroNodeWithEdge curr, MetroNodeWithEdge next) {
-        return curr.isJctStin() && prev.getLnCd().equals(next.getLnCd());
     }
 
     public void setDirection() {

@@ -1,11 +1,14 @@
 package kuraeyong.backend.service;
 
+import kuraeyong.backend.domain.constant.BranchDirectionType;
+import kuraeyong.backend.domain.constant.DirectionType;
 import kuraeyong.backend.domain.constant.DomainType;
 import kuraeyong.backend.domain.constant.EdgeType;
 import kuraeyong.backend.domain.path.MetroNodeWithEdge;
 import kuraeyong.backend.domain.path.MetroPath;
 import kuraeyong.backend.domain.path.MoveInfo;
 import kuraeyong.backend.domain.path.MoveInfos;
+import kuraeyong.backend.domain.path.PathResult;
 import kuraeyong.backend.domain.station.info.MinimumStationInfo;
 import kuraeyong.backend.domain.station.info.MinimumStationInfoWithDateType;
 import kuraeyong.backend.domain.station.time_table.StationTimeTable;
@@ -34,11 +37,12 @@ public class MoveService {
      * @param min            사용자의 해당 역 도착 시간 (분)
      * @return 이동 정보 리스트
      */
-    public MoveInfos createMoveInfoList(MetroPath compressedPath, String dateType, int hour, int min) {
+    public MoveInfos createMoveInfos(MetroPath compressedPath, String dateType, int hour, int min, PathResult front) {
         MoveInfos moveInfos = new MoveInfos();
-        String currTime = DateUtil.getCurrTime(hour, min);
+        String currTime = createCurrTime(hour, min, front, compressedPath);
 
         moveInfos.add(MoveInfo.builder()
+                .dptTm(DateUtil.getCurrTime(hour, min))
                 .arvTm(currTime)
                 .build());
         for (int i = 0; i < compressedPath.size() - 1; i++) {
@@ -58,6 +62,45 @@ public class MoveService {
         setTrfInfo(moveInfos, dateType);
 
         return moveInfos;
+    }
+
+    /**
+     * 환승 경유를 하는 경로 탐색인 경우, currTime에 환승 시간을 더해줘야 함
+     *
+     * @param hour  현재 시간
+     * @param min   현재 분
+     * @param front 출발역부터 환승역까지의 경로 탐색 결과
+     * @return 환승 시간을 고려한 currTime
+     */
+    private String createCurrTime(int hour, int min, PathResult front, MetroPath rearCompressedPath) {
+        String currTime = DateUtil.getCurrTime(hour, min);
+        if (front == null) {
+            return currTime;
+        }
+        MetroPath frontCompressedPath = front.getCompressedPath();
+        MetroNodeWithEdge frontBeforeLastNode = frontCompressedPath.getFromEnd(2);
+        MetroNodeWithEdge frontLastNode = frontCompressedPath.getFromEnd(1);
+        MetroNodeWithEdge rearFirstNode = rearCompressedPath.get(0);
+        MetroNodeWithEdge rearSecondNode = rearCompressedPath.get(1);
+        return updateCurrTime(currTime, frontBeforeLastNode, frontLastNode, rearFirstNode, rearSecondNode);
+    }
+
+    private String updateCurrTime(String currTime, MetroNodeWithEdge frontBeforeLastNode, MetroNodeWithEdge frontLastNode, MetroNodeWithEdge rearFirstNode, MetroNodeWithEdge rearSecondNode) {
+        if (!frontLastNode.getLnCd().equals(rearFirstNode.getLnCd())) { // 노선 환승
+            MinimumStationInfo org = MinimumStationInfo.get(frontLastNode);
+            MinimumStationInfo dest = MinimumStationInfo.get(rearFirstNode);
+            DirectionType directionType = DirectionType.convertToTrfDirectionType(frontLastNode.getDirection(), rearFirstNode.getDirection());
+            int trfTime = stationTrfWeightMap.getStationTrfWeight(org, dest, null, directionType);
+            return DateUtil.plusMinutes(currTime, trfTime);
+        }
+        if (BranchDirectionType.isBranchTrf(frontBeforeLastNode, frontLastNode, rearSecondNode)) {    // 분기점 환승 (본지 or 지본)
+            int trfTime = rearFirstNode.getJctStin();
+            return DateUtil.plusMinutes(currTime, trfTime);
+        }
+        if (!frontLastNode.getDirection().equals(rearFirstNode.getDirection())) {   // 유턴
+            return DateUtil.plusMinutes(currTime, 1);
+        }
+        return currTime;
     }
 
     /**
@@ -201,7 +244,13 @@ public class MoveService {
     public MoveInfos join(MoveInfos front, MoveInfos rear, String dateType) {
         MoveInfos moveInfos = new MoveInfos(front);
 
-        // 첫 이동정보를 제외하고 연결
+        // 환승 경유인 경우 무브인포 추가
+        MoveInfo moveInfo = rear.get(0);
+        if (!moveInfo.getArvTm().equals(moveInfo.getDptTm())) {
+            moveInfos.add(moveInfo);
+        }
+
+        // 남은 무브인포 연결
         for (int i = 1; i < rear.size(); i++) {
             moveInfos.add(new MoveInfo(rear.get(i)));
         }
