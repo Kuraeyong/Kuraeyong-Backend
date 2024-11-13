@@ -86,7 +86,7 @@ public class MoveService {
     }
 
     private String updateCurrTime(String currTime, MetroNodeWithEdge frontBeforeLastNode, MetroNodeWithEdge frontLastNode, MetroNodeWithEdge rearFirstNode, MetroNodeWithEdge rearSecondNode) {
-        if (!frontLastNode.getLnCd().equals(rearFirstNode.getLnCd())) { // 노선 환승
+        if (frontLastNode.isDifferentLine(rearFirstNode.getLnCd())) { // 노선 환승
             MinimumStationInfo org = MinimumStationInfo.get(frontLastNode);
             MinimumStationInfo dest = MinimumStationInfo.get(rearFirstNode);
             DirectionType directionType = DirectionType.convertToTrfDirectionType(frontLastNode.getDirection(), rearFirstNode.getDirection());
@@ -97,7 +97,7 @@ public class MoveService {
             int trfTime = rearFirstNode.getJctStin();
             return DateUtil.plusMinutes(currTime, trfTime);
         }
-        if (!frontLastNode.getDirection().equals(rearFirstNode.getDirection())) {   // 유턴
+        if (!frontLastNode.isSameDirection(rearFirstNode.getDirection())) {   // 유턴
             return DateUtil.plusMinutes(currTime, 1);
         }
         return currTime;
@@ -198,7 +198,7 @@ public class MoveService {
             MinimumStationInfoWithDateType B_Key = MinimumStationInfoWithDateType.get(compressedPath.get(i), dateType, DomainType.STATION_TIME_TABLE);
             StationTimeTableElement B_Train = stationTimeTableMap.getStoppingTrainAfterCurrTime(B_Key, TO_C.getTrnNo(), TO_B.getArvTm());
 
-            // TODO. 불필요한 환승 제거
+            // 불필요한 환승 제거
             TO_B.setTrnNo(TO_C.getTrnNo());
             TO_B.setDptTm(A_Train.getDptTm());
             TO_B.setArvTm(B_Train.getArvTm());

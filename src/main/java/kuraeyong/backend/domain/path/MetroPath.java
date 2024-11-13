@@ -113,19 +113,19 @@ public class MetroPath implements Comparable<MetroPath> {
         for (int i = 0; i < size(); i++) {
             MetroNodeWithEdge curr = get(i);
 
-            // TODO. 분기점 검사
+            // 분기점 검사
             if (curr.isJctStin()) {
                 check[i] = true;
             }
 
-            // TODO. 환승역 여부 검사
+            // 환승역 여부 검사
             if (curr.getEdgeType() == EdgeType.TRF_EDGE) {
                 recentExpState = false;
                 check[i - 1] = true;
                 check[i] = true;
             }
 
-            // TODO. 급행 정차역 여부 검사
+            // 급행 정차역 여부 검사
             if (curr.isExpStin() == recentExpState) {
                 continue;
             }
@@ -176,7 +176,7 @@ public class MetroPath implements Comparable<MetroPath> {
     }
 
     public void setDirection() {
-        // TODO. 일반, 급행 간선의 방향 설정 (상, 하)
+        // 일반, 급행 간선의 방향 설정 (상, 하)
         for (int i = 0; i < size() - 1; i++) {
             MetroNodeWithEdge curr = get(i);
             MetroNodeWithEdge next = get(i + 1);
@@ -197,7 +197,7 @@ public class MetroPath implements Comparable<MetroPath> {
         }
         get(0).setDirection(get(1).getDirection());
 
-        // TODO. 환승 간선의 방향 설정 (상상, 상하, 하상, 하하)
+        // 환승 간선의 방향 설정 (상상, 상하, 하상, 하하)
         for (int i = 1; i < size() - 1; i++) {
             MetroNodeWithEdge prev = get(i - 1);
             MetroNodeWithEdge curr = get(i);

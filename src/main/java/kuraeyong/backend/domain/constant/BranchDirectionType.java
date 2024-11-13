@@ -8,7 +8,7 @@ public enum BranchDirectionType {
 
     private final String branchDirectionType;
 
-    private BranchDirectionType(String branchDirectionType) {
+    BranchDirectionType(String branchDirectionType) {
         this.branchDirectionType = branchDirectionType;
     }
 
@@ -27,7 +27,7 @@ public enum BranchDirectionType {
         if (!curr.isJctStin()) {    // 분기점이 아니면, 분기점 환승 X
             return false;
         }
-        if (!prev.getLnCd().equals(next.getLnCd())) {   // 노선도 다르면, 분기점 환승 X
+        if (prev.isDifferentLine(next.getLnCd())) {   // 노선도 다르면, 분기점 환승 X
             return false;
         }
         String prevBranchInfo = prev.getBranchInfo();

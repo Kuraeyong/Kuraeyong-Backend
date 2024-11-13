@@ -46,12 +46,12 @@ public class PathResult implements Comparable<PathResult> {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        // TODO 1. compressedPath
+        // compressedPath
         sb.append(path).append('\n');
         sb.append(compressedPath).append('\n');
         sb.append(moveInfos);
 
-        // TODO 2. moveInfoList
+        // moveInfoList
         sb.append("총 소요시간(대기시간 포함): ").append(getTotalTime()).append("분\n");
         sb.append("환승 횟수: ").append(getTrfCnt()).append("회\n");
         sb.append("총 환승시간: ").append(getTotalTrfTime()).append("분\n");

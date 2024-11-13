@@ -109,7 +109,7 @@ public class StationService {
      * 역사 시간표와 관련한 API 응답 결과를 station_time_table_[csvFilePath]에 저장
      */
     public String saveStationTimeTableAPIResultToCsv() {
-        // TODO. 쿼리스트링 정적 요소 사전 초기화
+        // 쿼리스트링 정적 요소 사전 초기화
         String format = "json";
         String dayNm = csvFilePath.split("[_.]")[3];
         String dayCd = switch (dayNm) {
@@ -162,7 +162,7 @@ public class StationService {
                         "&dayCd=" + dayCd;
                 JSONArray parseBody = getParseBody(queryString);
 
-                // TODO. 결과가 없는 경우, 로그 기록
+                // 결과가 없는 경우, 로그 기록
                 if (parseBody == null) {
                     logBw.write(++logCount + "," +
                             railOprIsttCd + "," +
@@ -173,7 +173,7 @@ public class StationService {
                     continue;
                 }
 
-                // TODO. CSV 파일에 저장
+                // CSV 파일에 저장
                 for (Object parseLine : parseBody) {
                     lineCount++;
                     JSONObject line = (JSONObject) parseLine;

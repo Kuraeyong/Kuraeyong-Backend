@@ -78,6 +78,14 @@ public class MetroNodeWithEdge implements Comparable<MetroNodeWithEdge> {
         return node.getIsExpStin() == 1;
     }
 
+    public boolean isDifferentLine(String lnCd) {
+        return !getLnCd().equals(lnCd);
+    }
+
+    public boolean isSameDirection(DirectionType directionType) {
+        return getDirection().equals(directionType);
+    }
+
     // 가중치를 기준으로 우선순위 결정
     @Override
     public int compareTo(MetroNodeWithEdge o) {

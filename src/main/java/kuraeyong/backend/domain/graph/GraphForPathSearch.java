@@ -85,7 +85,7 @@ public class GraphForPathSearch {
      * @param edgeInfo 해당역의 임의의 간선
      * @return 일반역 여부 판별 (환승역도 아니고, 급행 정차역도 아닌지)
      */
-    private static boolean isGeneralStin(EdgeInfo edgeInfo) {
+    private boolean isGeneralStin(EdgeInfo edgeInfo) {
         return edgeInfo.getIsTrfStin() == 0 && edgeInfo.getIsExpStin() == 0;
     }
 
@@ -135,6 +135,7 @@ public class GraphForPathSearch {
 
     /**
      * 인자로 GraphForPathSearch의 MetroNode를 주어야 제대로 동작함
+     *
      * @param edgeType 자를 간선의 종류
      * @return  자른 간선
      */

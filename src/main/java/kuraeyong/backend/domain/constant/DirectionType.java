@@ -12,7 +12,7 @@ public enum DirectionType {
 
     private final int directionType;
 
-    private DirectionType(int directionType) {
+    DirectionType(int directionType) {
         this.directionType = directionType;
     }
 

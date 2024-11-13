@@ -32,7 +32,7 @@ public class StationCongestionMap {
             map.get(key).add(row);
         }
 
-        // TODO. 방향을 기준으로 정렬 (하행이 앞으로)
+        // 방향을 기준으로 정렬 (하행이 앞으로)
         Set<MinimumStationInfoWithDateType> keySet = map.keySet();
         for (MinimumStationInfoWithDateType key : keySet) {
             map.get(key).sort();

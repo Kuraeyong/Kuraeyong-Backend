@@ -23,7 +23,7 @@ public class StationTimeTableMap {
     public StationTimeTableMap(StationTimeTableElementRepository stationTimeTableElementRepository) {
         map = new HashMap<>();
 
-        // TODO. 열차 정보 초기화
+        // 열차 정보 초기화
         for (StationTimeTableElement train : stationTimeTableElementRepository.findAll()) {
             if (train.isOrgStin() && train.isTmnStin()) {   // 시간 정보가 유효하지 않은 열차 정보라면
                 continue;
@@ -41,13 +41,13 @@ public class StationTimeTableMap {
             map.get(key).add(train);
         }
 
-        // TODO. 출발 시간을 기준으로 정렬
+        // 출발 시간을 기준으로 정렬
         Set<MinimumStationInfoWithDateType> keySet = map.keySet();
         for (MinimumStationInfoWithDateType key : keySet) {
             map.get(key).sort();
         }
 
-        // TODO. 성수, 응암 처리
+        // 성수, 응암 처리
         initTrnNoStdStationSameTrainMap(SEONGSU);
         initTrnNoStdStationSameTrainMap(EUNGAM);
     }

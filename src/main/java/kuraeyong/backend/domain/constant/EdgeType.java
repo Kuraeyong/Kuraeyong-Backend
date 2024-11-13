@@ -8,7 +8,7 @@ public enum EdgeType {
 
     private final int edgeType;
 
-    private EdgeType(int edgeType) {
+    EdgeType(int edgeType) {
         this.edgeType = edgeType;
     }
 
