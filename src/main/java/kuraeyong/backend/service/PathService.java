@@ -42,12 +42,12 @@ public class PathService {
     private final StationCongestionMap stationCongestionMap;
     private static final int YEN_CANDIDATE_CNT = 10;
 
-    public PathResult searchPath(String orgStinNm, String destStinNm, String dateType, int hour, int min, int congestionThreshold, String convenience, PathResult front) {
+    public PathResult searchPath(String orgStinNm, String destStinNm, String dateType, int hour, int min, int congestionThreshold, String convenience, PathResult front, int stopoverTime) {
         validateExistStinNm(orgStinNm);
         validateExistStinNm(destStinNm);
 
         List<MetroPath> temporaryPaths = createTemporaryPaths(orgStinNm, destStinNm, dateType);
-        PathResults pathResults = createPathResults(temporaryPaths, dateType, hour, min, front);
+        PathResults pathResults = createPathResults(temporaryPaths, dateType, hour, min, front, stopoverTime);
         stationCongestionMap.setCongestionScoreOfPaths(pathResults, dateType, congestionThreshold);
         pathResults.sort(SortType.CONGESTION);
 //        showPathResults(pathResults);
@@ -95,12 +95,12 @@ public class PathService {
      * @param min            분
      * @return 실제 경로 목록
      */
-    private PathResults createPathResults(List<MetroPath> temporaryPaths, String dateType, int hour, int min, PathResult front) {
+    private PathResults createPathResults(List<MetroPath> temporaryPaths, String dateType, int hour, int min, PathResult front, int stopoverTime) {
         PathResults pathResults = new PathResults();
         for (MetroPath path : temporaryPaths) {
             path.setDirection();
             MetroPath compressedPath = path.getCompressPath();
-            MoveInfos moveInfos = moveService.createMoveInfos(compressedPath, dateType, hour, min, front);
+            MoveInfos moveInfos = moveService.createMoveInfos(compressedPath, dateType, hour, min, front, stopoverTime);
             if (moveInfos == null) {
                 continue;
             }

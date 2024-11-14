@@ -37,9 +37,9 @@ public class MoveService {
      * @param min            사용자의 해당 역 도착 시간 (분)
      * @return 이동 정보 리스트
      */
-    public MoveInfos createMoveInfos(MetroPath compressedPath, String dateType, int hour, int min, PathResult front) {
+    public MoveInfos createMoveInfos(MetroPath compressedPath, String dateType, int hour, int min, PathResult front, int stopoverTime) {
         MoveInfos moveInfos = new MoveInfos();
-        String currTime = createCurrTime(hour, min, front, compressedPath);
+        String currTime = createCurrTime(hour, min, front, stopoverTime, compressedPath);
 
         moveInfos.add(MoveInfo.builder()
                 .dptTm(DateUtil.getCurrTime(hour, min))
@@ -72,7 +72,7 @@ public class MoveService {
      * @param front 출발역부터 환승역까지의 경로 탐색 결과
      * @return 환승 시간을 고려한 currTime
      */
-    private String createCurrTime(int hour, int min, PathResult front, MetroPath rearCompressedPath) {
+    private String createCurrTime(int hour, int min, PathResult front, int stopoverTime, MetroPath rearCompressedPath) {
         String currTime = DateUtil.getCurrTime(hour, min);
         if (front == null) {
             return currTime;
@@ -82,10 +82,11 @@ public class MoveService {
         MetroNodeWithEdge frontLastNode = frontCompressedPath.getFromEnd(1);
         MetroNodeWithEdge rearFirstNode = rearCompressedPath.get(0);
         MetroNodeWithEdge rearSecondNode = rearCompressedPath.get(1);
-        return updateCurrTime(currTime, frontBeforeLastNode, frontLastNode, rearFirstNode, rearSecondNode);
+        return updateCurrTime(currTime, stopoverTime, frontBeforeLastNode, frontLastNode, rearFirstNode, rearSecondNode);
     }
 
-    private String updateCurrTime(String currTime, MetroNodeWithEdge frontBeforeLastNode, MetroNodeWithEdge frontLastNode, MetroNodeWithEdge rearFirstNode, MetroNodeWithEdge rearSecondNode) {
+    private String updateCurrTime(String currTime, int stopoverTime, MetroNodeWithEdge frontBeforeLastNode, MetroNodeWithEdge frontLastNode, MetroNodeWithEdge rearFirstNode, MetroNodeWithEdge rearSecondNode) {
+        currTime = DateUtil.plusMinutes(currTime, stopoverTime);
         if (frontLastNode.isDifferentLine(rearFirstNode.getLnCd())) { // 노선 환승
             MinimumStationInfo org = MinimumStationInfo.get(frontLastNode);
             MinimumStationInfo dest = MinimumStationInfo.get(rearFirstNode);
