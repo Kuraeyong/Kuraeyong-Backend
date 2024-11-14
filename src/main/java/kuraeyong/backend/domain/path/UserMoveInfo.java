@@ -32,6 +32,10 @@ public class UserMoveInfo {
         return lnCd == null;
     }
 
+    public boolean isStopOverStin(String stopoverStinNm) {
+        return orgStinNm.equals(stopoverStinNm) && destStinNm.equals(stopoverStinNm);
+    }
+
     @Override
     public String toString() {
         return determineLnCd() + "\t\t" +

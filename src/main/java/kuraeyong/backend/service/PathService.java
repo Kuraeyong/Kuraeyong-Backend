@@ -49,7 +49,7 @@ public class PathService {
         List<MetroPath> temporaryPaths = createTemporaryPaths(orgStinNm, destStinNm, dateType);
         PathResults pathResults = createPathResults(temporaryPaths, dateType, hour, min, front, stopoverTime);
         stationCongestionMap.setCongestionScoreOfPaths(pathResults, dateType, congestionThreshold);
-        pathResults.sort(SortType.CONGESTION);
+        pathResults.sort(SortType.MIN_TIME);
 //        showPathResults(pathResults);
 //        showOptimalPath(pathResults);
 

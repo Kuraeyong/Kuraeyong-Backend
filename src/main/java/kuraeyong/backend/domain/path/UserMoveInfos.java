@@ -1,5 +1,6 @@
 package kuraeyong.backend.domain.path;
 
+import kuraeyong.backend.util.DateUtil;
 import kuraeyong.backend.util.StringUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -13,10 +14,11 @@ public class UserMoveInfos {
     private final int totalRequiredTime;
     private final int congestionScore;
 
-    public UserMoveInfos(List<UserMoveInfo> userMoveInfos, int totalRequiredTime, int congestionScore) {
+    public UserMoveInfos(List<UserMoveInfo> userMoveInfos, int totalRequiredTime, int congestionScore, String stopoverStinNm, int stopoverTime) {
         this.userMoveInfos = userMoveInfos;
         this.totalRequiredTime = totalRequiredTime;
         this.congestionScore = congestionScore;
+        setStopoverInfo(stopoverStinNm, stopoverTime);
     }
 
     public int getTotalTrfCnt() {
@@ -52,5 +54,33 @@ public class UserMoveInfos {
         userMoveInfos.forEach(sb::append);
 
         return sb.toString();
+    }
+
+    private void setStopoverInfo(String stopoverStinNm, int stopoverTime) {
+        if (stopoverStinNm == null) {
+            return;
+        }
+        for (int i = 0; i < userMoveInfos.size(); i++) {
+            UserMoveInfo userMoveInfo = userMoveInfos.get(i);
+            if (!userMoveInfo.isStopOverStin(stopoverStinNm)) {
+                continue;
+            }
+            userMoveInfos.add(i, UserMoveInfo.of(
+                    "경유",
+                    userMoveInfo.getOrgStinNm(),
+                    userMoveInfo.getDestStinNm(),
+                    userMoveInfo.getOrgTm(),
+                    DateUtil.plusMinutes(userMoveInfo.getOrgTm(), stopoverTime)
+            ));
+            userMoveInfos.add(i + 1, UserMoveInfo.of(
+                    userMoveInfo.getLnCd(),
+                    userMoveInfo.getOrgStinNm(),
+                    userMoveInfo.getDestStinNm(),
+                    DateUtil.plusMinutes(userMoveInfo.getOrgTm(), stopoverTime),
+                    userMoveInfo.getDestTm()
+            ));
+            userMoveInfos.remove(i + 2);
+            return;
+        }
     }
 }

@@ -1,6 +1,7 @@
 package kuraeyong.backend.controller;
 
 import kuraeyong.backend.domain.path.PathResult;
+import kuraeyong.backend.domain.path.UserMoveInfos;
 import kuraeyong.backend.dto.request.PathSearchRequest;
 import kuraeyong.backend.service.PathService;
 import kuraeyong.backend.util.DateUtil;
@@ -36,7 +37,8 @@ public class PathController {
                     pathSearchRequest.getConvenience(),
                     null,
                     -1);
-            showPathResult(pathResult);
+            UserMoveInfos userMoveInfos = pathResult.createUserMoveInfos(null, -1);
+            System.out.println(userMoveInfos);
             // FIXME: return pathResult;
             return;
         }
@@ -61,7 +63,8 @@ public class PathController {
                 pathResultBeforeStopoverStin,
                 stopoverTime);
         PathResult totalPathResult = pathService.join(pathResultBeforeStopoverStin, pathResultAfterStopoverStin, pathSearchRequest.getDateType());
-        showPathResult(totalPathResult);
+        UserMoveInfos userMoveInfos = totalPathResult.createUserMoveInfos(pathSearchRequest.getStopoverStinNm(), stopoverTime);
+        System.out.println(userMoveInfos);
         // FIXME: return totalPathResult;
     }
 

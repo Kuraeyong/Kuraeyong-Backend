@@ -43,7 +43,7 @@ public class PathResult implements Comparable<PathResult> {
         return moveInfos.getTotalTrfTime();
     }
 
-    public UserMoveInfos createUserMoveInfos() {
+    public UserMoveInfos createUserMoveInfos(String stopoverStinNm, int stopoverTime) {
         List<UserMoveInfo> userMoveInfos = new ArrayList<>();
 
         int firstMoveInfoIdxWithSameTrn = 1;
@@ -83,16 +83,15 @@ public class PathResult implements Comparable<PathResult> {
                 moveInfos.get(firstMoveInfoIdxWithSameTrn).getDptTm(),
                 moveInfos.get(moveInfos.size() - 1).getArvTm()
         ));
-
-        return new UserMoveInfos(userMoveInfos, getTotalTime(), congestionScore);
+        return new UserMoveInfos(userMoveInfos, getTotalTime(), congestionScore, stopoverStinNm, stopoverTime);
     }
 
     @Override
     public String toString() {
         return path + "\n" +
                 compressedPath + "\n" +
-                moveInfos +
-                createUserMoveInfos();
+                moveInfos + "\n" +
+                congestionScore;
     }
 
     @Override
