@@ -37,8 +37,11 @@ public class PathController {
                     pathSearchRequest.getConvenience(),
                     null,
                     -1);
-            UserMoveInfos userMoveInfos = pathResult.createUserMoveInfos(null, -1);
-            System.out.println(userMoveInfos);
+            if (isEmpty(pathResult)) {
+                System.out.println("현재 운행 중인 열차가 없습니다.");
+                return;
+            }
+            showUserMoveInfos(pathResult, null, -1);
             // FIXME: return pathResult;
             return;
         }
@@ -51,6 +54,10 @@ public class PathController {
                 pathSearchRequest.getConvenience(),
                 null,
                 -1);
+        if (isEmpty(pathResultBeforeStopoverStin)) {
+            System.out.println("현재 운행 중인 열차가 없습니다.");
+            return;
+        }
         int stopoverTime = pathSearchRequest.getStopoverTime();
         String stopoverDptTm = pathResultBeforeStopoverStin.getFinalArvTm();
         PathResult pathResultAfterStopoverStin = pathService.searchPath(pathSearchRequest.getStopoverStinNm(),
@@ -62,14 +69,22 @@ public class PathController {
                 pathSearchRequest.getConvenience(),
                 pathResultBeforeStopoverStin,
                 stopoverTime);
+        if (isEmpty(pathResultAfterStopoverStin)) {
+            System.out.println("현재 운행 중인 열차가 없습니다.");
+            return;
+        }
         PathResult totalPathResult = pathService.join(pathResultBeforeStopoverStin, pathResultAfterStopoverStin, pathSearchRequest.getDateType());
-        UserMoveInfos userMoveInfos = totalPathResult.createUserMoveInfos(pathSearchRequest.getStopoverStinNm(), stopoverTime);
-        System.out.println(userMoveInfos);
+        showUserMoveInfos(totalPathResult, pathSearchRequest.getStopoverStinNm(), stopoverTime);
         // FIXME: return totalPathResult;
     }
 
-    private void showPathResult(PathResult pathResult) {
-        System.out.println(pathResult);
+    private boolean isEmpty(PathResult pathResult) {
+        return pathResult == null;
+    }
+
+    private void showUserMoveInfos(PathResult pathResult, String stopoverStinNm, int stopoverTime) {
+        UserMoveInfos userMoveInfos = pathResult.createUserMoveInfos(stopoverStinNm, stopoverTime);
+        System.out.println(userMoveInfos);
     }
 
     private void validatePathSearchRequest(PathSearchRequest pathSearchRequest) {

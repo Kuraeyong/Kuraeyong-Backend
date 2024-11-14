@@ -61,7 +61,7 @@ public class DateUtil {
         int timeVal1 = timeToMinute(getTimeForCompare(time1));
         int timeVal2 = timeToMinute(getTimeForCompare(time2));
 
-        return timeVal2 - timeVal1;
+        return Math.abs(timeVal2 - timeVal1);
     }
 
     public static String passingTimeToCongestionTime(String passingTime) {

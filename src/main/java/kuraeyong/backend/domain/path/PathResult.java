@@ -45,7 +45,6 @@ public class PathResult implements Comparable<PathResult> {
 
     public UserMoveInfos createUserMoveInfos(String stopoverStinNm, int stopoverTime) {
         List<UserMoveInfo> userMoveInfos = new ArrayList<>();
-
         int firstMoveInfoIdxWithSameTrn = 1;
         for (int i = 2; i < moveInfos.size(); i++) {
             MoveInfo prev = moveInfos.get(i - 1);
