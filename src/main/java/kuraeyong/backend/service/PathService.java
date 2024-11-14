@@ -51,7 +51,7 @@ public class PathService {
         stationCongestionMap.setCongestionScoreOfPaths(pathResults, dateType, congestionThreshold);
         pathResults.sort(SortType.CONGESTION);
 //        showPathResults(pathResults);
-        showOptimalPath(pathResults);
+//        showOptimalPath(pathResults);
 
         return pathResults.getOptimalPath();
     }
