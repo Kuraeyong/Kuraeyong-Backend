@@ -40,9 +40,10 @@ public class MoveService {
     public MoveInfos createMoveInfos(MetroPath compressedPath, String dateType, int hour, int min, PathResult front, int stopoverTime) {
         MoveInfos moveInfos = new MoveInfos();
         String currTime = createCurrTime(hour, min, front, stopoverTime, compressedPath);
+        int sec = DateUtil.getSecond(currTime);
 
         moveInfos.add(MoveInfo.builder()
-                .dptTm(DateUtil.getCurrTime(hour, min))
+                .dptTm(DateUtil.getCurrTime(hour, min, sec))
                 .arvTm(currTime)
                 .build());
         for (int i = 0; i < compressedPath.size() - 1; i++) {
@@ -73,10 +74,11 @@ public class MoveService {
      * @return 환승 시간을 고려한 currTime
      */
     private String createCurrTime(int hour, int min, PathResult front, int stopoverTime, MetroPath rearCompressedPath) {
-        String currTime = DateUtil.getCurrTime(hour, min);
         if (front == null) {
-            return currTime;
+            return DateUtil.getCurrTime(hour, min);
         }
+        int sec = DateUtil.getSecond(front.getFinalArvTm());
+        String currTime = DateUtil.getCurrTime(hour, min, sec);
         MetroPath frontCompressedPath = front.getCompressedPath();
         MetroNodeWithEdge frontBeforeLastNode = frontCompressedPath.getFromEnd(2);
         MetroNodeWithEdge frontLastNode = frontCompressedPath.getFromEnd(1);

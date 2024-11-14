@@ -8,13 +8,17 @@ public class DateUtil {
     public final static int CORRECTION_VALUE = 240000; // 날짜 변경 기준 시간에 따른 보정 값
 
     public static String getCurrTime(int hour, int min) {
-        return makeDoubleDigits(hour) + makeDoubleDigits(min) + "00";
+        return getCurrTime(hour, min, 0);
+    }
+
+    public static String getCurrTime(int hour, int min, int sec) {
+        return makeDoubleDigits(hour) + makeDoubleDigits(min) + makeDoubleDigits(sec);
     }
 
     public static String plusMinutes(String currTime, int minutes) {
-        int hour = Integer.parseInt(currTime.substring(0, 2));
-        int min = Integer.parseInt(currTime.substring(2, 4));
-        int sec = Integer.parseInt(currTime.substring(4, 6));
+        int hour = getHour(currTime);
+        int min = getMinute(currTime);
+        int sec = getSecond(currTime);
 
         LocalDateTime localDateTime = LocalDateTime.of(2000, 4, 13, hour, min, sec);
         LocalDateTime result = localDateTime.plusMinutes(minutes);
@@ -95,5 +99,9 @@ public class DateUtil {
 
     public static int getMinute(String time) {
         return Integer.parseInt(time.substring(2, 4));
+    }
+
+    public static int getSecond(String time) {
+        return Integer.parseInt(time.substring(4, 6));
     }
 }
