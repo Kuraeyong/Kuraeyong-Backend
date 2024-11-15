@@ -36,7 +36,8 @@ public class PathController {
                     pathSearchRequest.getCongestionThreshold(),
                     pathSearchRequest.getConvenience(),
                     null,
-                    -1);
+                    -1,
+                    pathSearchRequest.getSortType());
             if (isEmpty(pathResult)) {
                 System.out.println("현재 운행 중인 열차가 없습니다.");
                 return;
@@ -53,7 +54,8 @@ public class PathController {
                 pathSearchRequest.getCongestionThreshold(),
                 pathSearchRequest.getConvenience(),
                 null,
-                -1);
+                -1,
+                pathSearchRequest.getSortType());
         if (isEmpty(pathResultBeforeStopoverStin)) {
             System.out.println("현재 운행 중인 열차가 없습니다.");
             return;
@@ -68,7 +70,8 @@ public class PathController {
                 pathSearchRequest.getCongestionThreshold(),
                 pathSearchRequest.getConvenience(),
                 pathResultBeforeStopoverStin,
-                stopoverTime);
+                stopoverTime,
+                pathSearchRequest.getSortType());
         if (isEmpty(pathResultAfterStopoverStin)) {
             System.out.println("현재 운행 중인 열차가 없습니다.");
             return;

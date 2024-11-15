@@ -42,14 +42,14 @@ public class PathService {
     private final StationCongestionMap stationCongestionMap;
     private static final int YEN_CANDIDATE_CNT = 10;
 
-    public PathResult searchPath(String orgStinNm, String destStinNm, String dateType, int hour, int min, int congestionThreshold, String convenience, PathResult front, int stopoverTime) {
+    public PathResult searchPath(String orgStinNm, String destStinNm, String dateType, int hour, int min, int congestionThreshold, String convenience, PathResult front, int stopoverTime, String sortType) {
         validateExistStinNm(orgStinNm);
         validateExistStinNm(destStinNm);
 
         List<MetroPath> temporaryPaths = createTemporaryPaths(orgStinNm, destStinNm, dateType);
         PathResults pathResults = createPathResults(temporaryPaths, dateType, hour, min, front, stopoverTime);
         stationCongestionMap.setCongestionScoreOfPaths(pathResults, dateType, congestionThreshold);
-        pathResults.sort(SortType.MIN_TIME);
+        pathResults.sort(SortType.parse(sortType));
 //        showPathResults(pathResults);
 //        showOptimalPath(pathResults);
 

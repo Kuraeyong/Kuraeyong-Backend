@@ -15,6 +15,7 @@ public class PathSearchRequest {
     private int congestionThreshold;
     private String convenience;
     private int stopoverTime;
+    private String sortType;
 
     @Override
     public String toString() {
@@ -28,6 +29,7 @@ public class PathSearchRequest {
                 ", congestionThreshold=" + congestionThreshold +
                 ", convenience='" + convenience + '\'' +
                 ", stopoverTime=" + stopoverTime +
+                ", sortType=" + sortType + '\'' +
                 '}';
     }
 }

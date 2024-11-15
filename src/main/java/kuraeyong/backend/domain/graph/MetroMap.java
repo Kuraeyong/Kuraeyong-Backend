@@ -65,7 +65,7 @@ public class MetroMap {
                     .trfStinCd(edgeInfo.getTrfStinCd())
                     .trfStinNm(edgeInfo.getTrfStinNm())
                     .weight(edgeInfo.getWeight())
-                    .edgeType(EdgeType.intToEdgeType(edgeInfo.getEdgeType()))
+                    .edgeType(EdgeType.convert(edgeInfo.getEdgeType()))
                     .build();
             node.addEdge(edge);
 
@@ -84,7 +84,7 @@ public class MetroMap {
                     .trfStinCd(edgeInfo.getTrfStinCd())
                     .trfStinNm(edgeInfo.getTrfStinNm())
                     .weight(edgeInfo.getWeight())
-                    .edgeType(EdgeType.intToEdgeType(edgeInfo.getEdgeType()))
+                    .edgeType(EdgeType.convert(edgeInfo.getEdgeType()))
                     .build();
             node.addEdge(edge);
         }

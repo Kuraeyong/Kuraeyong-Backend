@@ -70,7 +70,7 @@ public class GraphForPathSearch {
                         .trfStinNm(edgeInfo.getTrfStinNm())
                         .weight(edgeInfo.getWeight())
                         .trfNodeNo(trfNode.getNodeNo())
-                        .edgeType(EdgeType.intToEdgeType(edgeInfo.getEdgeType()))
+                        .edgeType(EdgeType.convert(edgeInfo.getEdgeType()))
                         .build();
                 node.addEdge(edge);
             }

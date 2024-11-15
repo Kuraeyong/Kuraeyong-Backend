@@ -16,7 +16,7 @@ public enum EdgeType {
         return edgeType;
     }
 
-    public static EdgeType intToEdgeType(int edgeType) {
+    public static EdgeType convert(int edgeType) {
         return switch (edgeType) {
             case 0 -> GEN_EDGE;
             case 1 -> EXP_EDGE;
