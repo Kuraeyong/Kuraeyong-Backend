@@ -11,17 +11,21 @@ public class UserMoveInfo {
     private final String destStinNm;
     private final String orgTm;
     private final String destTm;
+    private final String trnTmnStinNm;
+    private final String trnDir;
 
-    private UserMoveInfo(String lnCd, String orgStinNm, String destStinNm, String orgTm, String destTm) {
+    private UserMoveInfo(String lnCd, String orgStinNm, String destStinNm, String orgTm, String destTm, String trnTmnStinNm, String trnDir) {
         this.lnCd = lnCd;
         this.orgStinNm = orgStinNm;
         this.destStinNm = destStinNm;
         this.orgTm = orgTm;
         this.destTm = destTm;
+        this.trnTmnStinNm = trnTmnStinNm;
+        this.trnDir = trnDir;
     }
 
-    public static UserMoveInfo of(String lnCd, String orgStinNm, String destStinNm, String orgTm, String destTm) {
-        return new UserMoveInfo(lnCd, orgStinNm, destStinNm, orgTm, destTm);
+    public static UserMoveInfo of(String lnCd, String orgStinNm, String destStinNm, String orgTm, String destTm, String trnTmnStinNm, String trnDir) {
+        return new UserMoveInfo(lnCd, orgStinNm, destStinNm, orgTm, destTm, trnTmnStinNm, trnDir);
     }
 
     public int getRequiredTime() {
@@ -41,7 +45,8 @@ public class UserMoveInfo {
         return determineLnCd() + "\t\t" +
                 StringUtil.equalizeStinNmLen(orgStinNm) + StringUtil.equalizeStinNmLen(destStinNm) +
                 DateUtil.getMinDiff(orgTm, destTm) + "분" +
-                "(" + orgTm + "~" + destTm + ")\n";
+                "(" + orgTm + "~" + destTm + ")\t\t\t" +
+                printDirection(trnTmnStinNm, trnDir) + "\n";
     }
 
     private String determineLnCd() {
@@ -49,6 +54,13 @@ public class UserMoveInfo {
             return lnCd;
         }
         return "환승";
+    }
+
+    private String printDirection(String trnTmnStinNm, String trnDir) {
+        if (trnTmnStinNm == null || trnDir == null) {
+            return "";
+        }
+        return trnTmnStinNm + " 방향(" + trnDir + ")";
     }
 }
 

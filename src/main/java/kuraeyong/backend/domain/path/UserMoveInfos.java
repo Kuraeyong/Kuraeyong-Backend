@@ -49,8 +49,8 @@ public class UserMoveInfos {
         sb.append("환승 횟수: ").append(getTotalTrfCnt()).append("회\n");
         sb.append("총 환승시간: ").append(getTotalTrfTime()).append("분\n");
         sb.append("혼잡도 점수: ").append(congestionScore).append("\n");
-        sb.append("노선\t\t").append(StringUtil.equalizeStinNmLen("출발역")).append(StringUtil.equalizeStinNmLen("도착역")).append("시간\n");
-        sb.append("-".repeat(84)).append('\n');
+        sb.append("노선\t\t").append(StringUtil.equalizeStinNmLen("출발역")).append(StringUtil.equalizeStinNmLen("도착역")).append(StringUtil.equalizeStinNmLen("시간")).append("방향\n");
+        sb.append("-".repeat(105)).append('\n');
         userMoveInfos.forEach(sb::append);
 
         return sb.toString();
@@ -70,14 +70,18 @@ public class UserMoveInfos {
                     userMoveInfo.getOrgStinNm(),
                     userMoveInfo.getDestStinNm(),
                     userMoveInfo.getOrgTm(),
-                    DateUtil.plusMinutes(userMoveInfo.getOrgTm(), stopoverTime)
+                    DateUtil.plusMinutes(userMoveInfo.getOrgTm(), stopoverTime),
+                    null,
+                    null
             ));
             userMoveInfos.add(i + 1, UserMoveInfo.of(
                     userMoveInfo.getLnCd(),
                     userMoveInfo.getOrgStinNm(),
                     userMoveInfo.getDestStinNm(),
                     DateUtil.plusMinutes(userMoveInfo.getOrgTm(), stopoverTime),
-                    userMoveInfo.getDestTm()
+                    userMoveInfo.getDestTm(),
+                    null,
+                    null
             ));
             userMoveInfos.remove(i + 2);
             return;

@@ -6,6 +6,9 @@ public class StringUtil {
     }
 
     public static String equalizeStinNmLen(String stinNm) {
+        if (stinNm == null) {
+            return "";
+        }
         int tapCnt = switch (stinNm.length()) {
             case 1, 2 -> 7;
             case 3, 4 -> 6;

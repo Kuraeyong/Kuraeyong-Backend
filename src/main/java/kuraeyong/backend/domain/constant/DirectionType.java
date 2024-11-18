@@ -1,22 +1,22 @@
 package kuraeyong.backend.domain.constant;
 
 public enum DirectionType {
-    UP(0),    // 상행
-    DOWN(1),    // 하행
+    UP("상행"),    // 상행
+    DOWN("하행"),    // 하행
 
     // 환승 간선(TRF_EDGE)인 경우
-    UP_UP(2),    // 상상
-    UP_DOWN(3),    // 상하
-    DOWN_UP(4),    // 하상
-    DOWN_DOWN(5);    // 하하
+    UP_UP("상상"),    // 상상
+    UP_DOWN("상하"),    // 상하
+    DOWN_UP("하상"),    // 하상
+    DOWN_DOWN("하하");    // 하하
 
-    private final int directionType;
+    private final String directionType;
 
-    DirectionType(int directionType) {
+    DirectionType(String directionType) {
         this.directionType = directionType;
     }
 
-    public int get() {
+    public String get() {
         return directionType;
     }
 
@@ -34,5 +34,16 @@ public enum DirectionType {
             return DOWN_DOWN;
         }
         return null;
+    }
+
+    public static String get(String trnNo) {
+        if (trnNo == null) {
+            return null;
+        }
+        int lastNumber = trnNo.charAt(trnNo.length() - 1) - '0';
+        if (lastNumber % 2 == 0) {
+            return UP.get();
+        }
+        return DOWN.get();
     }
 }
