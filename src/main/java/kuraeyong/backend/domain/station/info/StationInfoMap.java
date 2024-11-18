@@ -36,4 +36,12 @@ public class StationInfoMap {
     public String getBranchInfo(MinimumStationInfo key) {
         return get(key).getBranchInfo();
     }
+
+    public String getStinNm(MinimumStationInfo key) {
+        StationInfo stationInfo = get(key);
+        if (stationInfo == null) {
+            return null;
+        }
+        return get(key).getStinNm();
+    }
 }

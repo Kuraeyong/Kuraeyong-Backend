@@ -9,6 +9,8 @@ import kuraeyong.backend.domain.path.MetroPath;
 import kuraeyong.backend.domain.path.MoveInfo;
 import kuraeyong.backend.domain.path.MoveInfos;
 import kuraeyong.backend.domain.path.PathResult;
+import kuraeyong.backend.domain.path.UserMoveInfo;
+import kuraeyong.backend.domain.path.UserMoveInfos;
 import kuraeyong.backend.domain.station.info.MinimumStationInfo;
 import kuraeyong.backend.domain.station.info.MinimumStationInfoWithDateType;
 import kuraeyong.backend.domain.station.time_table.StationTimeTable;
@@ -20,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -63,6 +66,73 @@ public class MoveService {
         setTrfInfo(moveInfos, dateType);
 
         return moveInfos;
+    }
+
+    public MoveInfos join(MoveInfos front, MoveInfos rear, String dateType) {
+        MoveInfos moveInfos = new MoveInfos(front);
+
+        // 환승 경유인 경우 무브인포 추가
+        MoveInfo moveInfo = rear.get(0);
+        if (!moveInfo.getArvTm().equals(moveInfo.getDptTm())) {
+            moveInfos.add(moveInfo);
+        }
+
+        // 남은 무브인포 연결
+        for (int i = 1; i < rear.size(); i++) {
+            moveInfos.add(new MoveInfo(rear.get(i)));
+        }
+
+        // 환승 정보 재설정
+        setTrfInfo(moveInfos, dateType);
+
+        return moveInfos;
+    }
+
+    public UserMoveInfos createUserMoveInfos(PathResult pathResult, String stopoverStinNm, int stopoverTime) {
+        // init
+        MoveInfos moveInfos = pathResult.getMoveInfos();
+        MetroPath compressedPath = pathResult.getCompressedPath();
+        List<UserMoveInfo> userMoveInfos = new ArrayList<>();
+
+        // create
+        int firstMoveInfoIdxWithSameTrn = 1;
+        for (int i = 2; i < moveInfos.size(); i++) {
+            MoveInfo prev = moveInfos.get(i - 1);
+            MoveInfo curr = moveInfos.get(i);
+
+            if (curr.getTrnGroupNo() == prev.getTrnGroupNo()) {
+                continue;
+            }
+            userMoveInfos.add(UserMoveInfo.of(
+                    prev.getLnCd(),
+                    compressedPath.getStinNm(firstMoveInfoIdxWithSameTrn - 1),
+                    compressedPath.getStinNm(i - 1),
+                    moveInfos.get(firstMoveInfoIdxWithSameTrn).getDptTm(),
+                    prev.getArvTm()
+            ));
+            firstMoveInfoIdxWithSameTrn = i;
+
+            // 일반, 급행 환승인 경우
+            if (curr.getTrnGroupNo() == -1 || prev.getTrnGroupNo() == -1) {
+                continue;
+            }
+            userMoveInfos.add(UserMoveInfo.of(
+                    null,
+                    compressedPath.getStinNm(i - 1),
+                    compressedPath.getStinNm(i - 1),
+                    prev.getArvTm(),
+                    prev.getArvTm()
+            ));
+        }
+        // 마지막 UserMoveInfo 별도 추가
+        userMoveInfos.add(UserMoveInfo.of(
+                moveInfos.get(moveInfos.size() - 1).getLnCd(),
+                compressedPath.getStinNm(firstMoveInfoIdxWithSameTrn - 1),
+                compressedPath.getStinNm(compressedPath.size() - 1),
+                moveInfos.get(firstMoveInfoIdxWithSameTrn).getDptTm(),
+                moveInfos.get(moveInfos.size() - 1).getArvTm()
+        ));
+        return new UserMoveInfos(userMoveInfos, pathResult.getTotalTime(), pathResult.getCongestionScore(), stopoverStinNm, stopoverTime);
     }
 
     /**
@@ -242,25 +312,5 @@ public class MoveService {
         moveInfos.get(moveInfos.size() - 1).setTrnGroupNo(trnGroupNo);
         moveInfos.setTrfCnt(trfCnt);
         moveInfos.setTotalTrfTime(totalTrfTime);
-    }
-
-    public MoveInfos join(MoveInfos front, MoveInfos rear, String dateType) {
-        MoveInfos moveInfos = new MoveInfos(front);
-
-        // 환승 경유인 경우 무브인포 추가
-        MoveInfo moveInfo = rear.get(0);
-        if (!moveInfo.getArvTm().equals(moveInfo.getDptTm())) {
-            moveInfos.add(moveInfo);
-        }
-
-        // 남은 무브인포 연결
-        for (int i = 1; i < rear.size(); i++) {
-            moveInfos.add(new MoveInfo(rear.get(i)));
-        }
-
-        // 환승 정보 재설정
-        setTrfInfo(moveInfos, dateType);
-
-        return moveInfos;
     }
 }

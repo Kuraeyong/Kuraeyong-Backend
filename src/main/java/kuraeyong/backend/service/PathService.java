@@ -11,6 +11,7 @@ import kuraeyong.backend.domain.path.MetroPath;
 import kuraeyong.backend.domain.path.MoveInfos;
 import kuraeyong.backend.domain.path.PathResult;
 import kuraeyong.backend.domain.path.PathResults;
+import kuraeyong.backend.domain.path.UserMoveInfos;
 import kuraeyong.backend.domain.station.congestion.StationCongestionMap;
 import kuraeyong.backend.domain.station.info.MinimumStationInfo;
 import kuraeyong.backend.domain.station.info.MinimumStationInfoWithDateType;
@@ -126,6 +127,10 @@ public class PathService {
         int congestionScore = (front.getCongestionScore() + rear.getCongestionScore()) / 2;
 
         return new PathResult(totalPath, totalCompressedPath, totalMoveInfos, congestionScore);
+    }
+
+    public UserMoveInfos createUserMoveInfos(PathResult pathResult, String stopoverStinNm, int stopoverTime) {
+        return moveService.createUserMoveInfos(pathResult, stopoverStinNm, stopoverTime);
     }
 
     /**

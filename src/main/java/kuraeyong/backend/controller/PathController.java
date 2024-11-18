@@ -86,7 +86,7 @@ public class PathController {
     }
 
     private void showUserMoveInfos(PathResult pathResult, String stopoverStinNm, int stopoverTime) {
-        UserMoveInfos userMoveInfos = pathResult.createUserMoveInfos(stopoverStinNm, stopoverTime);
+        UserMoveInfos userMoveInfos = pathService.createUserMoveInfos(pathResult, stopoverStinNm, stopoverTime);
         System.out.println(userMoveInfos);
     }
 
