@@ -13,6 +13,7 @@ import kuraeyong.backend.domain.path.UserMoveInfo;
 import kuraeyong.backend.domain.path.UserMoveInfos;
 import kuraeyong.backend.domain.station.info.MinimumStationInfo;
 import kuraeyong.backend.domain.station.info.MinimumStationInfoWithDateType;
+import kuraeyong.backend.domain.station.info.StationInfoMap;
 import kuraeyong.backend.domain.station.time_table.StationTimeTable;
 import kuraeyong.backend.domain.station.time_table.StationTimeTableElement;
 import kuraeyong.backend.domain.station.time_table.StationTimeTableMap;
@@ -29,6 +30,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class MoveService {
+    private final StationInfoMap stationInfoMap;
     private final StationTimeTableMap stationTimeTableMap;
     private final StationTrfWeightMap stationTrfWeightMap;
     private final static int TRAIN_CANDIDATE_CNT = 3;
@@ -190,8 +192,6 @@ public class MoveService {
             int weight = stationTrfWeightMap.getStationTrfWeight(currMSI, nextMSI, next.getBranchDirection(), next.getDirection());
 
             return MoveInfo.builder()
-                    .lnCd(null)
-                    .trnNo(null)
                     .dptTm(currTime)
                     .arvTm(DateUtil.plusMinutes(currTime, weight))
                     .build();
@@ -236,10 +236,12 @@ public class MoveService {
         if (A_FastestTrain == null) {
             return null;
         }
-
         curr.setPassingTime(A_FastestTrain.getDptTm());
+
+        MinimumStationInfo tmnStin = MinimumStationInfo.build(A_FastestTrain.getRailOprIsttCd(), A_FastestTrain.getLnCd(), A_FastestTrain.getTmnStinCd());
         return MoveInfo.builder()
                 .lnCd(A_FastestTrain.getLnCd())
+                .tmnStinNm(stationInfoMap.getStinNm(tmnStin))
                 .trnNo(A_FastestTrain.getTrnNo())
                 .dptTm(A_FastestTrain.getDptTm())
                 .arvTm(B_FastestTrain.getArvTm())
@@ -272,6 +274,7 @@ public class MoveService {
             StationTimeTableElement B_Train = stationTimeTableMap.getStoppingTrainAfterCurrTime(B_Key, TO_C.getTrnNo(), TO_B.getArvTm());
 
             // 불필요한 환승 제거
+            TO_B.setTmnStinNm(TO_C.getTmnStinNm());
             TO_B.setTrnNo(TO_C.getTrnNo());
             TO_B.setDptTm(A_Train.getDptTm());
             TO_B.setArvTm(B_Train.getArvTm());
