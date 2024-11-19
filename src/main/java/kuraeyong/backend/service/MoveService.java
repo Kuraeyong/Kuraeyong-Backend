@@ -247,7 +247,7 @@ public class MoveService {
         }
         curr.setPassingTime(A_FastestTrain.getDptTm());
 
-        MinimumStationInfo tmnStin = MinimumStationInfo.build(A_FastestTrain.getRailOprIsttCd(), A_FastestTrain.getLnCd(), A_FastestTrain.getTmnStinCd());
+        MinimumStationInfo tmnStin = stationInfoMap.createValidMSI(A_FastestTrain.getRailOprIsttCd(), A_FastestTrain.getLnCd(), A_FastestTrain.getTmnStinCd());
         return MoveInfo.builder()
                 .lnCd(A_FastestTrain.getLnCd())
                 .tmnStinNm(stationInfoMap.getStinNm(tmnStin))

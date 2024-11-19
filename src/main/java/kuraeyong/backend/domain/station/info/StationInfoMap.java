@@ -1,18 +1,19 @@
 package kuraeyong.backend.domain.station.info;
 
 import kuraeyong.backend.repository.StationInfoRepository;
-import lombok.Getter;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 @Component
-@Getter
 public class StationInfoMap {
     private final HashMap<MinimumStationInfo, StationInfo> map;
+    private final HashSet<String> railOprIsttCds;
 
     public StationInfoMap(StationInfoRepository stationInfoRepository) {
         map = new HashMap<>();
+        railOprIsttCds = new HashSet<>();
 
         for (StationInfo row : stationInfoRepository.findAll()) {
             MinimumStationInfo key = MinimumStationInfo.builder()
@@ -22,6 +23,7 @@ public class StationInfoMap {
                     .build();
 
             map.put(key, row);
+            railOprIsttCds.add(row.getRailOprIsttCd());
         }
     }
 
@@ -43,5 +45,20 @@ public class StationInfoMap {
             return null;
         }
         return get(key).getStinNm();
+    }
+
+    public MinimumStationInfo createValidMSI(String defaultRailOprIsttCd, String lnCd, String stinCd) {
+        MinimumStationInfo key = MinimumStationInfo.build(defaultRailOprIsttCd, lnCd, stinCd);
+        if (get(key) != null) {
+            return key;
+        }
+
+        for (String railOprIsttCd : railOprIsttCds) {
+            key = MinimumStationInfo.build(railOprIsttCd, lnCd, stinCd);
+            if (get(key) != null) {
+                return key;
+            }
+        }
+        return null;
     }
 }
