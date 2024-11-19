@@ -3,6 +3,7 @@ package kuraeyong.backend.controller;
 import kuraeyong.backend.domain.path.PathResult;
 import kuraeyong.backend.domain.path.UserMoveInfos;
 import kuraeyong.backend.dto.request.PathSearchRequest;
+import kuraeyong.backend.dto.response.UserMoveInfosDto;
 import kuraeyong.backend.service.PathService;
 import kuraeyong.backend.util.DateUtil;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +25,7 @@ public class PathController {
      * 환승역 번호   0~268 (총 환승역 269개)
      */
     @PostMapping("")
-    public void searchPath(@RequestBody PathSearchRequest pathSearchRequest) {
+    public UserMoveInfosDto searchPath(@RequestBody PathSearchRequest pathSearchRequest) {
         validatePathSearchRequest(pathSearchRequest);
 
         if (isDirectSearchPath(pathSearchRequest.getStopoverStinNm())) {
@@ -40,11 +41,11 @@ public class PathController {
                     pathSearchRequest.getSortType());
             if (isEmpty(pathResult)) {
                 System.out.println("현재 운행 중인 열차가 없습니다.");
-                return;
+                return null;
             }
-            showUserMoveInfos(pathResult, null, -1);
-            // FIXME: return pathResult;
-            return;
+            UserMoveInfos userMoveInfos = pathService.createUserMoveInfos(pathResult, null, -1);
+            System.out.println(userMoveInfos);
+            return new UserMoveInfosDto(userMoveInfos);
         }
         PathResult pathResultBeforeStopoverStin = pathService.searchPath(pathSearchRequest.getOrgStinNm(),
                 pathSearchRequest.getStopoverStinNm(),
@@ -58,7 +59,7 @@ public class PathController {
                 pathSearchRequest.getSortType());
         if (isEmpty(pathResultBeforeStopoverStin)) {
             System.out.println("현재 운행 중인 열차가 없습니다.");
-            return;
+            return null;
         }
         int stopoverTime = pathSearchRequest.getStopoverTime();
         String stopoverDptTm = pathResultBeforeStopoverStin.getFinalArvTm();
@@ -74,20 +75,20 @@ public class PathController {
                 pathSearchRequest.getSortType());
         if (isEmpty(pathResultAfterStopoverStin)) {
             System.out.println("현재 운행 중인 열차가 없습니다.");
-            return;
+            return null;
         }
         PathResult totalPathResult = pathService.join(pathResultBeforeStopoverStin, pathResultAfterStopoverStin, pathSearchRequest.getDateType());
-        showUserMoveInfos(totalPathResult, pathSearchRequest.getStopoverStinNm(), stopoverTime);
-        // FIXME: return totalPathResult;
+        UserMoveInfos userMoveInfos = pathService.createUserMoveInfos(totalPathResult, pathSearchRequest.getStopoverStinNm(), stopoverTime);
+        System.out.println(userMoveInfos);
+        return new UserMoveInfosDto(userMoveInfos);
     }
 
     private boolean isEmpty(PathResult pathResult) {
         return pathResult == null;
     }
 
-    private void showUserMoveInfos(PathResult pathResult, String stopoverStinNm, int stopoverTime) {
-        UserMoveInfos userMoveInfos = pathService.createUserMoveInfos(pathResult, stopoverStinNm, stopoverTime);
-        System.out.println(userMoveInfos);
+    private boolean isDirectSearchPath(String stopoverStinNm) {
+        return stopoverStinNm == null;
     }
 
     private void validatePathSearchRequest(PathSearchRequest pathSearchRequest) {
@@ -123,9 +124,5 @@ public class PathController {
         if (stopoverStinNm.equals(destStinNm)) {
             throw new IllegalArgumentException("경유역과 도착역의 이름이 동일합니다.");
         }
-    }
-
-    private boolean isDirectSearchPath(String stopoverStinNm) {
-        return stopoverStinNm == null;
     }
 }

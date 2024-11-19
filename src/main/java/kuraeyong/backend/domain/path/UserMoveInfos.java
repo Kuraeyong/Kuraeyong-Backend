@@ -1,10 +1,12 @@
 package kuraeyong.backend.domain.path;
 
+import kuraeyong.backend.dto.response.UserMoveInfoDto;
 import kuraeyong.backend.util.DateUtil;
 import kuraeyong.backend.util.StringUtil;
 import lombok.AccessLevel;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -39,6 +41,12 @@ public class UserMoveInfos {
             }
         }
         return totalTrfTime;
+    }
+
+    public List<UserMoveInfoDto> toDto() {
+        List<UserMoveInfoDto> userMoveInfosDto = new ArrayList<>();
+        userMoveInfos.forEach(userMoveInfo -> userMoveInfosDto.add(new UserMoveInfoDto(userMoveInfo)));
+        return userMoveInfosDto;
     }
 
     @Override
