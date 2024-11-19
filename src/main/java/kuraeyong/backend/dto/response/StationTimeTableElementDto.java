@@ -1,7 +1,11 @@
-package kuraeyong.backend.dto;
+package kuraeyong.backend.dto.response;
 
 import kuraeyong.backend.domain.station.time_table.StationTimeTableElement;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter

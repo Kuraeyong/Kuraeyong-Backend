@@ -2,7 +2,7 @@ package kuraeyong.backend.config;
 
 import kuraeyong.backend.repository.StationTimeTableElementRepository;
 import kuraeyong.backend.domain.station.time_table.StationTimeTableElement;
-import kuraeyong.backend.dto.StationTimeTableElementDto;
+import kuraeyong.backend.dto.response.StationTimeTableElementDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
