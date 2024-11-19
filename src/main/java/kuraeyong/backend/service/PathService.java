@@ -1,5 +1,7 @@
 package kuraeyong.backend.service;
 
+import kuraeyong.backend.common.exception.ErrorMessage;
+import kuraeyong.backend.common.exception.PathResultException;
 import kuraeyong.backend.domain.constant.DomainType;
 import kuraeyong.backend.domain.constant.EdgeType;
 import kuraeyong.backend.domain.constant.SortType;
@@ -51,8 +53,6 @@ public class PathService {
         PathResults pathResults = createPathResults(temporaryPaths, dateType, hour, min, front, stopoverTime);
         stationCongestionMap.setCongestionScoreOfPaths(pathResults, dateType, congestionThreshold);
         pathResults.sort(SortType.parse(sortType));
-//        showPathResults(pathResults);
-//        showOptimalPath(pathResults);
 
         return pathResults.getOptimalPath();
     }
@@ -77,11 +77,8 @@ public class PathService {
 
         // 간이 경로 리스트 생성
         List<MetroPath> temporaryPaths = searchCandidatePathList(orgNo, destNo, false, dateType);
-        assert temporaryPaths != null;
         List<MetroPath> temporaryPathsWithExpEdge = searchCandidatePathList(orgNo, destNo, true, dateType);
-        if (temporaryPathsWithExpEdge != null) {
-            temporaryPaths.addAll(temporaryPathsWithExpEdge);
-        }
+        temporaryPaths.addAll(temporaryPathsWithExpEdge);
         temporaryPaths = removeDuplicatedElement(temporaryPaths);
         addDirectPath(temporaryPaths, orgNo, destNo);
         return temporaryPaths;
@@ -131,25 +128,6 @@ public class PathService {
 
     public UserMoveInfos createUserMoveInfos(PathResult pathResult, String stopoverStinNm, int stopoverTime) {
         return moveService.createUserMoveInfos(pathResult, stopoverStinNm, stopoverTime);
-    }
-
-    /**
-     * 경로 탐색 결과를 출력
-     *
-     * @param pathResults 경로 탐색 결과
-     */
-    private void showPathResults(PathResults pathResults) {
-        if (pathResults.isEmpty()) {
-            System.out.println("현재 운행중인 열차가 없습니다.");
-        }
-        System.out.print(pathResults);
-    }
-
-    private void showOptimalPath(PathResults pathResults) {
-        if (pathResults.isEmpty()) {
-            System.out.println("현재 운행중인 열차가 없습니다.");
-        }
-        System.out.print(pathResults.getOptimalPath());
     }
 
     /**
@@ -341,7 +319,7 @@ public class PathService {
         // 첫 번째 최단 경로 계산
         MetroPath initialPath = createTemporaryPath(orgNo, destNo, null, containExp, dateType);
         if (initialPath == null) {
-            return null;
+            throw new PathResultException(ErrorMessage.TEMPORARY_PATH_NOT_FOUND);
         }
         shortestPathList.add(initialPath);
         pathSet.add(initialPath);
@@ -501,7 +479,7 @@ public class PathService {
 
     private void validateExistStinNm(String stinNm) {
         if (stationService.getStationByName(stinNm) == null) {
-            throw new IllegalArgumentException("존재하지 않는 역명입니다.");
+            throw new IllegalArgumentException(ErrorMessage.STATION_NOT_FOUND.get());
         }
     }
 }

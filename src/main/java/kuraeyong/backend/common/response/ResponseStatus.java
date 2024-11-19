@@ -1,4 +1,4 @@
-package kuraeyong.backend.common.response.status;
+package kuraeyong.backend.common.response;
 
 public interface ResponseStatus {
     int getCode();

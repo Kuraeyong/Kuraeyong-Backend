@@ -1,14 +1,14 @@
 package kuraeyong.backend.domain.constant;
 
 public enum DirectionType {
-    UP("상행"),    // 상행
-    DOWN("하행"),    // 하행
+    UP("상행"),
+    DOWN("하행"),
 
     // 환승 간선(TRF_EDGE)인 경우
-    UP_UP("상상"),    // 상상
-    UP_DOWN("상하"),    // 상하
-    DOWN_UP("하상"),    // 하상
-    DOWN_DOWN("하하");    // 하하
+    UP_UP("상상"),
+    UP_DOWN("상하"),
+    DOWN_UP("하상"),
+    DOWN_DOWN("하하");
 
     private final String directionType;
 

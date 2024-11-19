@@ -2,11 +2,9 @@ package kuraeyong.backend.common.response;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import kuraeyong.backend.common.response.status.ResponseStatus;
-import kuraeyong.backend.common.response.status.ResponseStatusType;
 import lombok.Getter;
 
-import static kuraeyong.backend.common.response.status.ResponseStatusType.SUCCESS;
+import static kuraeyong.backend.common.response.ResponseStatusType.SUCCESS;
 
 @Getter
 @JsonPropertyOrder({"code", "status", "message", "result"})
@@ -23,27 +21,5 @@ public class BaseResponse<T> implements ResponseStatus {
         this.status = SUCCESS.getStatus();
         this.message = SUCCESS.getMessage();
         this.result = result;
-    }
-
-    public BaseResponse(ResponseStatusType responseStatusType) {
-        this.code = responseStatusType.getCode();
-        this.status = responseStatusType.getStatus();
-        this.message = responseStatusType.getMessage();
-        this.result = null;
-    }
-
-    @Override
-    public int getCode() {
-        return code;
-    }
-
-    @Override
-    public int getStatus() {
-        return status;
-    }
-
-    @Override
-    public String getMessage() {
-        return message;
     }
 }
