@@ -1,5 +1,8 @@
 package kuraeyong.backend.controller;
 
+import kuraeyong.backend.common.response.BaseResponse;
+import kuraeyong.backend.common.response.status.ResponseStatus;
+import kuraeyong.backend.common.response.status.ResponseStatusType;
 import kuraeyong.backend.domain.path.PathResult;
 import kuraeyong.backend.domain.path.UserMoveInfos;
 import kuraeyong.backend.dto.request.PathSearchRequest;
@@ -25,7 +28,7 @@ public class PathController {
      * 환승역 번호   0~268 (총 환승역 269개)
      */
     @PostMapping("")
-    public UserMoveInfosDto searchPath(@RequestBody PathSearchRequest pathSearchRequest) {
+    public ResponseStatus searchPath(@RequestBody PathSearchRequest pathSearchRequest) {
         validatePathSearchRequest(pathSearchRequest);
 
         if (isDirectSearchPath(pathSearchRequest.getStopoverStinNm())) {
@@ -40,12 +43,11 @@ public class PathController {
                     -1,
                     pathSearchRequest.getSortType());
             if (isEmpty(pathResult)) {
-                System.out.println("현재 운행 중인 열차가 없습니다.");
-                return null;
+                return new BaseResponse<>(ResponseStatusType.TRAIN_NOT_EXISTED);
             }
             UserMoveInfos userMoveInfos = pathService.createUserMoveInfos(pathResult, null, -1);
             System.out.println(userMoveInfos);
-            return new UserMoveInfosDto(userMoveInfos);
+            return new BaseResponse<>(new UserMoveInfosDto(userMoveInfos));
         }
         PathResult pathResultBeforeStopoverStin = pathService.searchPath(pathSearchRequest.getOrgStinNm(),
                 pathSearchRequest.getStopoverStinNm(),
@@ -58,8 +60,7 @@ public class PathController {
                 -1,
                 pathSearchRequest.getSortType());
         if (isEmpty(pathResultBeforeStopoverStin)) {
-            System.out.println("현재 운행 중인 열차가 없습니다.");
-            return null;
+            return new BaseResponse<>(ResponseStatusType.TRAIN_NOT_EXISTED);
         }
         int stopoverTime = pathSearchRequest.getStopoverTime();
         String stopoverDptTm = pathResultBeforeStopoverStin.getFinalArvTm();
@@ -74,13 +75,12 @@ public class PathController {
                 stopoverTime,
                 pathSearchRequest.getSortType());
         if (isEmpty(pathResultAfterStopoverStin)) {
-            System.out.println("현재 운행 중인 열차가 없습니다.");
-            return null;
+            return new BaseResponse<>(ResponseStatusType.TRAIN_NOT_EXISTED);
         }
         PathResult totalPathResult = pathService.join(pathResultBeforeStopoverStin, pathResultAfterStopoverStin, pathSearchRequest.getDateType());
         UserMoveInfos userMoveInfos = pathService.createUserMoveInfos(totalPathResult, pathSearchRequest.getStopoverStinNm(), stopoverTime);
         System.out.println(userMoveInfos);
-        return new UserMoveInfosDto(userMoveInfos);
+        return new BaseResponse<>(new UserMoveInfosDto(userMoveInfos));
     }
 
     private boolean isEmpty(PathResult pathResult) {

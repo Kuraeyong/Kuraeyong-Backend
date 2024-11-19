@@ -3,6 +3,7 @@ package kuraeyong.backend.common.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import kuraeyong.backend.common.response.status.ResponseStatus;
+import kuraeyong.backend.common.response.status.ResponseStatusType;
 import lombok.Getter;
 
 import static kuraeyong.backend.common.response.status.ResponseStatusType.SUCCESS;
@@ -22,6 +23,13 @@ public class BaseResponse<T> implements ResponseStatus {
         this.status = SUCCESS.getStatus();
         this.message = SUCCESS.getMessage();
         this.result = result;
+    }
+
+    public BaseResponse(ResponseStatusType responseStatusType) {
+        this.code = responseStatusType.getCode();
+        this.status = responseStatusType.getStatus();
+        this.message = responseStatusType.getMessage();
+        this.result = null;
     }
 
     @Override
