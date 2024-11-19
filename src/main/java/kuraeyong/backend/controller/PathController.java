@@ -5,8 +5,7 @@ import kuraeyong.backend.common.response.status.ResponseStatus;
 import kuraeyong.backend.common.response.status.ResponseStatusType;
 import kuraeyong.backend.domain.path.PathResult;
 import kuraeyong.backend.domain.path.UserMoveInfos;
-import kuraeyong.backend.dto.request.PathSearchRequest;
-import kuraeyong.backend.dto.response.UserMoveInfosDto;
+import kuraeyong.backend.dto.UserMoveInfosDto;
 import kuraeyong.backend.service.PathService;
 import kuraeyong.backend.util.DateUtil;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,7 @@ public class PathController {
      * 환승역 번호   0~268 (총 환승역 269개)
      */
     @PostMapping("")
-    public ResponseStatus searchPath(@RequestBody PathSearchRequest pathSearchRequest) {
+    public ResponseStatus searchPath(@RequestBody UserMoveInfosDto.Request pathSearchRequest) {
         validatePathSearchRequest(pathSearchRequest);
 
         if (isDirectSearchPath(pathSearchRequest.getStopoverStinNm())) {
@@ -47,7 +46,7 @@ public class PathController {
             }
             UserMoveInfos userMoveInfos = pathService.createUserMoveInfos(pathResult, null, -1);
             System.out.println(userMoveInfos);
-            return new BaseResponse<>(new UserMoveInfosDto(userMoveInfos));
+            return new BaseResponse<>(new UserMoveInfosDto.Response(userMoveInfos));
         }
         PathResult pathResultBeforeStopoverStin = pathService.searchPath(pathSearchRequest.getOrgStinNm(),
                 pathSearchRequest.getStopoverStinNm(),
@@ -80,7 +79,7 @@ public class PathController {
         PathResult totalPathResult = pathService.join(pathResultBeforeStopoverStin, pathResultAfterStopoverStin, pathSearchRequest.getDateType());
         UserMoveInfos userMoveInfos = pathService.createUserMoveInfos(totalPathResult, pathSearchRequest.getStopoverStinNm(), stopoverTime);
         System.out.println(userMoveInfos);
-        return new BaseResponse<>(new UserMoveInfosDto(userMoveInfos));
+        return new BaseResponse<>(new UserMoveInfosDto.Response(userMoveInfos));
     }
 
     private boolean isEmpty(PathResult pathResult) {
@@ -91,7 +90,7 @@ public class PathController {
         return stopoverStinNm == null;
     }
 
-    private void validatePathSearchRequest(PathSearchRequest pathSearchRequest) {
+    private void validatePathSearchRequest(UserMoveInfosDto.Request pathSearchRequest) {
         validateUniqueStinNm(pathSearchRequest.getOrgStinNm(), pathSearchRequest.getStopoverStinNm(), pathSearchRequest.getDestStinNm());
         validateDateType(pathSearchRequest.getDateType());
         validateTimeInfo(pathSearchRequest.getHour(), pathSearchRequest.getMin());

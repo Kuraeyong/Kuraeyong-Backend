@@ -1,4 +1,4 @@
-package kuraeyong.backend.dto.response;
+package kuraeyong.backend.dto;
 
 import kuraeyong.backend.domain.station.time_table.StationTimeTableElement;
 import lombok.AllArgsConstructor;
