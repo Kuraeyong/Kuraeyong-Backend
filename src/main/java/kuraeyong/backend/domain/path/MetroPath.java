@@ -63,6 +63,9 @@ public class MetroPath implements Comparable<MetroPath> {
         return new MetroPath(path.subList(start, end));
     }
 
+    /**
+     * 출발역->출발역 및 도착역->도착역인 불필요한 경로 제거
+     */
     public void removeUnnecessaryPath() {
         // 출발역과 동일한 이름의 마지막 역의 인덱스 기록
         String orgStinNm = getStinNm(0);
@@ -151,7 +154,7 @@ public class MetroPath implements Comparable<MetroPath> {
     /**
      * 경로를 순회하면서 분기점 환승이 필요한 역을 발견한 경우, 경로에 분기점 환승을 나타내는 MetroNodeWithEdge 하나를 추가
      *
-     * @param idx   분기점 환승 검사를 시작할 노드의 인덱스
+     * @param idx 분기점 환승 검사를 시작할 노드의 인덱스
      * @return 분기점 환승 검사를 시작할 다음 노드의 인덱스를 반환
      */
     private int addBranchTrfNode(int idx) {
