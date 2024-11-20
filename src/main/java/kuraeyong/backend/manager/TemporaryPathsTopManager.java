@@ -42,6 +42,7 @@ public class TemporaryPathsTopManager {
         temporaryPaths.addAll(temporaryPathsWithExpEdge);
         temporaryPaths = getUniqueTemporaryPaths(temporaryPaths);
         addDirectPath(temporaryPaths, orgNo, destNo);
+        temporaryPaths.forEach(MetroPath::setDirection);
         return temporaryPaths;
     }
 

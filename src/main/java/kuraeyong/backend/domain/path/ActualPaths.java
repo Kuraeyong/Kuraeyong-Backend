@@ -8,10 +8,10 @@ import java.util.Collections;
 import java.util.List;
 
 @Getter
-public class PathResults {
-    private final List<PathResult> list;
+public class ActualPaths {
+    private final List<ActualPath> list;
 
-    public PathResults() {
+    public ActualPaths() {
         list = new ArrayList<>();
     }
 
@@ -23,7 +23,7 @@ public class PathResults {
         return size() == 0;
     }
 
-    public PathResult getOptimalPath() {
+    public ActualPath getOptimalPath() {
         if (isEmpty()) {
             return null;
         }
@@ -58,15 +58,15 @@ public class PathResults {
         });
     }
 
-    public void add(PathResult pathResult) {
-        list.add(pathResult);
+    public void add(ActualPath actualPath) {
+        list.add(actualPath);
     }
 
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (PathResult pathResult : list) {
-            sb.append(pathResult).append('\n');
+        for (ActualPath actualPath : list) {
+            sb.append(actualPath).append('\n');
         }
         return sb.toString();
     }

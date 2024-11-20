@@ -1,0 +1,66 @@
+package kuraeyong.backend.manager;
+
+import kuraeyong.backend.domain.path.ActualPath;
+import kuraeyong.backend.domain.path.ActualPaths;
+import kuraeyong.backend.domain.path.MetroPath;
+import kuraeyong.backend.domain.path.MoveInfos;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Component;
+
+import java.util.List;
+
+@Component
+@RequiredArgsConstructor
+public class ActualPathsManager {
+    private final MoveInfosManager moveInfosManager;
+
+    /**
+     * 임시 경로 목록과 시간 정보를 이용해 실제 경로 목록을 생성
+     *
+     * @param temporaryPaths 임시 경로 목록
+     * @param dateType       요일 정보
+     * @param hour           시간
+     * @param min            분
+     * @param front          특정 역을 경유하는 경로 탐색인 경우, 출발역에서 경유역까지의 실제 경로
+     * @param stopoverTime   경유역에서 경유하는 시간
+     * @return 실제 경로 목록
+     */
+    public ActualPaths create(List<MetroPath> temporaryPaths, String dateType, int hour, int min, ActualPath front, int stopoverTime) {
+        ActualPaths actualPaths = new ActualPaths();
+        for (MetroPath path : temporaryPaths) {
+            MetroPath compressedPath = path.createCompressedPath();
+            MoveInfos moveInfos = moveInfosManager.create(compressedPath, dateType, hour, min, front, stopoverTime);
+            if (moveInfos == null) {
+                continue;
+            }
+            actualPaths.add(new ActualPath(path, compressedPath, moveInfos));
+        }
+        return actualPaths;
+    }
+
+    /**
+     * 두 실제 경로를 연결한, 새로운 실제 경로 반환
+     *
+     * @param front    출발역에서 경유역까지의 실제 경로
+     * @param rear     경유역에서 도착역까지의 실제 경로
+     * @param dateType 요일 종류
+     * @return 연결된 실제 경로
+     */
+    public ActualPath join(ActualPath front, ActualPath rear, String dateType) {
+        // 일반 경로 합치기
+        MetroPath totalPath = new MetroPath(front.getPath());
+        totalPath.concat(rear.getPath(), false);
+
+        // 압축 경로 합치기
+        MetroPath totalCompressedPath = new MetroPath(front.getCompressedPath());
+        totalCompressedPath.concat(rear.getCompressedPath(), false);
+
+        // 이동 정보 합치기
+        MoveInfos totalMoveInfos = moveInfosManager.join(front.getMoveInfos(), rear.getMoveInfos(), dateType);
+
+        // 혼잡도 점수 계산
+        int congestionScore = (front.getCongestionScore() + rear.getCongestionScore()) / 2;
+
+        return new ActualPath(totalPath, totalCompressedPath, totalMoveInfos, congestionScore);
+    }
+}

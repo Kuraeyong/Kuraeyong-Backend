@@ -4,7 +4,7 @@ import kuraeyong.backend.common.exception.ErrorMessage;
 import kuraeyong.backend.common.exception.PathResultException;
 import kuraeyong.backend.common.response.BaseResponse;
 import kuraeyong.backend.common.response.ResponseStatus;
-import kuraeyong.backend.domain.path.PathResult;
+import kuraeyong.backend.domain.path.ActualPath;
 import kuraeyong.backend.domain.path.UserMoveInfos;
 import kuraeyong.backend.dto.UserMoveInfosDto;
 import kuraeyong.backend.service.PathService;
@@ -32,7 +32,7 @@ public class PathController {
         validatePathSearchRequest(pathSearchRequest);
 
         if (isDirectSearchPath(pathSearchRequest.getStopoverStinNm())) {
-            PathResult pathResult = pathService.searchPath(pathSearchRequest.getOrgStinNm(),
+            ActualPath actualPath = pathService.searchPath(pathSearchRequest.getOrgStinNm(),
                     pathSearchRequest.getDestStinNm(),
                     pathSearchRequest.getDateType(),
                     pathSearchRequest.getHour(),
@@ -42,14 +42,14 @@ public class PathController {
                     null,
                     -1,
                     pathSearchRequest.getSortType());
-            if (isEmpty(pathResult)) {
+            if (isEmpty(actualPath)) {
                 throw new PathResultException(ErrorMessage.PATH_RESULT_NOT_FOUND);
             }
-            UserMoveInfos userMoveInfos = pathService.createUserMoveInfos(pathResult, null, -1);
+            UserMoveInfos userMoveInfos = pathService.createUserMoveInfos(actualPath, null, -1);
             System.out.println(userMoveInfos);
             return new BaseResponse<>(new UserMoveInfosDto.Response(userMoveInfos));
         }
-        PathResult pathResultBeforeStopoverStin = pathService.searchPath(pathSearchRequest.getOrgStinNm(),
+        ActualPath actualPathBeforeStopoverStin = pathService.searchPath(pathSearchRequest.getOrgStinNm(),
                 pathSearchRequest.getStopoverStinNm(),
                 pathSearchRequest.getDateType(),
                 pathSearchRequest.getHour(),
@@ -59,32 +59,32 @@ public class PathController {
                 null,
                 -1,
                 pathSearchRequest.getSortType());
-        if (isEmpty(pathResultBeforeStopoverStin)) {
+        if (isEmpty(actualPathBeforeStopoverStin)) {
             throw new PathResultException(ErrorMessage.PATH_RESULT_NOT_FOUND);
         }
         int stopoverTime = pathSearchRequest.getStopoverTime();
-        String stopoverDptTm = pathResultBeforeStopoverStin.getFinalArvTm();
-        PathResult pathResultAfterStopoverStin = pathService.searchPath(pathSearchRequest.getStopoverStinNm(),
+        String stopoverDptTm = actualPathBeforeStopoverStin.getFinalArvTm();
+        ActualPath actualPathAfterStopoverStin = pathService.searchPath(pathSearchRequest.getStopoverStinNm(),
                 pathSearchRequest.getDestStinNm(),
                 pathSearchRequest.getDateType(),
                 DateUtil.getHour(stopoverDptTm),
                 DateUtil.getMinute(stopoverDptTm),
                 pathSearchRequest.getCongestionThreshold(),
                 pathSearchRequest.getConvenience(),
-                pathResultBeforeStopoverStin,
+                actualPathBeforeStopoverStin,
                 stopoverTime,
                 pathSearchRequest.getSortType());
-        if (isEmpty(pathResultAfterStopoverStin)) {
+        if (isEmpty(actualPathAfterStopoverStin)) {
             throw new PathResultException(ErrorMessage.PATH_RESULT_NOT_FOUND);
         }
-        PathResult totalPathResult = pathService.join(pathResultBeforeStopoverStin, pathResultAfterStopoverStin, pathSearchRequest.getDateType());
-        UserMoveInfos userMoveInfos = pathService.createUserMoveInfos(totalPathResult, pathSearchRequest.getStopoverStinNm(), stopoverTime);
+        ActualPath totalActualPath = pathService.join(actualPathBeforeStopoverStin, actualPathAfterStopoverStin, pathSearchRequest.getDateType());
+        UserMoveInfos userMoveInfos = pathService.createUserMoveInfos(totalActualPath, pathSearchRequest.getStopoverStinNm(), stopoverTime);
         System.out.println(userMoveInfos);
         return new BaseResponse<>(new UserMoveInfosDto.Response(userMoveInfos));
     }
 
-    private boolean isEmpty(PathResult pathResult) {
-        return pathResult == null;
+    private boolean isEmpty(ActualPath actualPath) {
+        return actualPath == null;
     }
 
     private boolean isDirectSearchPath(String stopoverStinNm) {

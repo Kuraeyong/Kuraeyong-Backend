@@ -2,9 +2,9 @@ package kuraeyong.backend.domain.station.congestion;
 
 import kuraeyong.backend.domain.constant.DomainType;
 import kuraeyong.backend.domain.constant.EdgeType;
+import kuraeyong.backend.domain.path.ActualPath;
+import kuraeyong.backend.domain.path.ActualPaths;
 import kuraeyong.backend.domain.path.MetroNodeWithEdge;
-import kuraeyong.backend.domain.path.PathResult;
-import kuraeyong.backend.domain.path.PathResults;
 import kuraeyong.backend.domain.station.info.MinimumStationInfo;
 import kuraeyong.backend.domain.station.info.MinimumStationInfoWithDateType;
 import kuraeyong.backend.repository.StationCongestionRepository;
@@ -39,18 +39,18 @@ public class StationCongestionMap {
         }
     }
 
-    public void setCongestionScoreOfPaths(PathResults pathResults, String dateType, int congestionThreshold) {
-        for (PathResult pathResult : pathResults.getList()) {
-            setCongestionScoreOfPath(pathResult, dateType, congestionThreshold);
+    public void setCongestionScoreOfPaths(ActualPaths actualPaths, String dateType, int congestionThreshold) {
+        for (ActualPath actualPath : actualPaths.getList()) {
+            setCongestionScoreOfPath(actualPath, dateType, congestionThreshold);
         }
     }
 
-    private void setCongestionScoreOfPath(PathResult pathResult, String dateType, int congestionThreshold) {
+    private void setCongestionScoreOfPath(ActualPath actualPath, String dateType, int congestionThreshold) {
         final int CONGESTION_PENALTY = 10000;
         final int UNKNOWN_CONGESTION = 1000000;
         int congestionScore = 0;
 
-        List<MetroNodeWithEdge> path = pathResult.getIterablePath();
+        List<MetroNodeWithEdge> path = actualPath.getIterablePath();
         for (int i = 0; i < path.size(); i++) {
             // 해당 요일 종류에 혼잡도 정보를 제공하는 역인지 검사
             MetroNodeWithEdge curr = path.get(i);
@@ -58,7 +58,7 @@ public class StationCongestionMap {
             MinimumStationInfoWithDateType key = new MinimumStationInfoWithDateType(MSI, dateType, DomainType.STATION_CONGESTION);
             StationCongestionList stationCongestionList = map.get(key);
             if (stationCongestionList == null) {
-                pathResult.setCongestionScore(UNKNOWN_CONGESTION);
+                actualPath.setCongestionScore(UNKNOWN_CONGESTION);
                 return;
             }
 
@@ -66,7 +66,7 @@ public class StationCongestionMap {
             String time = DateUtil.passingTimeToCongestionTime(curr.getPassingTime());
             double congestion = stationCongestionList.get(curr.getDirection()).getTime(time);
             if (congestion == -1) {
-                pathResult.setCongestionScore(UNKNOWN_CONGESTION);
+                actualPath.setCongestionScore(UNKNOWN_CONGESTION);
                 return;
             }
 
@@ -81,7 +81,7 @@ public class StationCongestionMap {
             }
             congestionScore++;
         }
-        pathResult.setCongestionScore(congestionScore);
+        actualPath.setCongestionScore(congestionScore);
     }
 
     /**

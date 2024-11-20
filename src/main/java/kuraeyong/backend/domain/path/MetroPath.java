@@ -93,21 +93,10 @@ public class MetroPath implements Comparable<MetroPath> {
         path = path.subList(lastIdxWithOrgNm, firstIdxWithDestNm + 1);
     }
 
-    public MetroPath getCompressPath() {
-        MetroPath compressedPath = compressPath();
-        int idx = 1;
-        while (idx != -1) {
-            idx = compressedPath.addBranchTrfNode(idx);
-        }
-        compressedPath.setDirection();
-
-        return compressedPath;
-    }
-
     /**
      * 압축된 경로에서는 MSI만 유효함 (weight, edgeType, waitingTime 의미 X)
      */
-    private MetroPath compressPath() {
+    public MetroPath createCompressedPath() {
         boolean[] check = new boolean[size()];  // compressedPath에 포함할 요소인지 판정
         check[0] = true;
         check[size() - 1] = true;
@@ -148,6 +137,11 @@ public class MetroPath implements Comparable<MetroPath> {
             }
         }
 
+        int idx = 1;
+        while (idx != -1) {
+            idx = compressedPath.addBranchTrfNode(idx);
+        }
+        compressedPath.setDirection();
         return compressedPath;
     }
 
