@@ -17,8 +17,8 @@ public class GlobalExceptionHandler {
         return new BaseErrorResponse(ResponseStatusType.BAD_REQUEST, e);
     }
 
-    @ExceptionHandler(PathResultException.class)
-    private ResponseStatus handlePathResultException(PathResultException e) {
+    @ExceptionHandler(PathSearchResultException.class)
+    private ResponseStatus handlePathSearchResultException(PathSearchResultException e) {
         log.error(e.getMessage());
         return new BaseErrorResponse(ResponseStatusType.NOT_FOUND, e);
     }

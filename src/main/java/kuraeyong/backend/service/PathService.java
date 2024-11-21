@@ -1,17 +1,18 @@
 package kuraeyong.backend.service;
 
 import kuraeyong.backend.common.exception.ErrorMessage;
-import kuraeyong.backend.common.exception.PathResultException;
+import kuraeyong.backend.common.exception.PathSearchResultException;
 import kuraeyong.backend.common.response.BaseResponse;
 import kuraeyong.backend.common.response.ResponseStatus;
 import kuraeyong.backend.domain.constant.SortType;
 import kuraeyong.backend.domain.path.ActualPath;
 import kuraeyong.backend.domain.path.ActualPaths;
 import kuraeyong.backend.domain.path.MetroPath;
-import kuraeyong.backend.domain.path.UserMoveInfos;
+import kuraeyong.backend.domain.path.PathSearchResult;
 import kuraeyong.backend.domain.station.info.MinimumStationInfo;
-import kuraeyong.backend.dto.UserMoveInfosDto;
+import kuraeyong.backend.dto.PathSearchResultDto;
 import kuraeyong.backend.manager.ActualPathsManager;
+import kuraeyong.backend.manager.PathSearchResultManager;
 import kuraeyong.backend.manager.TemporaryPathsTopManager;
 import kuraeyong.backend.util.DateUtil;
 import lombok.RequiredArgsConstructor;
@@ -25,8 +26,8 @@ public class PathService {
 
     private final TemporaryPathsTopManager temporaryPathsTopManager;
     private final ActualPathsManager actualPathsManager;
+    private final PathSearchResultManager pathSearchResultManager;
     private final StationService stationService;
-    private final MoveService moveService;
 
     /**
      * 경유역이 지정되지 않은 경로 탐색 요청을 수행하여, 경로 탐색 결과를 반환
@@ -34,7 +35,7 @@ public class PathService {
      * @param pathSearchRequest 경로 탐색 요청
      * @return 경로 탐색 결과
      */
-    public ResponseStatus searchDirectPath(UserMoveInfosDto.Request pathSearchRequest) {
+    public ResponseStatus searchDirectPath(PathSearchResultDto.Request pathSearchRequest) {
         ActualPath optimalPath = createOptimalPath(pathSearchRequest.getOrgStinNm(),
                 pathSearchRequest.getDestStinNm(),
                 pathSearchRequest.getDateType(),
@@ -45,9 +46,9 @@ public class PathService {
                 null,
                 -1,
                 pathSearchRequest.getSortType());
-        UserMoveInfos userMoveInfos = moveService.createUserMoveInfos(optimalPath, null, -1);
-        System.out.println(userMoveInfos);
-        return new BaseResponse<>(new UserMoveInfosDto.Response(userMoveInfos));
+        PathSearchResult pathSearchResult = pathSearchResultManager.create(optimalPath, null, -1);
+        System.out.println(pathSearchResult);
+        return new BaseResponse<>(new PathSearchResultDto.Response(pathSearchResult));
     }
 
     /**
@@ -56,7 +57,7 @@ public class PathService {
      * @param pathSearchRequest 경로 탐색 요청
      * @return 경로 탐색 결과
      */
-    public ResponseStatus searchIndirectPath(UserMoveInfosDto.Request pathSearchRequest) {
+    public ResponseStatus searchIndirectPath(PathSearchResultDto.Request pathSearchRequest) {
         ActualPath front = createOptimalPath(pathSearchRequest.getOrgStinNm(),
                 pathSearchRequest.getStopoverStinNm(),
                 pathSearchRequest.getDateType(),
@@ -79,9 +80,9 @@ public class PathService {
                 pathSearchRequest.getStopoverTime(),
                 pathSearchRequest.getSortType());
         ActualPath optimalPath = actualPathsManager.join(front, rear, pathSearchRequest.getDateType());
-        UserMoveInfos userMoveInfos = moveService.createUserMoveInfos(optimalPath, pathSearchRequest.getStopoverStinNm(), pathSearchRequest.getStopoverTime());
-        System.out.println(userMoveInfos);
-        return new BaseResponse<>(new UserMoveInfosDto.Response(userMoveInfos));
+        PathSearchResult pathSearchResult = pathSearchResultManager.create(optimalPath, pathSearchRequest.getStopoverStinNm(), pathSearchRequest.getStopoverTime());
+        System.out.println(pathSearchResult);
+        return new BaseResponse<>(new PathSearchResultDto.Response(pathSearchResult));
     }
 
     /**
@@ -109,7 +110,7 @@ public class PathService {
         ActualPaths actualPaths = actualPathsManager.create(temporaryPaths, dateType, hour, min, front, stopoverTime);
         ActualPath optimalPath = actualPathsManager.createOptimalPath(actualPaths, dateType, congestionThreshold, SortType.parse(sortType));
         if (optimalPath == null) {
-            throw new PathResultException(ErrorMessage.PATH_RESULT_NOT_FOUND);
+            throw new PathSearchResultException(ErrorMessage.PATH_SEARCH_RESULT_NOT_FOUND);
         }
         return optimalPath;
     }

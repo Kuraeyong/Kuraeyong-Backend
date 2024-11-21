@@ -5,7 +5,7 @@ import kuraeyong.backend.util.StringUtil;
 import lombok.Getter;
 
 @Getter
-public class UserMoveInfo {
+public class PathSearchSegment {
     private final String lnCd;
     private final String orgStinNm;
     private final String destStinNm;
@@ -14,7 +14,7 @@ public class UserMoveInfo {
     private final String trnTmnStinNm;
     private final String trnDir;
 
-    private UserMoveInfo(String lnCd, String orgStinNm, String destStinNm, String orgTm, String destTm, String trnTmnStinNm, String trnDir) {
+    private PathSearchSegment(String lnCd, String orgStinNm, String destStinNm, String orgTm, String destTm, String trnTmnStinNm, String trnDir) {
         this.lnCd = lnCd;
         this.orgStinNm = orgStinNm;
         this.destStinNm = destStinNm;
@@ -24,8 +24,8 @@ public class UserMoveInfo {
         this.trnDir = trnDir;
     }
 
-    public static UserMoveInfo of(String lnCd, String orgStinNm, String destStinNm, String orgTm, String destTm, String trnTmnStinNm, String trnDir) {
-        return new UserMoveInfo(lnCd, orgStinNm, destStinNm, orgTm, destTm, trnTmnStinNm, trnDir);
+    public static PathSearchSegment of(String lnCd, String orgStinNm, String destStinNm, String orgTm, String destTm, String trnTmnStinNm, String trnDir) {
+        return new PathSearchSegment(lnCd, orgStinNm, destStinNm, orgTm, destTm, trnTmnStinNm, trnDir);
     }
 
     public int getRequiredTime() {

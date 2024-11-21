@@ -1,7 +1,7 @@
 package kuraeyong.backend.manager;
 
 import kuraeyong.backend.common.exception.ErrorMessage;
-import kuraeyong.backend.common.exception.PathResultException;
+import kuraeyong.backend.common.exception.PathSearchResultException;
 import kuraeyong.backend.domain.constant.DomainType;
 import kuraeyong.backend.domain.constant.EdgeType;
 import kuraeyong.backend.domain.graph.GraphForPathSearch;
@@ -49,7 +49,7 @@ public class TemporaryPathsManager {
         // 첫 번째 최단 경로 계산
         MetroPath initialPath = createTemporaryPathCandidate(orgNo, destNo, null, containExp, dateType);
         if (initialPath == null) {
-            throw new PathResultException(ErrorMessage.TEMPORARY_PATH_NOT_FOUND);
+            throw new PathSearchResultException(ErrorMessage.TEMPORARY_PATH_NOT_FOUND);
         }
         temporaryPathCandidates.add(initialPath);
         uniqueTemporaryPathCandidates.add(initialPath);

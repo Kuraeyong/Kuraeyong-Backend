@@ -1,29 +1,35 @@
-package kuraeyong.backend.service;
+package kuraeyong.backend.manager;
 
 import kuraeyong.backend.domain.constant.DirectionType;
 import kuraeyong.backend.domain.path.ActualPath;
 import kuraeyong.backend.domain.path.MetroPath;
 import kuraeyong.backend.domain.path.MoveInfo;
 import kuraeyong.backend.domain.path.MoveInfos;
-import kuraeyong.backend.domain.path.UserMoveInfo;
-import kuraeyong.backend.domain.path.UserMoveInfos;
+import kuraeyong.backend.domain.path.PathSearchResult;
+import kuraeyong.backend.domain.path.PathSearchSegment;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
-@Service
+@Component
 @RequiredArgsConstructor
-public class MoveService {
+public class PathSearchResultManager {
 
-    public UserMoveInfos createUserMoveInfos(ActualPath actualPath, String stopoverStinNm, int stopoverTime) {
+    /**
+     * 최적의 실제 경로를 이용해, 경로 탐색 결과를 생성
+     *
+     * @param optimalPath    최적의 실제 경로
+     * @param stopoverStinNm 경유역 이름
+     * @param stopoverTime   경유역에서 경유하는 시간
+     * @return 경로 탐색 결과
+     */
+    public PathSearchResult create(ActualPath optimalPath, String stopoverStinNm, int stopoverTime) {
         // init
-        MoveInfos moveInfos = actualPath.getMoveInfos();
-        MetroPath compressedPath = actualPath.getCompressedPath();
-        List<UserMoveInfo> userMoveInfos = new ArrayList<>();
+        MoveInfos moveInfos = optimalPath.getMoveInfos();
+        MetroPath compressedPath = optimalPath.getCompressedPath();
+        List<PathSearchSegment> pathSearchSegments = new ArrayList<>();
 
         // create
         int firstMoveInfoIdxWithSameTrn = 1;
@@ -36,7 +42,7 @@ public class MoveService {
                 continue;
             }
             firstMoveInfoWithSameTrn = moveInfos.get(firstMoveInfoIdxWithSameTrn);
-            userMoveInfos.add(UserMoveInfo.of(
+            pathSearchSegments.add(PathSearchSegment.of(
                     prev.getLnCd(),
                     compressedPath.getStinNm(firstMoveInfoIdxWithSameTrn - 1),
                     compressedPath.getStinNm(i - 1),
@@ -51,7 +57,7 @@ public class MoveService {
             if (curr.getTrnGroupNo() == -1 || prev.getTrnGroupNo() == -1) {
                 continue;
             }
-            userMoveInfos.add(UserMoveInfo.of(
+            pathSearchSegments.add(PathSearchSegment.of(
                     null,
                     compressedPath.getStinNm(i - 1),
                     compressedPath.getStinNm(i - 1),
@@ -61,9 +67,9 @@ public class MoveService {
                     null
             ));
         }
-        // 마지막 UserMoveInfo 별도 추가
+        // 마지막 PathSearchSegment 별도 추가
         firstMoveInfoWithSameTrn = moveInfos.get(firstMoveInfoIdxWithSameTrn);
-        userMoveInfos.add(UserMoveInfo.of(
+        pathSearchSegments.add(PathSearchSegment.of(
                 moveInfos.get(moveInfos.size() - 1).getLnCd(),
                 compressedPath.getStinNm(firstMoveInfoIdxWithSameTrn - 1),
                 compressedPath.getStinNm(compressedPath.size() - 1),
@@ -72,6 +78,6 @@ public class MoveService {
                 firstMoveInfoWithSameTrn.getTmnStinNm(),
                 DirectionType.get(firstMoveInfoWithSameTrn.getTrnNo())
         ));
-        return new UserMoveInfos(userMoveInfos, actualPath.getTotalTime(), actualPath.getCongestionScore(), stopoverStinNm, stopoverTime);
+        return new PathSearchResult(pathSearchSegments, optimalPath.getTotalTime(), optimalPath.getCongestionScore(), stopoverStinNm, stopoverTime);
     }
 }

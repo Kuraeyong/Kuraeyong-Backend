@@ -2,16 +2,14 @@ package kuraeyong.backend.controller;
 
 import kuraeyong.backend.common.exception.ErrorMessage;
 import kuraeyong.backend.common.response.ResponseStatus;
-import kuraeyong.backend.dto.UserMoveInfosDto;
+import kuraeyong.backend.dto.PathSearchResultDto;
 import kuraeyong.backend.service.PathService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/paths")
@@ -20,7 +18,7 @@ public class PathController {
     private final PathService pathService;
 
     @PostMapping("")
-    public ResponseStatus searchPath(@RequestBody UserMoveInfosDto.Request pathSearchRequest) {
+    public ResponseStatus searchPath(@RequestBody PathSearchResultDto.Request pathSearchRequest) {
         validatePathSearchRequest(pathSearchRequest);
         if (isDirectSearchPath(pathSearchRequest.getStopoverStinNm())) {
             return pathService.searchDirectPath(pathSearchRequest);
@@ -32,7 +30,7 @@ public class PathController {
         return stopoverStinNm == null;
     }
 
-    private void validatePathSearchRequest(UserMoveInfosDto.Request pathSearchRequest) {
+    private void validatePathSearchRequest(PathSearchResultDto.Request pathSearchRequest) {
         validateUniqueStinNm(pathSearchRequest.getOrgStinNm(), pathSearchRequest.getStopoverStinNm(), pathSearchRequest.getDestStinNm());
         validateDateType(pathSearchRequest.getDateType());
         validateTimeInfo(pathSearchRequest.getHour(), pathSearchRequest.getMin());

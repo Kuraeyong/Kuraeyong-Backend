@@ -1,12 +1,12 @@
 package kuraeyong.backend.dto;
 
-import kuraeyong.backend.domain.path.UserMoveInfos;
+import kuraeyong.backend.domain.path.PathSearchResult;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.List;
 
-public class UserMoveInfosDto {
+public class PathSearchResultDto {
 
     @AllArgsConstructor
     @Getter
@@ -28,13 +28,13 @@ public class UserMoveInfosDto {
         private final int totalRequiredTime;
         private final int totalTrfCnt;
         private final int totalTrfTime;
-        private final List<UserMoveInfoDto.Response> userMoveInfos;
+        private final List<PathSearchSegmentDto.Response> pathSearchSegments;
 
-        public Response(UserMoveInfos userMoveInfos) {
-            this.totalRequiredTime = userMoveInfos.getTotalRequiredTime();
-            this.totalTrfCnt = userMoveInfos.getTotalTrfCnt();
-            this.totalTrfTime = userMoveInfos.getTotalTrfTime();
-            this.userMoveInfos = userMoveInfos.toDto();
+        public Response(PathSearchResult pathSearchResult) {
+            this.totalRequiredTime = pathSearchResult.getTotalRequiredTime();
+            this.totalTrfCnt = pathSearchResult.getTotalTrfCnt();
+            this.totalTrfTime = pathSearchResult.getTotalTrfTime();
+            this.pathSearchSegments = pathSearchResult.toDto();
         }
     }
 }

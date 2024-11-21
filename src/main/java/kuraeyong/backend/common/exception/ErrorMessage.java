@@ -19,7 +19,7 @@ public enum ErrorMessage {
      * PATH_RESULT_EXCEPTION
      */
     TEMPORARY_PATH_NOT_FOUND("임시 경로가 존재하지 않습니다."),
-    PATH_RESULT_NOT_FOUND("경로 탐색 결과가 존재하지 않습니다.");
+    PATH_SEARCH_RESULT_NOT_FOUND("경로 탐색 결과가 존재하지 않습니다.");
 
     private final String errorMessage;
 
