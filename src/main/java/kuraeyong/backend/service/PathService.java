@@ -42,7 +42,6 @@ public class PathService {
                 pathSearchRequest.getHour(),
                 pathSearchRequest.getMin(),
                 pathSearchRequest.getCongestionThreshold(),
-                pathSearchRequest.getConvenience(),
                 null,
                 -1,
                 pathSearchRequest.getSortType());
@@ -64,7 +63,6 @@ public class PathService {
                 pathSearchRequest.getHour(),
                 pathSearchRequest.getMin(),
                 pathSearchRequest.getCongestionThreshold(),
-                pathSearchRequest.getConvenience(),
                 null,
                 -1,
                 pathSearchRequest.getSortType());
@@ -75,7 +73,6 @@ public class PathService {
                 DateUtil.getHour(stopoverDptTm),
                 DateUtil.getMinute(stopoverDptTm),
                 pathSearchRequest.getCongestionThreshold(),
-                pathSearchRequest.getConvenience(),
                 front,
                 pathSearchRequest.getStopoverTime(),
                 pathSearchRequest.getSortType());
@@ -94,13 +91,12 @@ public class PathService {
      * @param hour                시간
      * @param min                 분
      * @param congestionThreshold 혼잡도 임계값
-     * @param convenience         이용할 편의시설
      * @param front               특정 역을 경유하는 경로 탐색인 경우, 출발역에서 경유역까지의 실제 경로
      * @param stopoverTime        경유역에서 경유하는 시간
      * @param sortType            정렬 종류 (최적의 경로를 찾기 위해 필요)
      * @return 최적의 실제 경로
      */
-    private ActualPath createOptimalPath(String orgStinNm, String destStinNm, String dateType, int hour, int min, int congestionThreshold, String convenience, ActualPath front, int stopoverTime, String sortType) {
+    private ActualPath createOptimalPath(String orgStinNm, String destStinNm, String dateType, int hour, int min, int congestionThreshold, ActualPath front, int stopoverTime, String sortType) {
         validateExistStinNm(orgStinNm);
         validateExistStinNm(destStinNm);
 

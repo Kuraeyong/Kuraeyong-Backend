@@ -21,8 +21,8 @@ public enum ConvenienceType {
         return convenienceType;
     }
 
-    public static ConvenienceType toConvenienceType(String convenience) {
-        return switch (convenience) {
+    public static ConvenienceType parse(String convenienceName) {
+        return switch (convenienceName) {
             case "elevator" -> ELEVATOR;
             case "disabledToilet" -> DISABLED_TOILET;
             case "lactationRoom" -> LACTATION_ROOM;

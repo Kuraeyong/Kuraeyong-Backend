@@ -35,7 +35,7 @@ public class StationConvenienceMap {
         }
     }
 
-    public List<String> getConvenienceStationList(ConvenienceType convenienceType) {
+    public List<String> getStationsContainingConvenience(ConvenienceType convenienceType) {
         List<String> list = new ArrayList<>();
         map.keySet().forEach(key -> {
             if (map.get(key).contains(convenienceType)) {

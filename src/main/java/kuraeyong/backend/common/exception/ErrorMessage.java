@@ -14,6 +14,7 @@ public enum ErrorMessage {
     INVALID_TIME_INFO("시간 정보가 유효하지 않습니다."),
     INVALID_DATE_TYPE("요일 종류가 유효하지 않습니다."),
     STATION_NOT_FOUND("존재하지 않는 역입니다."),
+    CONVENIENCE_NOT_FOUND("존재하지 않는 편의시설입니다."),
 
     /**
      * PATH_RESULT_EXCEPTION

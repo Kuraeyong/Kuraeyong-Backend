@@ -18,7 +18,6 @@ public class PathSearchResultDto {
         private int hour;
         private int min;
         private int congestionThreshold;
-        private String convenience;
         private int stopoverTime;
         private String sortType;
     }
