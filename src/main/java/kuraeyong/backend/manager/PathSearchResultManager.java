@@ -43,7 +43,7 @@ public class PathSearchResultManager {
             }
             firstMoveInfoWithSameTrn = moveInfos.get(firstMoveInfoIdxWithSameTrn);
             pathSearchSegments.add(PathSearchSegment.of(
-                    prev.getLnCd(),
+                    determineLnCd(prev.getLnCd()),
                     compressedPath.getStinNm(firstMoveInfoIdxWithSameTrn - 1),
                     compressedPath.getStinNm(i - 1),
                     firstMoveInfoWithSameTrn.getDptTm(),
@@ -58,7 +58,7 @@ public class PathSearchResultManager {
                 continue;
             }
             pathSearchSegments.add(PathSearchSegment.of(
-                    null,
+                    determineLnCd(null),
                     compressedPath.getStinNm(i - 1),
                     compressedPath.getStinNm(i - 1),
                     prev.getArvTm(),
@@ -70,7 +70,7 @@ public class PathSearchResultManager {
         // 마지막 PathSearchSegment 별도 추가
         firstMoveInfoWithSameTrn = moveInfos.get(firstMoveInfoIdxWithSameTrn);
         pathSearchSegments.add(PathSearchSegment.of(
-                moveInfos.get(moveInfos.size() - 1).getLnCd(),
+                determineLnCd(moveInfos.get(moveInfos.size() - 1).getLnCd()),
                 compressedPath.getStinNm(firstMoveInfoIdxWithSameTrn - 1),
                 compressedPath.getStinNm(compressedPath.size() - 1),
                 firstMoveInfoWithSameTrn.getDptTm(),
@@ -79,5 +79,12 @@ public class PathSearchResultManager {
                 DirectionType.get(firstMoveInfoWithSameTrn.getTrnNo())
         ));
         return new PathSearchResult(pathSearchSegments, optimalPath.getTotalTime(), optimalPath.getCongestionScore(), stopoverStinNm, stopoverTime);
+    }
+
+    private String determineLnCd(String lnCd) {
+        if (lnCd == null) {
+            return "환승";
+        }
+        return lnCd;
     }
 }

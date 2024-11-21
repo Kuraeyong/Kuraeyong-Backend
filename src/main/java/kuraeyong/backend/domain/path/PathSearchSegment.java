@@ -33,7 +33,7 @@ public class PathSearchSegment {
     }
 
     public boolean isTrf() {
-        return lnCd == null;
+        return lnCd.equals("환승");
     }
 
     public boolean isStopOverStin(String stopoverStinNm) {
@@ -42,18 +42,11 @@ public class PathSearchSegment {
 
     @Override
     public String toString() {
-        return determineLnCd() + "\t\t" +
+        return lnCd + "\t\t" +
                 StringUtil.equalizeStinNmLen(orgStinNm) + StringUtil.equalizeStinNmLen(destStinNm) +
                 DateUtil.getMinDiff(orgTm, destTm) + "분" +
                 "(" + orgTm + "~" + destTm + ")\t\t\t" +
                 printDirection(trnTmnStinNm, trnDir) + "\n";
-    }
-
-    private String determineLnCd() {
-        if (!isTrf()) {
-            return lnCd;
-        }
-        return "환승";
     }
 
     private String printDirection(String trnTmnStinNm, String trnDir) {
