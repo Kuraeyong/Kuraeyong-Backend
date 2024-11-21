@@ -1,4 +1,4 @@
-package kuraeyong.backend.manager;
+package kuraeyong.backend.manager.path;
 
 import kuraeyong.backend.domain.constant.SortType;
 import kuraeyong.backend.domain.path.ActualPath;
@@ -75,7 +75,7 @@ public class ActualPathsManager {
      * @param dateType            요일 종류
      * @param congestionThreshold 혼잡도 임계값
      * @param sortType            정렬 종류
-     * @return  최적의 실제 경로
+     * @return 최적의 실제 경로
      */
     public ActualPath createOptimalPath(ActualPaths actualPaths, String dateType, int congestionThreshold, SortType sortType) {
         if (sortType == SortType.CONGESTION) {

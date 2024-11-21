@@ -1,13 +1,18 @@
 package kuraeyong.backend.service;
 
+import kuraeyong.backend.common.exception.DomainInitializationException;
+import kuraeyong.backend.common.exception.ErrorMessage;
+import kuraeyong.backend.common.response.BaseResponse;
+import kuraeyong.backend.common.response.ResponseStatus;
 import kuraeyong.backend.domain.constant.FileType;
-import kuraeyong.backend.domain.graph.EdgeInfo;
-import kuraeyong.backend.domain.station.congestion.StationCongestion;
-import kuraeyong.backend.domain.station.convenience.StationConvenience;
 import kuraeyong.backend.domain.station.info.MinimumStationInfo;
 import kuraeyong.backend.domain.station.info.StationInfo;
-import kuraeyong.backend.domain.station.trf_weight.StationTrfWeight;
-import kuraeyong.backend.repository.*;
+import kuraeyong.backend.manager.station.EdgeInfoManager;
+import kuraeyong.backend.manager.station.StationCongestionManager;
+import kuraeyong.backend.manager.station.StationConvenienceManager;
+import kuraeyong.backend.manager.station.StationDBInitializer;
+import kuraeyong.backend.manager.station.StationInfoManager;
+import kuraeyong.backend.manager.station.StationTrfWeightManager;
 import kuraeyong.backend.util.FlatFileUtil;
 import kuraeyong.backend.util.OpenApiUtil;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +24,14 @@ import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -29,11 +41,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StationService {
 
-    private final StationInfoRepository stationInfoRepository;
-    private final StationTrfWeightRepository stationTrfWeightRepository;
-    private final StationCongestionRepository stationCongestionRepository;
-    private final StationConvenienceRepository stationConvenienceRepository;
-    private final EdgeInfoRepository edgeInfoRepository;
+    private final StationInfoManager stationInfoManager;
+    private final StationTrfWeightManager stationTrfWeightManager;
+    private final StationCongestionManager stationCongestionManager;
+    private final StationConvenienceManager stationConvenienceManager;
+    private final EdgeInfoManager edgeInfoManager;
     private final static String BASE_URL = "src/main/resources/xlsx/";
     private static String csvFilePath, logFilePath;
 
@@ -47,62 +59,53 @@ public class StationService {
         logFilePath = path;
     }
 
-    public String initDB(FileType fileType) {
+    /**
+     * 역 이름을 통해 역을 조회
+     *
+     * @param stinNm 역 이름
+     * @return 해당 이름을 가진 역
+     */
+    public MinimumStationInfo getStationByName(String stinNm) {
+        return stationInfoManager.getStationByName(stinNm);
+    }
+
+    /**
+     * 파일 종류에 맞는 데이터베이스를 초기화
+     *
+     * @param fileType 파일 종류
+     * @return 초기화 성공 여부
+     */
+    public ResponseStatus initDB(FileType fileType) {
+        StationDBInitializer manager = getManager(fileType);
         String filePath = BASE_URL + fileType.getFileName();
         List<List<String>> rowList = FlatFileUtil.getDataListFromExcel(filePath);
-        boolean isFinished;
 
+        if (manager.initDB(rowList)) {
+            return new BaseResponse<>();
+        }
+        throw new DomainInitializationException(ErrorMessage.DOMAIN_INITIALIZATION_FAILED);
+    }
+
+    /**
+     * 파일 종류에 맞는 매니저를 반환
+     *
+     * @param fileType 파일 종류
+     * @return 파일 종류에 맞는 매니저
+     */
+    private StationDBInitializer getManager(FileType fileType) {
         if (fileType == FileType.STATION_INFO) {
-            isFinished = initStationInfoDB(rowList);
-        } else if (fileType == FileType.STATION_TRF_WEIGHT) {
-            isFinished = initStationTrfWeightDB(rowList);
-        } else if (fileType == FileType.STATION_CONGESTION) {
-            isFinished = initStationCongestionDB(rowList);
-        } else if (fileType == FileType.STATION_CONVENIENCE) {
-            isFinished = initStationConvenienceDB(rowList);
-        } else {
-            isFinished = initEdgeInfoDB(rowList);
+            return stationInfoManager;
         }
-        
-        if (isFinished) {
-            return "SUCCESS";
+        if (fileType == FileType.STATION_TRF_WEIGHT) {
+            return stationTrfWeightManager;
         }
-        return "FAILED";
-    }
-    
-    private boolean initStationInfoDB(List<List<String>> rowList) {
-        List<StationInfo> stationInfoList = FlatFileUtil.toStationInfoList(rowList);
-        
-        stationInfoRepository.deleteAll();
-        return stationInfoList.size() == stationInfoRepository.saveAll(stationInfoList).size();
-    }
-
-    private boolean initStationTrfWeightDB(List<List<String>> rowList) {
-        List<StationTrfWeight> stationTrfWeightList = FlatFileUtil.toStationTrfWeightList(rowList);
-
-        stationTrfWeightRepository.deleteAll();
-        return stationTrfWeightList.size() == stationTrfWeightRepository.saveAll(stationTrfWeightList).size();
-    }
-
-    private boolean initStationCongestionDB(List<List<String>> rowList) {
-        List<StationCongestion> stationCongestionList = FlatFileUtil.toStationCongestionList(rowList);
-
-        stationCongestionRepository.deleteAll();
-        return stationCongestionList.size() == stationCongestionRepository.saveAll(stationCongestionList).size();
-    }
-
-    private boolean initStationConvenienceDB(List<List<String>> rowList) {
-        List<StationConvenience> stationConvenienceList = FlatFileUtil.toStationConvenienceList(rowList);
-
-        stationConvenienceRepository.deleteAll();
-        return stationConvenienceList.size() == stationConvenienceRepository.saveAll(stationConvenienceList).size();
-    }
-
-    private boolean initEdgeInfoDB(List<List<String>> rowList) {
-        List<EdgeInfo> edgeInfoList = FlatFileUtil.toEdgeInfoList(rowList);
-
-        edgeInfoRepository.deleteAll();
-        return edgeInfoList.size() == edgeInfoRepository.saveAll(edgeInfoList).size();
+        if (fileType == FileType.STATION_CONGESTION) {
+            return stationCongestionManager;
+        }
+        if (fileType == FileType.STATION_CONVENIENCE) {
+            return stationConvenienceManager;
+        }
+        return edgeInfoManager;
     }
 
     /**
@@ -150,7 +153,7 @@ public class StationService {
                     "DAY_CD");
             logBw.write(NEWLINE);
 
-            for (StationInfo stationInfo : stationInfoRepository.findAll()) {
+            for (StationInfo stationInfo : stationInfoManager.findAll()) {
                 System.out.println("CurrentStationCount: " + ++stationCount);
                 String railOprIsttCd = stationInfo.getRailOprIsttCd();
                 String lnCd = stationInfo.getLnCd();
@@ -226,7 +229,7 @@ public class StationService {
     }
 
     /**
-     *  JSON 데이터 파싱
+     * JSON 데이터 파싱
      */
     private static JSONArray getParseBody(String queryString) throws IOException, ParseException {
         String urlStr = OpenApiUtil.getKricOpenApiURL("convenientInfo", "stationTimetable", queryString);
@@ -241,18 +244,5 @@ public class StationService {
 
         // body 받아오기
         return (JSONArray) jsonObject.get("body");
-    }
-
-    /**
-     * 역명으로 고유역 조회
-     */
-    public MinimumStationInfo getStationByName(String stinNm) {
-        List<StationInfo> stationInfoList = stationInfoRepository.findByStinNm(stinNm);
-        if (stationInfoList.isEmpty()) {
-            return null;
-        }
-
-        StationInfo row = stationInfoList.get(0);
-        return MinimumStationInfo.build(row.getRailOprIsttCd(), row.getLnCd(), row.getStinCd());
     }
 }

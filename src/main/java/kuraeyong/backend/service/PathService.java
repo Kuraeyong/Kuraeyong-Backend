@@ -11,9 +11,9 @@ import kuraeyong.backend.domain.path.MetroPath;
 import kuraeyong.backend.domain.path.PathSearchResult;
 import kuraeyong.backend.domain.station.info.MinimumStationInfo;
 import kuraeyong.backend.dto.PathSearchResultDto;
-import kuraeyong.backend.manager.ActualPathsManager;
-import kuraeyong.backend.manager.PathSearchResultManager;
-import kuraeyong.backend.manager.TemporaryPathsTopManager;
+import kuraeyong.backend.manager.path.ActualPathsManager;
+import kuraeyong.backend.manager.path.PathSearchResultManager;
+import kuraeyong.backend.manager.path.TemporaryPathsTopManager;
 import kuraeyong.backend.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -97,9 +97,6 @@ public class PathService {
      * @return 최적의 실제 경로
      */
     private ActualPath createOptimalPath(String orgStinNm, String destStinNm, String dateType, int hour, int min, int congestionThreshold, ActualPath front, int stopoverTime, String sortType) {
-        validateExistStinNm(orgStinNm);
-        validateExistStinNm(destStinNm);
-
         MinimumStationInfo org = stationService.getStationByName(orgStinNm);
         MinimumStationInfo dest = stationService.getStationByName(destStinNm);
         List<MetroPath> temporaryPaths = temporaryPathsTopManager.create(org, dest, dateType);
@@ -109,11 +106,5 @@ public class PathService {
             throw new PathSearchResultException(ErrorMessage.PATH_SEARCH_RESULT_NOT_FOUND);
         }
         return optimalPath;
-    }
-
-    private void validateExistStinNm(String stinNm) {
-        if (stationService.getStationByName(stinNm) == null) {
-            throw new IllegalArgumentException(ErrorMessage.STATION_NOT_FOUND.get());
-        }
     }
 }

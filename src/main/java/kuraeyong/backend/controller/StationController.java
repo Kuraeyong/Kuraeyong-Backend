@@ -1,5 +1,6 @@
 package kuraeyong.backend.controller;
 
+import kuraeyong.backend.common.response.ResponseStatus;
 import kuraeyong.backend.domain.constant.FileType;
 import kuraeyong.backend.service.StationService;
 import lombok.RequiredArgsConstructor;
@@ -17,27 +18,27 @@ public class StationController {
     private final StationService stationService;
 
     @GetMapping("/init/station-info")
-    public String initStationInfoDB() {
+    public ResponseStatus initStationInfoDB() {
         return stationService.initDB(FileType.STATION_INFO);
     }
 
     @GetMapping("/init/station-trf-weight")
-    public String initStationTrfWeightDB() {
+    public ResponseStatus initStationTrfWeightDB() {
         return stationService.initDB(FileType.STATION_TRF_WEIGHT);
     }
 
     @GetMapping("/init/station-congestion")
-    public String initStationCongestionDB() {
+    public ResponseStatus initStationCongestionDB() {
         return stationService.initDB(FileType.STATION_CONGESTION);
     }
 
     @GetMapping("/init/station-convenience")
-    public String initStationConvenienceDB() {
+    public ResponseStatus initStationConvenienceDB() {
         return stationService.initDB(FileType.STATION_CONVENIENCE);
     }
 
     @GetMapping("/init/edge-info")
-    public String initEdgeInfoDB() {
+    public ResponseStatus initEdgeInfoDB() {
         return stationService.initDB(FileType.EDGE_INFO);
     }
 

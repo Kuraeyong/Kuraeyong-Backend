@@ -1,4 +1,4 @@
-package kuraeyong.backend.manager;
+package kuraeyong.backend.manager.path;
 
 import kuraeyong.backend.domain.constant.BranchDirectionType;
 import kuraeyong.backend.domain.constant.DirectionType;

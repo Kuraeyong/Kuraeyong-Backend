@@ -1,4 +1,4 @@
-package kuraeyong.backend.manager;
+package kuraeyong.backend.manager.path;
 
 import kuraeyong.backend.common.exception.ErrorMessage;
 import kuraeyong.backend.common.exception.PathSearchResultException;

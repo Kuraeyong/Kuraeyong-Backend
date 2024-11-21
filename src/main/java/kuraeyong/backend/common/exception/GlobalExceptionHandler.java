@@ -22,4 +22,10 @@ public class GlobalExceptionHandler {
         log.error(e.getMessage());
         return new BaseErrorResponse(ResponseStatusType.NOT_FOUND, e);
     }
+
+    @ExceptionHandler(DomainInitializationException.class)
+    private ResponseStatus handleDomainInitializationException(DomainInitializationException e) {
+        log.error(e.getMessage());
+        return new BaseErrorResponse(ResponseStatusType.INTERNAL_SERVER_ERROR, e);
+    }
 }

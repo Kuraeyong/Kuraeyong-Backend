@@ -16,6 +16,10 @@ public class BaseResponse<T> implements ResponseStatus {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private final T result;
 
+    public BaseResponse() {
+        this(null);
+    }
+
     public BaseResponse(T result) {
         this.code = SUCCESS.getCode();
         this.status = SUCCESS.getStatus();

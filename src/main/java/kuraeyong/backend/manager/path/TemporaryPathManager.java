@@ -1,4 +1,4 @@
-package kuraeyong.backend.manager;
+package kuraeyong.backend.manager.path;
 
 import kuraeyong.backend.domain.constant.DomainType;
 import kuraeyong.backend.domain.constant.EdgeType;

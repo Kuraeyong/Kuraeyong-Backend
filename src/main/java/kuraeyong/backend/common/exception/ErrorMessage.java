@@ -17,10 +17,15 @@ public enum ErrorMessage {
     CONVENIENCE_NOT_FOUND("존재하지 않는 편의시설입니다."),
 
     /**
-     * PATH_RESULT_EXCEPTION
+     * PATH_SEARCH_RESULT_EXCEPTION
      */
     TEMPORARY_PATH_NOT_FOUND("임시 경로가 존재하지 않습니다."),
-    PATH_SEARCH_RESULT_NOT_FOUND("경로 탐색 결과가 존재하지 않습니다.");
+    PATH_SEARCH_RESULT_NOT_FOUND("경로 탐색 결과가 존재하지 않습니다."),
+
+    /**
+     * INTERNAL_SERVER_ERROR
+     */
+    DOMAIN_INITIALIZATION_FAILED("도메인 초기화에 실패하였습니다.");
 
     private final String errorMessage;
 
