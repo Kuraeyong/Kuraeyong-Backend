@@ -1,9 +1,11 @@
 package kuraeyong.backend.manager;
 
+import kuraeyong.backend.domain.constant.SortType;
 import kuraeyong.backend.domain.path.ActualPath;
 import kuraeyong.backend.domain.path.ActualPaths;
 import kuraeyong.backend.domain.path.MetroPath;
 import kuraeyong.backend.domain.path.MoveInfos;
+import kuraeyong.backend.domain.station.congestion.StationCongestionMap;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +14,9 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class ActualPathsManager {
+
     private final MoveInfosManager moveInfosManager;
+    private final StationCongestionMap stationCongestionMap;
 
     /**
      * 임시 경로 목록과 시간 정보를 이용해 실제 경로 목록을 생성
@@ -62,5 +66,22 @@ public class ActualPathsManager {
         int congestionScore = (front.getCongestionScore() + rear.getCongestionScore()) / 2;
 
         return new ActualPath(totalPath, totalCompressedPath, totalMoveInfos, congestionScore);
+    }
+
+    /**
+     * 실제 경로 목록을 우선순위에 맞게 정렬하여, 최적의 실제 경로를 생성
+     *
+     * @param actualPaths         실제 경로 목록
+     * @param dateType            요일 종류
+     * @param congestionThreshold 혼잡도 임계값
+     * @param sortType            정렬 종류
+     * @return  최적의 실제 경로
+     */
+    public ActualPath createOptimalPath(ActualPaths actualPaths, String dateType, int congestionThreshold, SortType sortType) {
+        if (sortType == SortType.CONGESTION) {
+            stationCongestionMap.setCongestionScoreOfPaths(actualPaths, dateType, congestionThreshold);
+        }
+        actualPaths.sort(sortType);
+        return actualPaths.getOptimalPath();
     }
 }

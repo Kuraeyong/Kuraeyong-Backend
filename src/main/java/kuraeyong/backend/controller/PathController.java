@@ -1,14 +1,9 @@
 package kuraeyong.backend.controller;
 
 import kuraeyong.backend.common.exception.ErrorMessage;
-import kuraeyong.backend.common.exception.PathResultException;
-import kuraeyong.backend.common.response.BaseResponse;
 import kuraeyong.backend.common.response.ResponseStatus;
-import kuraeyong.backend.domain.path.ActualPath;
-import kuraeyong.backend.domain.path.UserMoveInfos;
 import kuraeyong.backend.dto.UserMoveInfosDto;
 import kuraeyong.backend.service.PathService;
-import kuraeyong.backend.util.DateUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,67 +19,13 @@ public class PathController {
 
     private final PathService pathService;
 
-    /**
-     * 환승역 번호   0~268 (총 환승역 269개)
-     */
     @PostMapping("")
     public ResponseStatus searchPath(@RequestBody UserMoveInfosDto.Request pathSearchRequest) {
         validatePathSearchRequest(pathSearchRequest);
-
         if (isDirectSearchPath(pathSearchRequest.getStopoverStinNm())) {
-            ActualPath actualPath = pathService.searchPath(pathSearchRequest.getOrgStinNm(),
-                    pathSearchRequest.getDestStinNm(),
-                    pathSearchRequest.getDateType(),
-                    pathSearchRequest.getHour(),
-                    pathSearchRequest.getMin(),
-                    pathSearchRequest.getCongestionThreshold(),
-                    pathSearchRequest.getConvenience(),
-                    null,
-                    -1,
-                    pathSearchRequest.getSortType());
-            if (isEmpty(actualPath)) {
-                throw new PathResultException(ErrorMessage.PATH_RESULT_NOT_FOUND);
-            }
-            UserMoveInfos userMoveInfos = pathService.createUserMoveInfos(actualPath, null, -1);
-            System.out.println(userMoveInfos);
-            return new BaseResponse<>(new UserMoveInfosDto.Response(userMoveInfos));
+            return pathService.searchDirectPath(pathSearchRequest);
         }
-        ActualPath actualPathBeforeStopoverStin = pathService.searchPath(pathSearchRequest.getOrgStinNm(),
-                pathSearchRequest.getStopoverStinNm(),
-                pathSearchRequest.getDateType(),
-                pathSearchRequest.getHour(),
-                pathSearchRequest.getMin(),
-                pathSearchRequest.getCongestionThreshold(),
-                pathSearchRequest.getConvenience(),
-                null,
-                -1,
-                pathSearchRequest.getSortType());
-        if (isEmpty(actualPathBeforeStopoverStin)) {
-            throw new PathResultException(ErrorMessage.PATH_RESULT_NOT_FOUND);
-        }
-        int stopoverTime = pathSearchRequest.getStopoverTime();
-        String stopoverDptTm = actualPathBeforeStopoverStin.getFinalArvTm();
-        ActualPath actualPathAfterStopoverStin = pathService.searchPath(pathSearchRequest.getStopoverStinNm(),
-                pathSearchRequest.getDestStinNm(),
-                pathSearchRequest.getDateType(),
-                DateUtil.getHour(stopoverDptTm),
-                DateUtil.getMinute(stopoverDptTm),
-                pathSearchRequest.getCongestionThreshold(),
-                pathSearchRequest.getConvenience(),
-                actualPathBeforeStopoverStin,
-                stopoverTime,
-                pathSearchRequest.getSortType());
-        if (isEmpty(actualPathAfterStopoverStin)) {
-            throw new PathResultException(ErrorMessage.PATH_RESULT_NOT_FOUND);
-        }
-        ActualPath totalActualPath = pathService.join(actualPathBeforeStopoverStin, actualPathAfterStopoverStin, pathSearchRequest.getDateType());
-        UserMoveInfos userMoveInfos = pathService.createUserMoveInfos(totalActualPath, pathSearchRequest.getStopoverStinNm(), stopoverTime);
-        System.out.println(userMoveInfos);
-        return new BaseResponse<>(new UserMoveInfosDto.Response(userMoveInfos));
-    }
-
-    private boolean isEmpty(ActualPath actualPath) {
-        return actualPath == null;
+        return pathService.searchIndirectPath(pathSearchRequest);
     }
 
     private boolean isDirectSearchPath(String stopoverStinNm) {
