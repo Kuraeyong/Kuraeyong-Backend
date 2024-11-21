@@ -43,12 +43,7 @@ public class StationController {
     }
 
     @GetMapping("/save/station-time-table-result")
-    public String saveStationTimeTableAPIResultToCsv() {
-        return stationService.saveStationTimeTableAPIResultToCsv();
-    }
-
-    @GetMapping("/load-csv")
-    public String loadCsv() {
-        return stationService.loadCsv();
+    public ResponseStatus saveStationTimeTableAPIResult2Csv() {
+        return stationService.saveStationTimeTableApiResult2Csv();
     }
 }
