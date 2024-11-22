@@ -20,4 +20,8 @@ public class StationCongestionManager implements StationDBInitializer {
         stationCongestionRepository.deleteAll();
         return stationCongestionList.size() == stationCongestionRepository.saveAll(stationCongestionList).size();
     }
+
+    public List<StationCongestion> findAll() {
+        return stationCongestionRepository.findAll();
+    }
 }

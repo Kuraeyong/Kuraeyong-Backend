@@ -4,7 +4,7 @@ import jakarta.annotation.PostConstruct;
 import kuraeyong.backend.domain.constant.EdgeType;
 import kuraeyong.backend.domain.station.info.MinimumStationInfo;
 import kuraeyong.backend.domain.station.info.StationInfoMap;
-import kuraeyong.backend.repository.EdgeInfoRepository;
+import kuraeyong.backend.manager.station.EdgeInfoManager;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -17,10 +17,10 @@ import java.util.List;
 @Getter
 @RequiredArgsConstructor
 public class MetroMap {
+    private final EdgeInfoManager edgeInfoManager;
+    private final StationInfoMap stationInfoMap;
     private List<MetroNode> graph;
     private HashMap<String, Integer> lineSeparator;
-    private final EdgeInfoRepository edgeInfoRepository;
-    private final StationInfoMap stationInfoMap;
 
     @PostConstruct
     public void initMap() {
@@ -33,7 +33,7 @@ public class MetroMap {
         int nodeNo = 0;
 
         // 일반 간선 정보 조회
-        for (EdgeInfo edgeInfo : edgeInfoRepository.findNotExpEdgeInfo()) {
+        for (EdgeInfo edgeInfo : edgeInfoManager.findNotExpEdgeInfo()) {
             if (!isSameLine(edgeInfo.getLnCd(), prevLnCd)) {
                 lineSeparator.put(edgeInfo.getLnCd(), nodeNo);
             }
@@ -75,7 +75,7 @@ public class MetroMap {
         graph.add(node);    // 마지막 노드 개별 추가
 
         // 급행 간선 정보 조회
-        for (EdgeInfo edgeInfo : edgeInfoRepository.findByEdgeTypeEquals(1)) {
+        for (EdgeInfo edgeInfo : edgeInfoManager.findByEdgeTypeEquals(1)) {
             MinimumStationInfo MSI = MinimumStationInfo.build(edgeInfo.getRailOprIsttCd(), edgeInfo.getLnCd(), edgeInfo.getStinCd());
             node = getNode(MSI);
             MetroEdge edge = MetroEdge.builder()

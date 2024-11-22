@@ -1,6 +1,6 @@
 package kuraeyong.backend.domain.station.info;
 
-import kuraeyong.backend.repository.StationInfoRepository;
+import kuraeyong.backend.manager.station.StationInfoManager;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
@@ -11,11 +11,11 @@ public class StationInfoMap {
     private final HashMap<MinimumStationInfo, StationInfo> map;
     private final HashSet<String> railOprIsttCds;
 
-    public StationInfoMap(StationInfoRepository stationInfoRepository) {
+    public StationInfoMap(StationInfoManager stationInfoManager) {
         map = new HashMap<>();
         railOprIsttCds = new HashSet<>();
 
-        for (StationInfo row : stationInfoRepository.findAll()) {
+        for (StationInfo row : stationInfoManager.findAll()) {
             MinimumStationInfo key = MinimumStationInfo.builder()
                     .railOprIsttCd(row.getRailOprIsttCd())
                     .lnCd(row.getLnCd())

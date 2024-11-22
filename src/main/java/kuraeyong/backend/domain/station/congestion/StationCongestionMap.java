@@ -7,7 +7,7 @@ import kuraeyong.backend.domain.path.ActualPaths;
 import kuraeyong.backend.domain.path.MetroNodeWithEdge;
 import kuraeyong.backend.domain.station.info.MinimumStationInfo;
 import kuraeyong.backend.domain.station.info.MinimumStationInfoWithDateType;
-import kuraeyong.backend.repository.StationCongestionRepository;
+import kuraeyong.backend.manager.station.StationCongestionManager;
 import kuraeyong.backend.util.DateUtil;
 import org.springframework.stereotype.Component;
 
@@ -19,10 +19,10 @@ import java.util.Set;
 public class StationCongestionMap {
     private final HashMap<MinimumStationInfoWithDateType, StationCongestionList> map;
 
-    public StationCongestionMap(StationCongestionRepository stationCongestionRepository) {
+    public StationCongestionMap(StationCongestionManager stationCongestionManager) {
         map = new HashMap<>();
 
-        for (StationCongestion row : stationCongestionRepository.findAll()) {
+        for (StationCongestion row : stationCongestionManager.findAll()) {
             MinimumStationInfo MSI = MinimumStationInfo.build(row.getRailOprIsttCd(), row.getLnCd(), row.getStinCd());
             MinimumStationInfoWithDateType key = new MinimumStationInfoWithDateType(MSI, row.getDayNm(), DomainType.STATION_CONGESTION);
 

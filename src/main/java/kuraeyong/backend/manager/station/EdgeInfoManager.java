@@ -20,4 +20,16 @@ public class EdgeInfoManager implements StationDBInitializer {
         edgeInfoRepository.deleteAll();
         return edgeInfoList.size() == edgeInfoRepository.saveAll(edgeInfoList).size();
     }
+
+    public List<EdgeInfo> findNotExpEdgeInfo() {
+        return edgeInfoRepository.findNotExpEdgeInfo();
+    }
+
+    public List<EdgeInfo> findByEdgeTypeEquals(int number) {
+        return edgeInfoRepository.findByEdgeTypeEquals(number);
+    }
+
+    public List<EdgeInfo> findByRailOprIsttCdAndLnCdAndStinCd(String railOprIsttCd, String lnCd, String stinCd) {
+        return edgeInfoRepository.findByRailOprIsttCdAndLnCdAndStinCd(railOprIsttCd, lnCd, stinCd);
+    }
 }

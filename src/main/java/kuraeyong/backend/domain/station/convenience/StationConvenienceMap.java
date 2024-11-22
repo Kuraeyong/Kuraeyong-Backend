@@ -1,7 +1,7 @@
 package kuraeyong.backend.domain.station.convenience;
 
 import kuraeyong.backend.domain.constant.ConvenienceType;
-import kuraeyong.backend.repository.StationConvenienceRepository;
+import kuraeyong.backend.manager.station.StationConvenienceManager;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -12,10 +12,10 @@ import java.util.List;
 public class StationConvenienceMap {
     private final HashMap<String, StationConvenienceBits> map;
 
-    public StationConvenienceMap(StationConvenienceRepository stationConvenienceRepository) {
+    public StationConvenienceMap(StationConvenienceManager stationConvenienceManager) {
         map = new HashMap<>();
 
-        for (StationConvenience row : stationConvenienceRepository.findAll()) {
+        for (StationConvenience row : stationConvenienceManager.findAll()) {
             StationConvenienceBits stationConvenienceBits = StationConvenienceBits.builder()
                     .elevator(row.getElevator() == 1)
                     .disabledToilet(row.getDisabledToilet() == 1)

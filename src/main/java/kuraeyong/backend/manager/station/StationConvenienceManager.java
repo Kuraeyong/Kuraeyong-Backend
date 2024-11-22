@@ -20,4 +20,8 @@ public class StationConvenienceManager implements StationDBInitializer {
         stationConvenienceRepository.deleteAll();
         return stationConvenienceList.size() == stationConvenienceRepository.saveAll(stationConvenienceList).size();
     }
+
+    public List<StationConvenience> findAll() {
+        return stationConvenienceRepository.findAll();
+    }
 }

@@ -2,6 +2,8 @@ package kuraeyong.backend.manager.station;
 
 import kuraeyong.backend.common.exception.ErrorMessage;
 import kuraeyong.backend.domain.station.info.StationInfo;
+import kuraeyong.backend.domain.station.time_table.StationTimeTableElement;
+import kuraeyong.backend.repository.StationTimeTableElementRepository;
 import kuraeyong.backend.util.OpenApiUtil;
 import lombok.RequiredArgsConstructor;
 import org.json.simple.JSONArray;
@@ -24,7 +26,9 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class StationTimeTableManager {
+public class StationTimeTableElementManager {
+    private final StationTimeTableElementRepository stationTimeTableElementRepository;
+
     private final static String NEW_LINE = System.lineSeparator();
     private final static String DELIMITER = ",";
     private static String csvFilePath;
@@ -38,6 +42,10 @@ public class StationTimeTableManager {
     @Value("${log-file-path}")
     public void setLogFilePath(String path) {
         logFilePath = path;
+    }
+
+    public List<StationTimeTableElement> findAll() {
+        return stationTimeTableElementRepository.findAll();
     }
 
     /**

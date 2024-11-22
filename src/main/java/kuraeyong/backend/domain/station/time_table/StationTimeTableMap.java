@@ -3,7 +3,7 @@ package kuraeyong.backend.domain.station.time_table;
 import kuraeyong.backend.domain.constant.DomainType;
 import kuraeyong.backend.domain.station.info.MinimumStationInfo;
 import kuraeyong.backend.domain.station.info.MinimumStationInfoWithDateType;
-import kuraeyong.backend.repository.StationTimeTableElementRepository;
+import kuraeyong.backend.manager.station.StationTimeTableElementManager;
 import kuraeyong.backend.util.DateUtil;
 import org.springframework.stereotype.Component;
 
@@ -20,11 +20,11 @@ public class StationTimeTableMap {
     private final static MinimumStationInfo EUNGAM = MinimumStationInfo.build("S1", "6", "2611");
     public final static MinimumStationInfo K2_KWANGWOON = MinimumStationInfo.build("KR", "K2", "119");
 
-    public StationTimeTableMap(StationTimeTableElementRepository stationTimeTableElementRepository) {
+    public StationTimeTableMap(StationTimeTableElementManager stationTimeTableElementManager) {
         map = new HashMap<>();
 
         // 열차 정보 초기화
-        for (StationTimeTableElement train : stationTimeTableElementRepository.findAll()) {
+        for (StationTimeTableElement train : stationTimeTableElementManager.findAll()) {
             if (train.isOrgStin() && train.isTmnStin()) {   // 시간 정보가 유효하지 않은 열차 정보라면
                 continue;
             }

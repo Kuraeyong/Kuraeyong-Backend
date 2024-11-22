@@ -42,7 +42,7 @@ public class GraphForPathSearch {
         String lnCd = minimumStationInfo.getLnCd();
         String stinCd = minimumStationInfo.getStinCd();
         MinimumStationInfo key = MinimumStationInfo.build(railOprIsttCd, lnCd, stinCd);
-        List<EdgeInfo> edgeInfoList = metroMap.getEdgeInfoRepository().findByRailOprIsttCdAndLnCdAndStinCd(railOprIsttCd, lnCd, stinCd);
+        List<EdgeInfo> edgeInfoList = metroMap.getEdgeInfoManager().findByRailOprIsttCdAndLnCdAndStinCd(railOprIsttCd, lnCd, stinCd);
         EdgeInfo anyEdgeInfo = edgeInfoList.get(0);
         if (isGeneralStin(anyEdgeInfo)) {
             // 새로운 노드(일반역) 생성

@@ -3,7 +3,7 @@ package kuraeyong.backend.domain.station.trf_weight;
 import kuraeyong.backend.domain.constant.BranchDirectionType;
 import kuraeyong.backend.domain.constant.DirectionType;
 import kuraeyong.backend.domain.station.info.MinimumStationInfo;
-import kuraeyong.backend.repository.StationTrfWeightRepository;
+import kuraeyong.backend.manager.station.StationTrfWeightManager;
 import lombok.Getter;
 import org.springframework.stereotype.Component;
 
@@ -14,10 +14,10 @@ import java.util.HashMap;
 public class StationTrfWeightMap {
     private final HashMap<MinimumStationInfo, StationTrfWeightList> map;
 
-    public StationTrfWeightMap(StationTrfWeightRepository stationTrfWeightRepository) {
+    public StationTrfWeightMap(StationTrfWeightManager stationTrfWeightManager) {
         map = new HashMap<>();
 
-        for (StationTrfWeight row : stationTrfWeightRepository.findAll()) {
+        for (StationTrfWeight row : stationTrfWeightManager.findAll()) {
             MinimumStationInfo key = MinimumStationInfo.build(row.getRailOprIsttCd(), row.getLnCd(), row.getStinCd());
 
             if (!map.containsKey(key)) {

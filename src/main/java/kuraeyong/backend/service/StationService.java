@@ -11,7 +11,7 @@ import kuraeyong.backend.manager.station.StationCongestionManager;
 import kuraeyong.backend.manager.station.StationConvenienceManager;
 import kuraeyong.backend.manager.station.StationDBInitializer;
 import kuraeyong.backend.manager.station.StationInfoManager;
-import kuraeyong.backend.manager.station.StationTimeTableManager;
+import kuraeyong.backend.manager.station.StationTimeTableElementManager;
 import kuraeyong.backend.manager.station.StationTrfWeightManager;
 import kuraeyong.backend.util.FlatFileUtil;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class StationService {
     private final StationCongestionManager stationCongestionManager;
     private final StationConvenienceManager stationConvenienceManager;
     private final EdgeInfoManager edgeInfoManager;
-    private final StationTimeTableManager stationTimeTableManager;
+    private final StationTimeTableElementManager stationTimeTableElementManager;
 
     private final static String BASE_URL = "src/main/resources/xlsx/";
 
@@ -62,6 +62,16 @@ public class StationService {
     }
 
     /**
+     * 역사 시간표 API 응답 결과를 역사 시간표 파일에 저장
+     *
+     * @return 응답 결과 저장 성공 여부
+     */
+    public ResponseStatus saveStationTimeTableApiResult2Csv() {
+        stationTimeTableElementManager.saveApiResult2Csv(stationInfoManager.findAll());
+        return new BaseResponse<>();
+    }
+
+    /**
      * 파일 종류에 맞는 매니저를 반환
      *
      * @param fileType 파일 종류
@@ -81,15 +91,5 @@ public class StationService {
             return stationConvenienceManager;
         }
         return edgeInfoManager;
-    }
-
-    /**
-     * 역사 시간표 API 응답 결과를 역사 시간표 파일에 저장
-     *
-     * @return 응답 결과 저장 성공 여부
-     */
-    public ResponseStatus saveStationTimeTableApiResult2Csv() {
-        stationTimeTableManager.saveApiResult2Csv(stationInfoManager.findAll());
-        return new BaseResponse<>();
     }
 }

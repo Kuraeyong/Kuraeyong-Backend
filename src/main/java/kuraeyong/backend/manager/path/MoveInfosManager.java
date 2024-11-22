@@ -71,6 +71,34 @@ public class MoveInfosManager {
     }
 
     /**
+     * 두 이동 정보 목록을 연결한, 새로운 이동 정보 목록 반환
+     *
+     * @param front    출발역에서 경유역까지의 이동 정보 목록
+     * @param rear     경유역에서 도착역까지의 이동 정보 목록
+     * @param dateType 요일 종류
+     * @return 연결된 이동 정보 목록
+     */
+    public MoveInfos join(MoveInfos front, MoveInfos rear, String dateType) {
+        MoveInfos moveInfos = new MoveInfos(front);
+
+        // 환승 경유인 경우 무브인포 추가
+        MoveInfo moveInfo = rear.get(0);
+        if (!moveInfo.getArvTm().equals(moveInfo.getDptTm())) {
+            moveInfos.add(moveInfo);
+        }
+
+        // 남은 무브인포 연결
+        for (int i = 1; i < rear.size(); i++) {
+            moveInfos.add(new MoveInfo(rear.get(i)));
+        }
+
+        // 환승 정보 재설정
+        setTrfInfo(moveInfos, dateType);
+
+        return moveInfos;
+    }
+
+    /**
      * 시간표 조회를 수행할 현재 시간을 생성
      *
      * @param hour               시간
@@ -270,34 +298,5 @@ public class MoveInfosManager {
         moveInfos.get(moveInfos.size() - 1).setTrnGroupNo(trnGroupNo);
         moveInfos.setTrfCnt(trfCnt);
         moveInfos.setTotalTrfTime(totalTrfTime);
-    }
-
-
-    /**
-     * 두 이동 정보 목록을 연결한, 새로운 이동 정보 목록 반환
-     *
-     * @param front    출발역에서 경유역까지의 이동 정보 목록
-     * @param rear     경유역에서 도착역까지의 이동 정보 목록
-     * @param dateType 요일 종류
-     * @return 연결된 이동 정보 목록
-     */
-    public MoveInfos join(MoveInfos front, MoveInfos rear, String dateType) {
-        MoveInfos moveInfos = new MoveInfos(front);
-
-        // 환승 경유인 경우 무브인포 추가
-        MoveInfo moveInfo = rear.get(0);
-        if (!moveInfo.getArvTm().equals(moveInfo.getDptTm())) {
-            moveInfos.add(moveInfo);
-        }
-
-        // 남은 무브인포 연결
-        for (int i = 1; i < rear.size(); i++) {
-            moveInfos.add(new MoveInfo(rear.get(i)));
-        }
-
-        // 환승 정보 재설정
-        setTrfInfo(moveInfos, dateType);
-
-        return moveInfos;
     }
 }

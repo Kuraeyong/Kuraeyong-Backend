@@ -20,4 +20,8 @@ public class StationTrfWeightManager implements StationDBInitializer {
         stationTrfWeightRepository.deleteAll();
         return stationTrfWeightList.size() == stationTrfWeightRepository.saveAll(stationTrfWeightList).size();
     }
+
+    public List<StationTrfWeight> findAll() {
+        return stationTrfWeightRepository.findAll();
+    }
 }
