@@ -73,20 +73,21 @@ public class PathSearchResult {
             if (!pathSearchSegment.isStopOverStin(stopoverStinNm)) {
                 continue;
             }
+            int trfTime = pathSearchSegment.getRequiredTime() - stopoverTime;
             pathSearchSegments.add(i, PathSearchSegment.of(
-                    "경유",
+                    pathSearchSegment.getLnCd(),
                     pathSearchSegment.getOrgStinNm(),
                     pathSearchSegment.getDestStinNm(),
                     pathSearchSegment.getOrgTm(),
-                    DateUtil.plusMinutes(pathSearchSegment.getOrgTm(), stopoverTime),
+                    DateUtil.plusMinutes(pathSearchSegment.getOrgTm(), trfTime),
                     null,
                     null
             ));
             pathSearchSegments.add(i + 1, PathSearchSegment.of(
-                    pathSearchSegment.getLnCd(),
+                    "경유",
                     pathSearchSegment.getOrgStinNm(),
                     pathSearchSegment.getDestStinNm(),
-                    DateUtil.plusMinutes(pathSearchSegment.getOrgTm(), stopoverTime),
+                    DateUtil.plusMinutes(pathSearchSegment.getOrgTm(), trfTime),
                     pathSearchSegment.getDestTm(),
                     null,
                     null
