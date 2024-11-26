@@ -49,7 +49,7 @@ public class PathSearchResultManager {
                     firstMoveInfoWithSameTrn.getDptTm(),
                     prev.getArvTm(),
                     firstMoveInfoWithSameTrn.getTmnStinNm(),
-                    DirectionType.get(firstMoveInfoWithSameTrn.getTrnNo())
+                    DirectionType.get(prev.getLnCd(), firstMoveInfoWithSameTrn.getTrnNo())
             ));
             firstMoveInfoIdxWithSameTrn = i;    // update
 
@@ -76,7 +76,7 @@ public class PathSearchResultManager {
                 firstMoveInfoWithSameTrn.getDptTm(),
                 moveInfos.get(moveInfos.size() - 1).getArvTm(),
                 firstMoveInfoWithSameTrn.getTmnStinNm(),
-                DirectionType.get(firstMoveInfoWithSameTrn.getTrnNo())
+                DirectionType.get(moveInfos.get(moveInfos.size() - 1).getLnCd(), firstMoveInfoWithSameTrn.getTrnNo())
         ));
         return new PathSearchResult(pathSearchSegments, optimalPath.getTotalTime(), optimalPath.getCongestionScore(), stopoverStinNm, stopoverTime);
     }

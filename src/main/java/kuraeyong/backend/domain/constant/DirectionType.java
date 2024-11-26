@@ -36,14 +36,28 @@ public enum DirectionType {
         return null;
     }
 
-    public static String get(String trnNo) {
+    public static String get(String lnCd, String trnNo) {
         if (trnNo == null) {
             return null;
         }
         int lastNumber = trnNo.charAt(trnNo.length() - 1) - '0';
+        if (lnCd == null || !isCircularLineOfLine2(lnCd, trnNo)) {
+            return determineDirection(lastNumber);
+        }
+        if (lastNumber % 2 == 0) {
+            return "내선";
+        }
+        return "외선";
+    }
+
+    private static String determineDirection(int lastNumber) {
         if (lastNumber % 2 == 0) {
             return UP.get();
         }
         return DOWN.get();
+    }
+
+    private static boolean isCircularLineOfLine2(String lnCd, String trnNo) {
+        return lnCd.equals("2") && trnNo.startsWith("2");
     }
 }
