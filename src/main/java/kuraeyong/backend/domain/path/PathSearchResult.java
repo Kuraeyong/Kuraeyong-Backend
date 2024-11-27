@@ -46,6 +46,17 @@ public class PathSearchResult {
     public List<PathSearchSegmentDto.Response> toDto() {
         List<PathSearchSegmentDto.Response> pathSearchSegmentsDto = new ArrayList<>();
         pathSearchSegments.forEach(pathSearchSegment -> pathSearchSegmentsDto.add(new PathSearchSegmentDto.Response(pathSearchSegment)));
+        // 도착 포인트 추가
+        PathSearchSegment last = pathSearchSegments.get(pathSearchSegments.size() - 1);
+        pathSearchSegmentsDto.add(new PathSearchSegmentDto.Response(PathSearchSegment.of(
+                last.getLnCd(),
+                last.getDestStinNm(),
+                null,
+                last.getDestTm(),
+                last.getDestTm(),
+                null,
+                null
+        )));
         return pathSearchSegmentsDto;
     }
 
