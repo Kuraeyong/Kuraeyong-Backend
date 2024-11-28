@@ -94,7 +94,7 @@ public class ActualPath implements Comparable<ActualPath> {
     @Override
     public int compareTo(ActualPath o) {
         if (!getFinalArvTm().equals(o.getFinalArvTm())) {    // 도착시간이 다르면
-            return getFinalArvTm().compareTo(o.getFinalArvTm());
+            return Integer.compare(DateUtil.getTimeForCompare(getFinalArvTm()), DateUtil.getTimeForCompare(o.getFinalArvTm()));
         }
         if (getTrfCnt() != o.getTrfCnt()) {    // 환승횟수가 다르면
             return Integer.compare(getTrfCnt(), o.getTrfCnt());
