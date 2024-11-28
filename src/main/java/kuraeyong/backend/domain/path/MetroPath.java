@@ -186,11 +186,7 @@ public class MetroPath implements Comparable<MetroPath> {
                 next.setDirection(DirectionType.DOWN);
                 continue;
             }
-            if (curr.getUpDownOrder() > next.getUpDownOrder()) {
-                next.setDirection(DirectionType.UP);
-                continue;
-            }
-            next.setDirection(DirectionType.DOWN);
+            setDirectionByUpDownOrder(curr, next);
         }
         get(0).setDirection(get(1).getDirection());
 
@@ -235,5 +231,21 @@ public class MetroPath implements Comparable<MetroPath> {
     @Override
     public int compareTo(MetroPath o) {
         return Double.compare(this.getTotalWeight(), o.getTotalWeight());
+    }
+
+    private void setDirectionByUpDownOrder(MetroNodeWithEdge curr, MetroNodeWithEdge next) {
+        if (curr.getUpDownOrder() > next.getUpDownOrder()) {
+            if (curr.getLnCd().equals("2") && Math.abs(curr.getUpDownOrder() - next.getUpDownOrder()) > 21) {   // FIXME. 순환선 역 개수의 절반을 구하는 방법
+                next.setDirection(DirectionType.DOWN);
+                return;
+            }
+            next.setDirection(DirectionType.UP);
+            return;
+        }
+        if (curr.getLnCd().equals("2") && Math.abs(curr.getUpDownOrder() - next.getUpDownOrder()) > 21) {
+            next.setDirection(DirectionType.UP);
+            return;
+        }
+        next.setDirection(DirectionType.DOWN);
     }
 }
