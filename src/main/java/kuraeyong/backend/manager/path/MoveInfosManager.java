@@ -17,6 +17,7 @@ import kuraeyong.backend.domain.station.time_table.StationTimeTableElement;
 import kuraeyong.backend.domain.station.time_table.StationTimeTableMap;
 import kuraeyong.backend.domain.station.trf_weight.StationTrfWeightMap;
 import kuraeyong.backend.util.DateUtil;
+import kuraeyong.backend.util.StringUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -252,6 +253,9 @@ public class MoveInfosManager {
             }
             MinimumStationInfoWithDateType B_Key = MinimumStationInfoWithDateType.get(compressedPath.get(i), dateType, DomainType.STATION_TIME_TABLE);
             StationTimeTableElement B_Train = stationTimeTableMap.getStoppingTrainAfterCurrTime(B_Key, TO_C.getTrnNo(), TO_B.getArvTm());
+            if (StringUtil.isNullString(B_Train.getArvTm())) {
+                continue;
+            }
 
             // 불필요한 환승 제거
             TO_B.setTmnStinNm(TO_C.getTmnStinNm());

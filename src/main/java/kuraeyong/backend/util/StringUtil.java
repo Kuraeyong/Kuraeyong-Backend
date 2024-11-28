@@ -26,4 +26,8 @@ public class StringUtil {
         }
         return sb.toString();
     }
+
+    public static boolean isNullString(String str) {
+        return str.equals("null");
+    }
 }

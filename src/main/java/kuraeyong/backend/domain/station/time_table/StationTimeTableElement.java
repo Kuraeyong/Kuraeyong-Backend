@@ -81,11 +81,11 @@ public class StationTimeTableElement implements Comparable<StationTimeTableEleme
 
     // 기점이면 (엄밀하게는, 도착시간이 유효한 시간 정보가 아니라면)
     public boolean isOrgStin() {
-        return DateUtil.isValidTime(arvTm);
+        return !DateUtil.isValidTime(arvTm);
     }
 
     // 종점이면 (엄밀하게는, 출발시간이 유효한 시간 정보가 아니라면)
     public boolean isTmnStin() {
-        return DateUtil.isValidTime(dptTm);
+        return !DateUtil.isValidTime(dptTm);
     }
 }

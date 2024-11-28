@@ -37,7 +37,7 @@ public class DateUtil {
     }
 
     public static int getTimeForCompare(String arvTm, String dptTm) {
-        int time = isValidTime(dptTm) ? Integer.parseInt(arvTm) : Integer.parseInt(dptTm);
+        int time = isValidTime(dptTm) ? Integer.parseInt(dptTm) : Integer.parseInt(arvTm);
 
         return (time < DATE_CHANGE_TIME) ? time + CORRECTION_VALUE : time;
     }
@@ -90,7 +90,7 @@ public class DateUtil {
     }
 
     public static boolean isValidTime(String str) {
-        return !str.matches("[0-9]{6}");
+        return str.matches("[0-9]{6}");
     }
 
     public static int getHour(String time) {
