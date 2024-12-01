@@ -15,11 +15,15 @@ public class PathSearchResult {
     private final List<PathSearchSegment> pathSearchSegments;
     private final int totalRequiredTime;
     private final int congestionScore;
+    private final int avgCongestion;
+    private final int maxCongestion;
 
-    public PathSearchResult(List<PathSearchSegment> pathSearchSegments, int totalRequiredTime, int congestionScore, String stopoverStinNm, int stopoverTime) {
+    public PathSearchResult(List<PathSearchSegment> pathSearchSegments, int totalRequiredTime, int congestionScore, int avgCongestion, int maxCongestion, String stopoverStinNm, int stopoverTime) {
         this.pathSearchSegments = pathSearchSegments;
         this.totalRequiredTime = totalRequiredTime;
         this.congestionScore = congestionScore;
+        this.avgCongestion = avgCongestion;
+        this.maxCongestion = maxCongestion;
         setStopoverInfo(stopoverStinNm, stopoverTime);
     }
 
@@ -68,6 +72,8 @@ public class PathSearchResult {
         sb.append("환승 횟수: ").append(getTotalTrfCnt()).append("회\n");
         sb.append("총 환승시간: ").append(getTotalTrfTime()).append("분\n");
         sb.append("혼잡도 점수: ").append(congestionScore).append("\n");
+        sb.append("평균 혼잡도: ").append(avgCongestion).append("\n");
+        sb.append("최대 혼잡도: ").append(maxCongestion).append("\n");
         sb.append("노선\t\t").append(StringUtil.equalizeStinNmLen("출발역")).append(StringUtil.equalizeStinNmLen("도착역")).append(StringUtil.equalizeStinNmLen("시간")).append("방향\n");
         sb.append("-".repeat(105)).append('\n');
         pathSearchSegments.forEach(sb::append);

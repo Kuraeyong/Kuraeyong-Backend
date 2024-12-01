@@ -64,8 +64,12 @@ public class ActualPathsManager {
 
         // 혼잡도 점수 계산
         int congestionScore = (front.getCongestionScore() + rear.getCongestionScore()) / 2;
+        int avgCongestion = isValidCongestion(front.getAvgCongestion(), rear.getAvgCongestion()) ?
+                (front.getAvgCongestion() + rear.getAvgCongestion()) / 2 : -1;
+        int maxCongestion = isValidCongestion(front.getAvgCongestion(), rear.getAvgCongestion()) ?
+                Math.max(front.getMaxCongestion(), rear.getMaxCongestion()) : -1;
 
-        return new ActualPath(totalPath, totalCompressedPath, totalMoveInfos, congestionScore);
+        return new ActualPath(totalPath, totalCompressedPath, totalMoveInfos, congestionScore, avgCongestion, maxCongestion);
     }
 
     /**
@@ -83,5 +87,9 @@ public class ActualPathsManager {
         }
         actualPaths.sort(sortType);
         return actualPaths.getOptimalPath();
+    }
+
+    private boolean isValidCongestion(int frontCongestion, int rearCongestion) {
+        return frontCongestion != -1 && rearCongestion != -1;
     }
 }

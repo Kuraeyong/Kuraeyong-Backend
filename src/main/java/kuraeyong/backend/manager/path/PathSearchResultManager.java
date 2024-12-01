@@ -78,7 +78,8 @@ public class PathSearchResultManager {
                 firstMoveInfoWithSameTrn.getTmnStinNm(),
                 DirectionType.get(moveInfos.get(moveInfos.size() - 1).getLnCd(), firstMoveInfoWithSameTrn.getTrnNo())
         ));
-        return new PathSearchResult(pathSearchSegments, optimalPath.getTotalTime(), optimalPath.getCongestionScore(), stopoverStinNm, stopoverTime);
+        return new PathSearchResult(pathSearchSegments, optimalPath.getTotalTime(), optimalPath.getCongestionScore(),
+                optimalPath.getAvgCongestion(), optimalPath.getMaxCongestion(), stopoverStinNm, stopoverTime);
     }
 
     private String determineLnCd(String lnCd) {

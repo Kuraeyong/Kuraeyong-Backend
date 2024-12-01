@@ -27,12 +27,16 @@ public class PathSearchResultDto {
         private final int totalRequiredTime;
         private final int totalTrfCnt;
         private final int totalTrfTime;
+        private final int avgCongestion;
+        private final int maxCongestion;
         private final List<PathSearchSegmentDto.Response> pathSearchSegmentsDto;
 
         public Response(PathSearchResult pathSearchResult) {
             this.totalRequiredTime = pathSearchResult.getTotalRequiredTime();
             this.totalTrfCnt = pathSearchResult.getTotalTrfCnt();
             this.totalTrfTime = pathSearchResult.getTotalTrfTime();
+            this.avgCongestion = pathSearchResult.getAvgCongestion();
+            this.maxCongestion = pathSearchResult.getMaxCongestion();
             this.pathSearchSegmentsDto = pathSearchResult.toDto();
             determineLnCdAndStinType();
         }

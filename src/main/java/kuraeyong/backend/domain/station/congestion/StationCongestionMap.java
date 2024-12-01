@@ -49,6 +49,9 @@ public class StationCongestionMap {
         final int CONGESTION_PENALTY = 10000;
         final int UNKNOWN_CONGESTION = 1000000;
         int congestionScore = 0;
+        int congestionCount = 0;
+        double totalCongestion = 0;
+        double maxCongestion = -1;
 
         List<MetroNodeWithEdge> path = actualPath.getIterablePath();
         for (int i = 0; i < path.size(); i++) {
@@ -70,6 +73,11 @@ public class StationCongestionMap {
                 return;
             }
 
+            // 최대, 평균 혼잡도 계산
+            congestionCount++;
+            totalCongestion += congestion;
+            maxCongestion = Math.max(maxCongestion, congestion);
+
             // 혼잡도 점수 계산
             if (congestion <= congestionThreshold) {
                 continue;
@@ -82,6 +90,8 @@ public class StationCongestionMap {
             congestionScore++;
         }
         actualPath.setCongestionScore(congestionScore);
+        actualPath.setAvgCongestion(congestionCount == 0 ? -1 : (int) totalCongestion / congestionCount);
+        actualPath.setMaxCongestion((int) maxCongestion);
     }
 
     /**

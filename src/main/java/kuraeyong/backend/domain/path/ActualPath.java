@@ -16,6 +16,10 @@ public class ActualPath implements Comparable<ActualPath> {
     private final MoveInfos moveInfos;
     @Setter
     private int congestionScore;
+    @Setter
+    private int avgCongestion;
+    @Setter
+    private int maxCongestion;
 
     public ActualPath(MetroPath path, MetroPath compressedPath, MoveInfos moveInfos) {
         this.path = path;
@@ -85,10 +89,14 @@ public class ActualPath implements Comparable<ActualPath> {
 
     @Override
     public String toString() {
-        return path + "\n" +
-                compressedPath + "\n" +
-                moveInfos + "\n" +
-                congestionScore;
+        return "ActualPath{" +
+                "path=" + path +
+                ", compressedPath=" + compressedPath +
+                ", moveInfos=" + moveInfos +
+                ", congestionScore=" + congestionScore +
+                ", avgCongestion=" + avgCongestion +
+                ", maxCongestion=" + maxCongestion +
+                '}';
     }
 
     @Override
