@@ -61,16 +61,16 @@ public class StationCongestionMap {
             MinimumStationInfoWithDateType key = new MinimumStationInfoWithDateType(MSI, dateType, DomainType.STATION_CONGESTION);
             StationCongestionList stationCongestionList = map.get(key);
             if (stationCongestionList == null) {
-                actualPath.setCongestionScore(UNKNOWN_CONGESTION);
-                return;
+                congestionScore = UNKNOWN_CONGESTION;
+                break;
             }
 
             // 해당 시간대에 혼잡도 정보를 제공하는지 검사
             String time = DateUtil.passingTimeToCongestionTime(curr.getPassingTime());
             double congestion = stationCongestionList.get(curr.getDirection()).getTime(time);
             if (congestion == -1) {
-                actualPath.setCongestionScore(UNKNOWN_CONGESTION);
-                return;
+                congestionScore = UNKNOWN_CONGESTION;
+                break;
             }
 
             // 최대, 평균 혼잡도 계산
