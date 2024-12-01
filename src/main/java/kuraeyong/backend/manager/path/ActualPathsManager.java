@@ -82,9 +82,7 @@ public class ActualPathsManager {
      * @return 최적의 실제 경로
      */
     public ActualPath createOptimalPath(ActualPaths actualPaths, String dateType, int congestionThreshold, SortType sortType) {
-        if (sortType == SortType.CONGESTION) {
-            stationCongestionMap.setCongestionScoreOfPaths(actualPaths, dateType, congestionThreshold);
-        }
+        stationCongestionMap.setCongestionScoreOfPaths(actualPaths, dateType, congestionThreshold);
         actualPaths.sort(sortType);
         return actualPaths.getOptimalPath();
     }
