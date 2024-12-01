@@ -17,6 +17,9 @@ import java.util.Set;
 
 @Component
 public class StationCongestionMap {
+    private static final int CONGESTION_PENALTY = 10000;
+    private static final int UNKNOWN_CONGESTION = 1000000;
+
     private final HashMap<MinimumStationInfoWithDateType, StationCongestionList> map;
 
     public StationCongestionMap(StationCongestionManager stationCongestionManager) {
@@ -46,8 +49,6 @@ public class StationCongestionMap {
     }
 
     private void setCongestionScoreOfPath(ActualPath actualPath, String dateType, int congestionThreshold) {
-        final int CONGESTION_PENALTY = 10000;
-        final int UNKNOWN_CONGESTION = 1000000;
         int congestionScore = 0;
         int congestionCount = 0;
         double totalCongestion = 0;
@@ -90,8 +91,8 @@ public class StationCongestionMap {
             congestionScore++;
         }
         actualPath.setCongestionScore(congestionScore);
-        actualPath.setAvgCongestion(congestionCount == 0 ? -1 : (int) totalCongestion / congestionCount);
-        actualPath.setMaxCongestion((int) maxCongestion);
+        actualPath.setAvgCongestion(isValidCongestionScore(congestionScore, congestionCount) ? (int) totalCongestion / congestionCount : -1);
+        actualPath.setMaxCongestion(isValidCongestionScore(congestionScore, congestionCount) ? (int) maxCongestion : -1);
     }
 
     /**
@@ -110,5 +111,9 @@ public class StationCongestionMap {
             return true;
         }
         return (curr.getEdgeType() == EdgeType.TRF_EDGE) || (next.getEdgeType() == EdgeType.TRF_EDGE);  // 환승역
+    }
+
+    private boolean isValidCongestionScore(int congestionScore, int congestionCount) {
+        return congestionScore < UNKNOWN_CONGESTION && congestionCount != 0;
     }
 }
