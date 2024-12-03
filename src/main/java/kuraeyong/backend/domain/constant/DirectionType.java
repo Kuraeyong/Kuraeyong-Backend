@@ -1,5 +1,7 @@
 package kuraeyong.backend.domain.constant;
 
+import kuraeyong.backend.util.StringUtil;
+
 public enum DirectionType {
     UP("상행"),
     DOWN("하행"),
@@ -40,9 +42,9 @@ public enum DirectionType {
         if (trnNo == null) {
             return null;
         }
-        int lastNumber = trnNo.charAt(trnNo.length() - 1) - '0';
+        int lastNumber = StringUtil.getLastNumber(trnNo);
         if (lnCd == null || !isCircularLineOfLine2(lnCd, trnNo)) {
-            return determineDirection(lastNumber);
+            return determineDirection(lastNumber).get();
         }
         if (lastNumber % 2 == 0) {
             return "내선";
@@ -50,11 +52,11 @@ public enum DirectionType {
         return "외선";
     }
 
-    private static String determineDirection(int lastNumber) {
+    private static DirectionType determineDirection(int lastNumber) {
         if (lastNumber % 2 == 0) {
-            return UP.get();
+            return UP;
         }
-        return DOWN.get();
+        return DOWN;
     }
 
     private static boolean isCircularLineOfLine2(String lnCd, String trnNo) {

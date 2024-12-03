@@ -237,22 +237,29 @@ public class MoveInfosManager {
             MoveInfo TO_A = moveInfos.get(i - 1);
             MoveInfo TO_B = moveInfos.get(i);
             MoveInfo TO_C = moveInfos.get(i + 1);
-            if (TO_B.getTrnNo() == null || TO_C.getTrnNo() == null) {
+            String TO_B_TrnNo = TO_B.getTrnNo();
+            String TO_C_TrnNo = TO_C.getTrnNo();
+            String TO_B_LnCd = TO_B.getLnCd();
+            String TO_C_LnCd = TO_C.getLnCd();
+            if (TO_B_TrnNo == null || TO_C_TrnNo == null) {
                 continue;
             }
-            if (!TO_B.getLnCd().equals(TO_C.getLnCd())) {
+            if (!TO_B_LnCd.equals(TO_C_LnCd)) {
                 continue;
             }
-            if (stationTimeTableMap.isSameTrain(TO_B.getTrnNo(), TO_C.getTrnNo(), TO_B.getLnCd(), dateType)) {
+            if (stationTimeTableMap.isSameTrain(TO_B_TrnNo, TO_C_TrnNo, TO_B_LnCd, dateType)) {
+                continue;
+            }
+            if (!DirectionType.get(TO_B_LnCd, TO_B_TrnNo).equals(DirectionType.get(TO_C_LnCd, TO_C_TrnNo))) {
                 continue;
             }
             MinimumStationInfoWithDateType A_Key = MinimumStationInfoWithDateType.get(compressedPath.get(i - 1), dateType, DomainType.STATION_TIME_TABLE);
-            StationTimeTableElement A_Train = stationTimeTableMap.getStoppingTrainAfterCurrTime(A_Key, TO_C.getTrnNo(), TO_A.getArvTm());
+            StationTimeTableElement A_Train = stationTimeTableMap.getStoppingTrainAfterCurrTime(A_Key, TO_C_TrnNo, TO_A.getArvTm());
             if (A_Train == null) {
                 continue;
             }
             MinimumStationInfoWithDateType B_Key = MinimumStationInfoWithDateType.get(compressedPath.get(i), dateType, DomainType.STATION_TIME_TABLE);
-            StationTimeTableElement B_Train = stationTimeTableMap.getStoppingTrainAfterCurrTime(B_Key, TO_C.getTrnNo(), TO_B.getArvTm());
+            StationTimeTableElement B_Train = stationTimeTableMap.getStoppingTrainAfterCurrTime(B_Key, TO_C_TrnNo, TO_B.getArvTm());
             if (StringUtil.isNullString(B_Train.getArvTm())) {
                 continue;
             }

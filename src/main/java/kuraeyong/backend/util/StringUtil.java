@@ -30,4 +30,9 @@ public class StringUtil {
     public static boolean isNullString(String str) {
         return str.equals("null");
     }
+
+    // FIXME. ExceptionHandle 코드 추가
+    public static int getLastNumber(String str) {
+        return str.charAt(str.length() - 1) - '0';
+    }
 }
